@@ -26,10 +26,21 @@
   to = "/share/index.html"
   status = 200
 
-# Handle static assets
+# Handle static assets for share pages
+[[redirects]]
+  from = "/share/assets/*"
+  to = "/share/assets/:splat"
+  status = 200
+
+[[headers]]
+  for = "/share/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+# Handle static assets for main site
 [[redirects]]
   from = "/assets/*"
-  to = "/share/assets/:splat"
+  to = "/assets/:splat"
   status = 200
 
 [[headers]]
