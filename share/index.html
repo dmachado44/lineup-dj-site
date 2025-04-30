@@ -20,12 +20,23 @@
     <script>
         // Set meta tags synchronously before any content loads
         (function() {
-            const lineupId = window.location.pathname.split('/').pop();
+            // Extract lineup ID from URL path
+            const pathParts = window.location.pathname.split('/');
+            const lineupId = pathParts[pathParts.length - 1];
+            
+            if (!lineupId) {
+                console.error('No lineup ID found in URL');
+                return;
+            }
+            
             const appUrl = `lineupdj://l/${lineupId}`;
             
             // Update Smart App Banner with lineup ID
             const appBanner = document.querySelector('meta[name="apple-itunes-app"]');
             appBanner.setAttribute('content', `app-id=6743953226, app-argument=${appUrl}`);
+            
+            // Update Universal Links meta tags
+            document.querySelector('meta[property="al:ios:url"]').setAttribute('content', appUrl);
         })();
     </script>
     <style>
@@ -138,8 +149,14 @@
         const db = getFirestore(app);
 
         // Get the lineup ID from the URL
-        const lineupId = window.location.pathname.split('/').pop();
+        const pathParts = window.location.pathname.split('/');
+        const lineupId = pathParts[pathParts.length - 1];
         const messageElement = document.getElementById('message');
+
+        if (!lineupId) {
+            messageElement.textContent = "Invalid lineup URL. Please check the link and try again.";
+            throw new Error('No lineup ID found in URL');
+        }
 
         // Handle app deep linking
         function handleAppRedirect() {
