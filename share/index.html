@@ -11,7 +11,11 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/share/assets/icon-180.png">
     <link rel="icon" type="image/png" href="/share/assets/icon.png">
     
+    <!-- Universal Links meta tags -->
     <meta name="apple-itunes-app" content="app-id=6743953226">
+    <meta property="al:ios:url" content="lineupdj://l/">
+    <meta property="al:ios:app_store_id" content="6743953226">
+    <meta property="al:ios:app_name" content="Lineup DJ">
     
     <script>
         // Set meta tags synchronously before any content loads
@@ -108,7 +112,7 @@
     <div class="container">
         <img src="/share/assets/newblue1024x1024.png" alt="Lineup DJ" class="app-logo">
         <h1>Lineup DJ</h1>
-        <p class="message">A lineup has been shared with you! Download the app to import it and create your own game-day moments.</p>
+        <p class="message" id="message">A lineup has been shared with you! Download the app to import it and create your own game-day moments.</p>
         <a href="https://apps.apple.com/us/app/lineup-dj/id6743953226" class="app-store-link" id="appStoreLink">
             <img src="/share/assets/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store" class="app-store-badge">
         </a>
@@ -119,9 +123,9 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
         import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
-        // Initialize Firebase with environment variable
+        // Initialize Firebase
         const firebaseConfig = {
-            apiKey: process.env.FIREBASE_API_KEY,
+            apiKey: "AIzaSyDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", // Replace with your actual API key
             authDomain: "lineup-dj.firebaseapp.com",
             projectId: "lineup-dj",
             storageBucket: "lineup-dj.firebasestorage.app",
@@ -135,6 +139,7 @@
 
         // Get the lineup ID from the URL
         const lineupId = window.location.pathname.split('/').pop();
+        const messageElement = document.getElementById('message');
 
         // Handle app deep linking
         function handleAppRedirect() {
@@ -154,7 +159,7 @@
                 const docSnap = await getDoc(docRef);
 
                 if (!docSnap.exists()) {
-                    console.error("Lineup not found");
+                    messageElement.textContent = "This shared lineup is no longer available.";
                     return;
                 }
 
@@ -162,7 +167,7 @@
                 const expiresAt = data.expires_at.toDate();
 
                 if (expiresAt < new Date()) {
-                    console.error("This shared lineup has expired");
+                    messageElement.textContent = "This shared lineup has expired.";
                     return;
                 }
 
@@ -171,6 +176,7 @@
 
             } catch (error) {
                 console.error("Error fetching lineup:", error);
+                messageElement.textContent = "There was an error loading this lineup. Please try again later.";
             }
         }
 
