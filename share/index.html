@@ -21,63 +21,47 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .container {
             max-width: 600px;
             margin: 0 auto;
             width: 100%;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+            text-align: center;
+            padding: 20px;
         }
 
-        .header {
-            text-align: center;
-            padding: 40px 20px;
+        .app-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 24px;
+            border-radius: 16px;
         }
 
         h1 {
             font-size: 32px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 16px;
         }
 
-        .subtitle {
+        .message {
             font-size: 18px;
             color: #515154;
-            margin-bottom: 24px;
+            margin-bottom: 32px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        #content {
-            flex: 1;
-            padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .app-store-link {
+            display: inline-block;
+            margin-top: 24px;
         }
 
-        .loading {
-            text-align: center;
-            color: #515154;
-            font-size: 16px;
-            padding: 20px;
-        }
-
-        .footer {
-            text-align: center;
-            padding: 20px;
-            color: #515154;
-            font-size: 14px;
-        }
-
-        .footer a {
-            color: #0066CC;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
+        .app-store-badge {
+            height: 40px;
         }
 
         @media (max-width: 480px) {
@@ -85,34 +69,30 @@
                 padding: 16px;
             }
 
-            .header {
-                padding: 24px 16px;
-            }
-
             h1 {
                 font-size: 28px;
             }
 
-            .subtitle {
+            .message {
                 font-size: 16px;
+                margin-bottom: 24px;
+            }
+
+            .app-logo {
+                width: 64px;
+                height: 64px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <h1>Lineup DJ</h1>
-            <p class="subtitle">Opening shared lineup...</p>
-        </header>
-
-        <div id="content">
-            <div class="loading">Loading lineup...</div>
-        </div>
-
-        <footer class="footer">
-            <p>Made with Lineup DJ - <a href="https://lineupdj.app">Download the App</a></p>
-        </footer>
+        <img src="/share/assets/newblue1024x1024.png" alt="Lineup DJ" class="app-logo">
+        <h1>Lineup DJ</h1>
+        <p class="message">A lineup has been shared with you! Download the app to import it and create your own game-day moments.</p>
+        <a href="https://apps.apple.com/us/app/lineup-dj/id6743953226" class="app-store-link">
+            <img src="/share/assets/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store" class="app-store-badge">
+        </a>
     </div>
 
     <script type="module">
@@ -142,23 +122,21 @@
                 const docRef = doc(db, "shared_lineups", lineupId);
                 const docSnap = await getDoc(docRef);
 
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    const lineup = JSON.parse(new TextDecoder().decode(data.lineup));
-                    const expiresAt = data.expires_at.toDate();
-
-                    if (expiresAt < new Date()) {
-                        showError("This shared lineup has expired");
-                        return;
-                    }
-
-                    renderLineup(lineup);
-                } else {
-                    showError("Lineup not found");
+                if (!docSnap.exists()) {
+                    console.error("Lineup not found");
+                    return;
                 }
+
+                const data = docSnap.data();
+                const expiresAt = data.expires_at.toDate();
+
+                if (expiresAt < new Date()) {
+                    console.error("This shared lineup has expired");
+                    return;
+                }
+
             } catch (error) {
                 console.error("Error fetching lineup:", error);
-                showError("Error loading lineup");
             }
         }
 
