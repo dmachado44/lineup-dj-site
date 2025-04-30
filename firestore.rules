@@ -5,8 +5,8 @@ service cloud.firestore {
     // Allow read/write access to shared_lineups collection
     match /shared_lineups/{documentId} {
       allow read: if true;  // Anyone can read shared lineups
-      allow create: if request.resource.data.keys().hasAll(['lineupId', 'createdAt']) 
-                   && request.resource.data.createdAt is timestamp;  // Validate required fields
+      allow create: if request.resource.data.keys().hasAll(['lineup', 'expires_at']) 
+                   && request.resource.data.expires_at is timestamp;  // Validate required fields
       allow update, delete: if false; // No one can update or delete shared lineups
     }
     
