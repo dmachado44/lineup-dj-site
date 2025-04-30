@@ -162,12 +162,28 @@
         function handleAppRedirect() {
             // Try to open the app with the lineup ID
             const appUrl = `lineupdj://l/${lineupId}`;
-            window.location.href = appUrl;
-
-            // If app doesn't open after 1 second, redirect to App Store
+            
+            // Create a hidden iframe to handle the app opening
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = appUrl;
+            document.body.appendChild(iframe);
+            
+            // Remove the iframe after a short delay
             setTimeout(() => {
-                window.location.href = 'https://apps.apple.com/us/app/lineup-dj/id6743953226';
+                document.body.removeChild(iframe);
             }, 1000);
+            
+            // Only redirect to App Store if the app doesn't open after 2 seconds
+            setTimeout(() => {
+                // Check if we're still on this page
+                if (document.hidden) {
+                    // App was opened successfully, don't redirect
+                    return;
+                }
+                // If we're still here, the app didn't open, so redirect to App Store
+                window.location.href = 'https://apps.apple.com/us/app/lineup-dj/id6743953226';
+            }, 2000);
         }
 
         async function fetchLineup() {
