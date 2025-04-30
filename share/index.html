@@ -17,6 +17,10 @@
     <meta property="al:ios:app_store_id" content="6743953226">
     <meta property="al:ios:app_name" content="Lineup DJ">
     
+    <!-- Additional meta tags for app opening -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
     <script>
         // Set meta tags synchronously before any content loads
         (function() {
@@ -160,29 +164,47 @@
 
         // Handle app deep linking
         function handleAppRedirect() {
-            // Try to open the app with the lineup ID
             const appUrl = `lineupdj://l/${lineupId}`;
             
-            // Create a hidden iframe to handle the app opening
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = appUrl;
-            document.body.appendChild(iframe);
+            // Try multiple methods to open the app
+            function tryOpenApp() {
+                // Method 1: Direct window.location
+                window.location.href = appUrl;
+                
+                // Method 2: Hidden iframe
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = appUrl;
+                document.body.appendChild(iframe);
+                
+                // Method 3: window.open
+                window.open(appUrl, '_blank');
+                
+                // Remove iframe after delay
+                setTimeout(() => {
+                    if (iframe.parentNode) {
+                        document.body.removeChild(iframe);
+                    }
+                }, 1000);
+            }
             
-            // Remove the iframe after a short delay
-            setTimeout(() => {
-                document.body.removeChild(iframe);
-            }, 1000);
+            // Try to open the app
+            tryOpenApp();
             
-            // Only redirect to App Store if the app doesn't open after 2 seconds
-            setTimeout(() => {
-                // Check if we're still on this page
+            // Check if app was opened
+            let appOpened = false;
+            const checkInterval = setInterval(() => {
                 if (document.hidden) {
-                    // App was opened successfully, don't redirect
-                    return;
+                    appOpened = true;
+                    clearInterval(checkInterval);
                 }
-                // If we're still here, the app didn't open, so redirect to App Store
-                window.location.href = 'https://apps.apple.com/us/app/lineup-dj/id6743953226';
+            }, 100);
+            
+            // Only redirect to App Store if app wasn't opened after 2 seconds
+            setTimeout(() => {
+                if (!appOpened) {
+                    window.location.href = 'https://apps.apple.com/us/app/lineup-dj/id6743953226';
+                }
             }, 2000);
         }
 
