@@ -3,7 +3,7 @@
         "apps": [],
         "details": [
             {
-                "appID": "HGU83XXXXX.com.lineupDJ.app",
+                "appID": "9572234H5U.com.lineupDJ.app",
                 "paths": ["/l/*"],
                 "components": [
                     {
@@ -15,6 +15,6 @@
         ]
     },
     "webcredentials": {
-        "apps": ["HGU83XXXXX.com.lineupDJ.app"]
+        "apps": ["9572234H5U.com.lineupDJ.app"]
     }
 } 
