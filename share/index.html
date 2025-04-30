@@ -11,7 +11,19 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/share/assets/icon-180.png">
     <link rel="icon" type="image/png" href="/share/assets/icon.png">
     
-    <meta name="apple-itunes-app" content="app-id=6743953226, app-argument=lineupdj://share/">
+    <meta name="apple-itunes-app" content="app-id=6743953226">
+    
+    <script>
+        // Set meta tags synchronously before any content loads
+        (function() {
+            const lineupId = window.location.pathname.split('/').pop();
+            const appUrl = `lineupdj://l/${lineupId}`;
+            
+            // Update Smart App Banner with lineup ID
+            const appBanner = document.querySelector('meta[name="apple-itunes-app"]');
+            appBanner.setAttribute('content', `app-id=6743953226, app-argument=${appUrl}`);
+        })();
+    </script>
     <style>
         * {
             margin: 0;

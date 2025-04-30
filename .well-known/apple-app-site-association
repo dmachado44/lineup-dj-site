@@ -3,8 +3,8 @@
         "apps": [],
         "details": [
             {
-                "appID": "YOUR_TEAM_ID.app.lineupdj",
-                "paths": ["*"]
+                "appID": "HGU83XXXXX.com.lineupDJ.app",
+                "paths": ["/l/*"]
             }
         ]
     }
