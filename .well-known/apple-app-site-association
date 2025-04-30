@@ -4,8 +4,17 @@
         "details": [
             {
                 "appID": "HGU83XXXXX.com.lineupDJ.app",
-                "paths": ["/l/*"]
+                "paths": ["/l/*"],
+                "components": [
+                    {
+                        "/": "/l/*",
+                        "comment": "Matches any URL whose path starts with /l/"
+                    }
+                ]
             }
         ]
+    },
+    "webcredentials": {
+        "apps": ["HGU83XXXXX.com.lineupDJ.app"]
     }
 } 
