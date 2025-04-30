@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-itunes-app" content="app-id=6743953226, app-argument=lineupdj://share/">
+    <meta property="al:ios:url" content="lineupdj://share/">
+    <meta property="al:ios:app_store_id" content="6743953226">
+    <meta property="al:ios:app_name" content="Lineup DJ">
+    <!-- End of new lines -->
+    <title>Lineup DJ - Create Unforgettable Game-Day Moments</title>
+    <title>Lineup DJ - Create Unforgettable Game-Day Moments</title>
+    <link rel="icon" type="image/png" href="assets/newblue1024x1024.png">
+    <link rel="apple-touch-icon" href="assets/newblue1024x1024.png">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KTQMX1DQ9T"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-KTQMX1DQ9T');
+    </script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main class="coming-soon">
+        <div class="content-wrapper">
+            <div class="content">
+                <img src="assets/newblue1024x1024.png" alt="Lineup DJ App Icon" class="app-icon">
+                <h1>Lineup DJ</h1>
+                <p class="tagline">Create unforgettable game-day moments</p>
+                <a href="https://apps.apple.com/us/app/lineup-dj/id6743953226" class="app-store-button" target="_blank" rel="noopener noreferrer">
+                    <img src="assets/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store">
+                </a>
+            </div>
+            <div class="video-container">
+                <video autoplay loop muted playsinline width="500" height="889">
+                    <source src="assets/lineupdjappwalkthrough.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </main>
+
+    <section class="blog-section">
+        <h2>Latest from Our Blog</h2>
+        <div class="blog-preview">
+            <a href="blog/family-friendly-walkout-songs.html" class="blog-card">
+                <h3>Family-Friendly Baseball Walkout Songs: Best Choices for Youth Players</h3>
+                <p>Discover the best age-appropriate walkout songs that keep the energy high and the content clean.</p>
+                <span class="read-more">Read More →</span>
+            </a>
+        </div>
+    </section>
+
+    <section class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-container">
+            <details class="faq-item">
+                <summary class="faq-question">Do I need an Apple Music subscription in order for Lineup DJ to work?</summary>
+                <p class="faq-answer">Yes, Lineup DJ requires an active Apple Music subscription to search for and play walkout songs. The AI voice introductions work independently of the music subscription.</p>
+            </details>
+            <!-- Add more questions here -->
+            <details class="faq-item">
+                <summary class="faq-question">What sports is Lineup DJ best for?</summary>
+                <p class="faq-answer">Lineup DJ is great for any sport where player introductions and walkout songs enhance the game-day atmosphere, such as baseball, softball, basketball, hockey, and more!</p>
+            </details>
+            <details class="faq-item">
+                <summary class="faq-question">How does the AI voice work?</summary>
+                <p class="faq-answer">Lineup DJ uses advanced text-to-speech technology to create natural-sounding voice introductions for each player based on the names you enter in the lineup.</p>
+            </details>
+        </div>
+    </section>
+
+    <footer>
+        <a href="mailto:hello@danmachado.com">Contact Us</a> | 
+        <a href="privacy.html">Privacy Policy</a>
+    </footer>
+    <script>
+// Handle shared lineup links
+function handleSharedLineup() {
+    // Extract the ID from the path instead of query parameters
+    const pathParts = window.location.pathname.split('/');
+    // Check if the path follows /l/{id} format
+    if (pathParts.length >= 3 && pathParts[1] === 'l') {
+        const lineupId = pathParts[2];
+        
+        // Try to open the app first with the correct URL format
+        window.location.href = `lineupdj://l/${lineupId}`;
+        
+        // If app doesn't open after 1 second, redirect to App Store
+        setTimeout(() => {
+            window.location.href = 'https://apps.apple.com/us/app/lineup-dj/id6743953226';
+        }, 1000);
+    }
+}
+        
+        // Run when page loads
+        document.addEventListener('DOMContentLoaded', handleSharedLineup);
+    </script>
+</body>
+</body>
+</html> 
