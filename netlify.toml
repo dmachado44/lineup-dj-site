@@ -10,7 +10,29 @@
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
 
-# Handle share links
+# Handle static assets first
+[[redirects]]
+  from = "/share/assets/*"
+  to = "/share/assets/:splat"
+  status = 200
+
+[[headers]]
+  for = "/share/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+# Handle main site assets
+[[redirects]]
+  from = "/assets/*"
+  to = "/assets/:splat"
+  status = 200
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+# Handle share links (after assets)
 [[redirects]]
   from = "/l/*"
   to = "/share/index.html"
@@ -25,25 +47,3 @@
   from = "/lineup*"
   to = "/share/index.html"
   status = 200
-
-# Handle static assets for share pages
-[[redirects]]
-  from = "/share/assets/*"
-  to = "/share/assets/:splat"
-  status = 200
-
-[[headers]]
-  for = "/share/assets/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000"
-
-# Handle static assets for main site
-[[redirects]]
-  from = "/assets/*"
-  to = "/assets/:splat"
-  status = 200
-
-[[headers]]
-  for = "/assets/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000"
