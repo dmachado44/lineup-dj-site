@@ -7,9 +7,21 @@
     <meta property="al:ios:url" content="lineupdj://l/">
     <meta property="al:ios:app_store_id" content="6743953226">
     <meta property="al:ios:app_name" content="Lineup DJ">
-    <!-- End of new lines -->
-    <title>Lineup DJ - Create Unforgettable Game-Day Moments</title>
-    <title>Lineup DJ - Create Unforgettable Game-Day Moments</title>
+    <title>Lineup DJ - Walkout Songs for Kids Baseball & Softball</title>
+    <meta name="description" content="Lineup DJ helps parents and coaches play walkout songs at youth baseball and softball games. Create walk-up music lineups with AI voice intros. Free app for iPhone.">
+    <link rel="canonical" href="https://lineupdj.app/">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lineupdj.app/">
+    <meta property="og:title" content="Lineup DJ - Walkout Songs for Kids Baseball & Softball">
+    <meta property="og:description" content="Lineup DJ helps parents and coaches play walkout songs at youth baseball and softball games. Create walk-up music lineups with AI voice intros. Free app for iPhone.">
+    <meta property="og:image" content="https://lineupdj.app/assets/og-image.png">
+    <meta property="og:site_name" content="Lineup DJ">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Lineup DJ - Walkout Songs for Kids Baseball & Softball">
+    <meta name="twitter:description" content="Lineup DJ helps parents and coaches play walkout songs at youth baseball and softball games. Create walk-up music lineups with AI voice intros.">
+    <meta name="twitter:image" content="https://lineupdj.app/assets/og-image.png">
     <link rel="icon" href="/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
@@ -27,14 +39,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebSite","name":"Lineup DJ","url":"https://lineupdj.app/","description":"Lineup DJ helps parents and coaches play walkout songs at youth baseball and softball games. Create walk-up music lineups with AI voice intros."}
+    </script>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Do I need an Apple Music subscription in order for Lineup DJ to work?","acceptedAnswer":{"@type":"Answer","text":"Yes, Lineup DJ requires an active Apple Music subscription to search for and play walkout songs. The AI voice introductions work independently of the music subscription."}},{"@type":"Question","name":"What sports is Lineup DJ best for?","acceptedAnswer":{"@type":"Answer","text":"Lineup DJ is great for any sport where player introductions and walkout songs enhance the game-day atmosphere, such as baseball, softball, basketball, hockey, and more!"}},{"@type":"Question","name":"How does the AI voice work?","acceptedAnswer":{"@type":"Answer","text":"Lineup DJ uses advanced text-to-speech technology to create natural-sounding voice introductions for each player based on the names you enter in the lineup."}}]}
+    </script>
 </head>
 <body>
     <main class="coming-soon">
         <div class="content-wrapper">
             <div class="content">
-                <img src="assets/newblue1024x1024.png" alt="Lineup DJ App Icon" class="app-icon">
+                <img src="assets/intro-graphic.svg" alt="Lineup DJ App Icon">
                 <h1>Lineup DJ</h1>
                 <p class="tagline">Create unforgettable game-day moments</p>
+                <p class="intro-copy">Playing walkout songs at your kid's baseball or softball game? Lineup DJ makes it easy to create walk-up music lineups with AI voice introductions. Perfect for little league, youth baseball, and softball.</p>
                 <a href="https://apps.apple.com/us/app/lineup-dj/id6743953226" class="app-store-button" target="_blank" rel="noopener noreferrer">
                     <img src="assets/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store">
                 </a>
@@ -50,13 +69,25 @@
 
     <section class="blog-section">
         <h2>Latest from Our Blog</h2>
-        <div class="blog-preview">
-            <a href="blog/family-friendly-walkout-songs.html" class="blog-card">
-                <h3>Family-Friendly Baseball Walkout Songs: Best Choices for Youth Players</h3>
-                <p>Discover the best age-appropriate walkout songs that keep the energy high and the content clean.</p>
-                <span class="read-more">Read More →</span>
-            </a>
+        <div class="blog-carousel">
+            <button class="carousel-btn carousel-prev" type="button" aria-label="Previous post">←</button>
+            <div class="carousel-viewport">
+                <div class="blog-carousel-track">
+                <a href="blog/top-25-walkout-songs-kids-2026.html" class="blog-card">
+                    <h3>Top 25 Walkout Songs for Kids (2026)</h3>
+                    <p>Movie hits, game anthems, and 15-second crowd winners—the ultimate guide for youth baseball and softball.</p>
+                    <span class="read-more">Read More →</span>
+                </a>
+                <a href="blog/family-friendly-walkout-songs.html" class="blog-card">
+                    <h3>Family-Friendly Baseball Walkout Songs: Best Choices for Youth Players</h3>
+                    <p>Discover the best age-appropriate walkout songs that keep the energy high and the content clean.</p>
+                    <span class="read-more">Read More →</span>
+                </a>
+                </div>
+            </div>
+            <button class="carousel-btn carousel-next" type="button" aria-label="Next post">→</button>
         </div>
+        <div class="carousel-dots" role="tablist" aria-label="Blog post navigation"></div>
     </section>
 
     <section class="faq-section">
@@ -104,7 +135,77 @@ function handleSharedLineup() {
         
         // Run when page loads
         document.addEventListener('DOMContentLoaded', handleSharedLineup);
+
+        // Blog carousel
+        document.addEventListener('DOMContentLoaded', function() {
+            const carousel = document.querySelector('.blog-carousel');
+            const track = document.querySelector('.blog-carousel-track');
+            const cards = document.querySelectorAll('.blog-carousel-track .blog-card');
+            const prevBtn = document.querySelector('.carousel-prev');
+            const nextBtn = document.querySelector('.carousel-next');
+            const dotsContainer = document.querySelector('.carousel-dots');
+            const cardCount = cards.length;
+
+            if (!track || cardCount === 0) return;
+
+            if (cardCount <= 2) {
+                carousel.classList.add('blog-carousel--static');
+                return;
+            }
+
+            carousel.classList.add('blog-carousel--carousel');
+            let currentIndex = 0;
+
+            for (let i = 0; i < cardCount; i++) {
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                dot.dataset.index = i;
+                dot.setAttribute('aria-label', 'Go to post ' + (i + 1));
+                dot.setAttribute('aria-selected', i === 0);
+                dotsContainer.appendChild(dot);
+            }
+            const dots = dotsContainer.querySelectorAll('.carousel-dot');
+
+            function getSlideOffset() {
+                return cards[0] ? cards[0].offsetWidth + 24 : 0;
+            }
+
+            function updateCarousel() {
+                const offset = getSlideOffset();
+                track.style.transform = `translateX(-${currentIndex * offset}px)`;
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === currentIndex);
+                    dot.setAttribute('aria-selected', i === currentIndex);
+                });
+                prevBtn.disabled = currentIndex === 0;
+                nextBtn.disabled = currentIndex >= cardCount - 1;
+            }
+
+            prevBtn.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateCarousel();
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (currentIndex < cardCount - 1) {
+                    currentIndex++;
+                    updateCarousel();
+                }
+            });
+
+            dots.forEach((dot, i) => {
+                dot.addEventListener('click', () => {
+                    currentIndex = i;
+                    updateCarousel();
+                });
+            });
+
+            window.addEventListener('resize', updateCarousel);
+            updateCarousel();
+        });
     </script>
-</body>
 </body>
 </html> 
