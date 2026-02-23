@@ -722,6 +722,30 @@ footer a:hover {
     margin-bottom: 2rem;
 }
 
+/* Toast notification */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    max-width: min(90vw, 480px);
+    padding: 1rem 1.5rem;
+    background: var(--text-color);
+    color: var(--background-color);
+    border-radius: 12px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    z-index: 1000;
+}
+
+.toast--visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
 @media (max-width: 600px) {
     .contact-app-info {
         flex-direction: column;

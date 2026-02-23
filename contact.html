@@ -46,7 +46,7 @@
         <section class="contact-form-section">
             <h2>Send Feedback</h2>
             <p>Have a question, suggestion, or bug report? We'd love to hear from you.</p>
-            <form name="contact" method="POST" data-netlify="true" action="/contact-success.html" netlify-honeypot="bot-field">
+            <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="contact-form">
                 <input type="hidden" name="form-name" value="contact">
                 <p class="form-honeypot">
                     <label>Don't fill this out if you're human: <input name="bot-field"></label>
@@ -69,10 +69,52 @@
         </section>
     </main>
 
+    <div id="toast" class="toast" aria-live="polite" hidden></div>
+
     <footer>
         <a href="contact.html">Contact</a> |
         <a href="privacy.html">Privacy Policy</a> |
         <a href="terms.html">Terms of Service</a>
     </footer>
+    <script>
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var form = e.target;
+            var toast = document.getElementById('toast');
+            var submitBtn = form.querySelector('.form-submit');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+
+            fetch('/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(new FormData(form)).toString()
+            })
+            .then(function() {
+                toast.textContent = "Thanks! I read every message. We're building Lineup DJ to give every kid their big-league moment. Your feedback helps us make game day even better.";
+                toast.hidden = false;
+                toast.classList.add('toast--visible');
+                form.reset();
+                setTimeout(function() {
+                    toast.classList.remove('toast--visible');
+                    setTimeout(function() { toast.hidden = true; }, 300);
+                }, 6000);
+            })
+            .catch(function() {
+                toast.textContent = 'Something went wrong. Please try again or email us directly.';
+                toast.hidden = false;
+                toast.classList.add('toast--visible');
+                setTimeout(function() {
+                    toast.classList.remove('toast--visible');
+                    setTimeout(function() { toast.hidden = true; }, 300);
+                }, 5000);
+            })
+            .finally(function() {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Message';
+            });
+        });
+    </script>
 </body>
 </html>
