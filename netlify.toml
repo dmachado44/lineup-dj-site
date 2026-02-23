@@ -67,3 +67,8 @@
   from = "/contact"
   to = "/contact.html"
   status = 200
+
+[[redirects]]
+  from = "/contact-success"
+  to = "/contact-success.html"
+  status = 200

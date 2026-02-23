@@ -3,3 +3,4 @@
 /share/*  /share/index.html  200
 /lineup*  /share/index.html  200
 /contact  /contact.html  200
+/contact-success  /contact-success.html  200
