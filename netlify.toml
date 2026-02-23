@@ -62,3 +62,8 @@
   from = "/lineup*"
   to = "/share/index.html"
   status = 200
+
+[[redirects]]
+  from = "/contact"
+  to = "/contact.html"
+  status = 200

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Lineup DJ</title>
+    <meta name="description" content="Get in touch with the Lineup DJ team. Send feedback, ask questions, or report issues about our walkout song app for youth baseball and softball.">
+    <link rel="canonical" href="https://lineupdj.app/contact">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+    <link rel="apple-touch-icon" href="assets/newblue1024x1024.png">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lineupdj.app/contact">
+    <meta property="og:title" content="Contact Us | Lineup DJ">
+    <meta property="og:image" content="https://lineupdj.app/assets/og-image.png">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KTQMX1DQ9T"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-KTQMX1DQ9T');
+    </script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main class="contact-content">
+        <a href="index.html" class="back-link">← Back to Home</a>
+        <h1>Contact Us</h1>
+
+        <section class="contact-app-info">
+            <img src="assets/newblue1024x1024.png" alt="Lineup DJ" class="contact-app-icon">
+            <div>
+                <h2>Lineup DJ</h2>
+                <p>Create unforgettable game-day moments with walkout songs and AI voice introductions for youth baseball, softball, and more. Perfect for parents and coaches.</p>
+                <a href="https://apps.apple.com/us/app/lineup-dj/id6743953226" class="app-store-button" target="_blank" rel="noopener noreferrer">
+                    <img src="assets/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store">
+                </a>
+            </div>
+        </section>
+
+        <section class="contact-form-section">
+            <h2>Send Feedback</h2>
+            <p>Have a question, suggestion, or bug report? We'd love to hear from you.</p>
+            <form name="contact" method="POST" data-netlify="true" action="/contact.html" netlify-honeypot="bot-field">
+                <input type="hidden" name="form-name" value="contact">
+                <p class="form-honeypot">
+                    <label>Don't fill this out if you're human: <input name="bot-field"></label>
+                </p>
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="5" required placeholder="Your feedback, question, or support request..."></textarea>
+                </div>
+                <button type="submit" class="form-submit">Send Message</button>
+            </form>
+            <p class="contact-email">Or email us directly at <a href="mailto:hello@danmachado.com">hello@danmachado.com</a></p>
+        </section>
+    </main>
+
+    <footer>
+        <a href="contact.html">Contact</a> |
+        <a href="privacy.html">Privacy Policy</a> |
+        <a href="terms.html">Terms of Service</a>
+    </footer>
+</body>
+</html>
