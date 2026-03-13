@@ -1275,6 +1275,121 @@ details[open] > .faq-answer {
 }
 
 /* ============================================================
+   About Page
+   ============================================================ */
+.about-page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 100px 2rem 80px;
+}
+
+.about-hero {
+    text-align: center;
+    padding-bottom: 60px;
+    margin-bottom: 60px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.about-hero h1 {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.8px;
+    margin-bottom: 28px;
+    color: var(--color-black);
+}
+
+.about-hero p {
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--color-text-secondary);
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.about-section {
+    margin-bottom: 52px;
+}
+
+.about-section h2 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 14px;
+    color: var(--color-black);
+}
+
+.about-section p {
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--color-text-secondary);
+    margin-bottom: 14px;
+}
+
+.about-section p:last-child { margin-bottom: 0; }
+
+.about-features-list {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 20px;
+    background: #F5F5F7;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.about-features-list li {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.about-features-list li:last-child { border-bottom: none; }
+
+.about-features-list li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-black);
+    flex-shrink: 0;
+}
+
+.about-closing {
+    background: var(--color-cta-bg);
+    border-radius: 20px;
+    padding: 52px 40px;
+    text-align: center;
+}
+
+.about-closing h2 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+    margin-bottom: 16px;
+    color: var(--color-black);
+}
+
+.about-closing p {
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--color-text-secondary);
+    margin-bottom: 12px;
+}
+
+.about-closing p:last-child { margin-bottom: 0; }
+
+@media (max-width: 600px) {
+    .about-hero h1 { font-size: 28px; }
+    .about-closing { padding: 40px 20px; }
+    .about-closing h2 { font-size: 22px; }
+}
+
+/* ============================================================
    Site Footer (redesigned)
    ============================================================ */
 .site-footer {
