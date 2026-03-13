@@ -84,14 +84,8 @@ a { text-decoration: none; }
     display: flex;
     justify-content: center;
     padding: 12px 24px;
-    transition: background 0.3s ease;
     pointer-events: none;
-}
-
-.site-header.scrolled {
-    background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: none;
 }
 
 .site-nav {
@@ -99,14 +93,19 @@ a { text-decoration: none; }
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
-    max-width: 1200px;
+    width: 520px;
     background: var(--color-nav-bg);
     backdrop-filter: blur(27px);
     -webkit-backdrop-filter: blur(27px);
     border-radius: 40px;
     padding: 10px 16px 10px 18px;
     gap: 20px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.site-header.scrolled .site-nav {
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
 }
 
 .nav-logo {
@@ -164,6 +163,18 @@ a { text-decoration: none; }
 /* ============================================================
    Hero Section
    ============================================================ */
+/* ── Hero entrance animation ── */
+@keyframes heroFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .hero-section {
     padding-top: 130px;
     padding-bottom: 80px;
@@ -187,6 +198,28 @@ a { text-decoration: none; }
     border-radius: 22px;
     box-shadow: 0 10px 40px rgba(247, 187, 176, 0.45);
     margin-bottom: 8px;
+    animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 0.05s;
+}
+
+.hero-section h1 {
+    animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 0.15s;
+}
+
+.hero-sub {
+    animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 0.25s;
+}
+
+.hero-rating {
+    animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 0.35s;
+}
+
+.hero-section .app-store-button {
+    animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 0.45s;
 }
 
 .hero-section h1 {
@@ -238,17 +271,22 @@ a { text-decoration: none; }
    ============================================================ */
 .screenshots-section {
     padding: 60px 0 80px;
-    background: #F5F5F7;
-    overflow: hidden;
+    background: var(--color-white);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+}
+
+.screenshots-section::-webkit-scrollbar {
+    display: none;
 }
 
 .screenshots-track {
     display: flex;
     gap: 24px;
     align-items: flex-start;
-    /* Center the strip so screenshots bleed off both sides */
     width: max-content;
-    margin: 0 auto;
     padding: 12px max(24px, calc(50vw - 900px));
 }
 
@@ -258,6 +296,7 @@ a { text-decoration: none; }
     border-radius: 24px;
     box-shadow: 0 24px 48px rgba(0,0,0,0.10), 0 8px 16px rgba(0,0,0,0.06);
     flex-shrink: 0;
+    scroll-snap-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -323,7 +362,7 @@ a { text-decoration: none; }
     position: relative;
     width: 100%;
     max-width: 640px;
-    min-height: 520px;
+    min-height: 600px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -371,7 +410,6 @@ a { text-decoration: none; }
 .avatar-bubble {
     position: absolute;
     border-radius: 50%;
-    animation: float 5s ease-in-out infinite;
 }
 
 .avatar-bubble .default-avatar-svg {
@@ -379,24 +417,62 @@ a { text-decoration: none; }
     height: 72px;
 }
 
-@keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(-2deg); }
-    50%       { transform: translateY(-14px) rotate(2deg); }
+/* Unique organic float paths — each follows a different curved drift */
+@keyframes float1 {
+    0%   { transform: translate(0px,    0px)   rotate(-1deg) scale(1); }
+    25%  { transform: translate(7px,  -12px)   rotate(2deg)  scale(1.02); }
+    50%  { transform: translate(3px,  -20px)   rotate(-2deg) scale(1); }
+    75%  { transform: translate(-6px, -10px)   rotate(1deg)  scale(0.98); }
+    100% { transform: translate(0px,    0px)   rotate(-1deg) scale(1); }
+}
+@keyframes float2 {
+    0%   { transform: translate(0px,    0px)   rotate(1deg)  scale(1); }
+    30%  { transform: translate(-9px,  -8px)   rotate(-2deg) scale(1.02); }
+    60%  { transform: translate(-5px, -16px)   rotate(3deg)  scale(0.99); }
+    80%  { transform: translate(4px,   -6px)   rotate(-1deg) scale(1.01); }
+    100% { transform: translate(0px,    0px)   rotate(1deg)  scale(1); }
+}
+@keyframes float3 {
+    0%   { transform: translate(0px,   0px)    rotate(0deg)  scale(1); }
+    20%  { transform: translate(5px, -14px)    rotate(-3deg) scale(1.01); }
+    45%  { transform: translate(-4px, -22px)   rotate(2deg)  scale(1.03); }
+    70%  { transform: translate(-8px, -10px)   rotate(-1deg) scale(0.98); }
+    100% { transform: translate(0px,   0px)    rotate(0deg)  scale(1); }
+}
+@keyframes float4 {
+    0%   { transform: translate(0px,   0px)    rotate(2deg)  scale(1); }
+    35%  { transform: translate(-6px, -10px)   rotate(-1deg) scale(0.99); }
+    55%  { transform: translate(8px,  -18px)   rotate(3deg)  scale(1.02); }
+    80%  { transform: translate(4px,   -6px)   rotate(-2deg) scale(1); }
+    100% { transform: translate(0px,   0px)    rotate(2deg)  scale(1); }
+}
+@keyframes float5 {
+    0%   { transform: translate(0px,    0px)   rotate(-2deg) scale(1); }
+    25%  { transform: translate(10px,  -6px)   rotate(1deg)  scale(1.01); }
+    50%  { transform: translate(6px,  -15px)   rotate(-3deg) scale(0.99); }
+    75%  { transform: translate(-5px, -20px)   rotate(2deg)  scale(1.02); }
+    100% { transform: translate(0px,    0px)   rotate(-2deg) scale(1); }
+}
+@keyframes float6 {
+    0%   { transform: translate(0px,   0px)    rotate(1deg)  scale(1); }
+    40%  { transform: translate(-10px, -12px)  rotate(-2deg) scale(1.03); }
+    65%  { transform: translate(3px,  -19px)   rotate(2deg)  scale(0.98); }
+    85%  { transform: translate(7px,   -8px)   rotate(-1deg) scale(1.01); }
+    100% { transform: translate(0px,   0px)    rotate(1deg)  scale(1); }
 }
 
-/* Position each bubble relative to the shared-visual container */
-.ab-1  { top: 4%;   left: 62%;  --float-dur: 5.2s; --float-delay: 0s; }
-.ab-2  { top: 28%;  left: 70%;  --float-dur: 5.8s; --float-delay: 0.8s; }
-.ab-3  { top: 54%;  left: 66%;  --float-dur: 4.9s; --float-delay: 1.5s; }
-.ab-4  { top: 56%;  left: 14%;  --float-dur: 5.4s; --float-delay: 0.4s; }
-.ab-5  { top: 42%;  left: 20%;  --float-dur: 6.1s; --float-delay: 1.1s; }
-.ab-6  { top: 26%;  left: 10%;  --float-dur: 5.0s; --float-delay: 0.7s; }
-.ab-7  { top: 4%;   left: 17%;  --float-dur: 5.6s; --float-delay: 1.8s; }
-.ab-8  { top: 2%;   left: 40%;  --float-dur: 4.7s; --float-delay: 0.3s; }
-.ab-9  { top: -4%;  left: 53%;  --float-dur: 5.3s; --float-delay: 0.9s; }
-.ab-10 { top: 30%;  left: 73%;  --float-dur: 5.7s; --float-delay: 1.3s; }
-
-.avatar-bubble { animation-duration: var(--float-dur, 5s); animation-delay: var(--float-delay, 0s); }
+/* 10 avatars at r=260px from center (320px, 300px) in a 640×600 container.
+   θ starts at 12 o'clock, clockwise every 36°.                           */
+.ab-1  { top: -1%;  left: 44%;  animation: float3 12.0s ease-in-out infinite 0.0s; } /* 12 o'clock  */
+.ab-2  { top:  9%;  left: 68%;  animation: float1 13.5s ease-in-out infinite 1.4s; } /* 1:30        */
+.ab-3  { top: 31%;  left: 83%;  animation: float5 11.2s ease-in-out infinite 0.6s; } /* 3 o'clock   */
+.ab-4  { top: 57%;  left: 83%;  animation: float2 14.0s ease-in-out infinite 2.2s; } /* 4:30        */
+.ab-5  { top: 79%;  left: 68%;  animation: float4 12.6s ease-in-out infinite 0.9s; } /* 6 o'clock   */
+.ab-6  { top: 87%;  left: 44%;  animation: float6 11.8s ease-in-out infinite 1.7s; } /* 6 o'clock   */
+.ab-7  { top: 79%;  left: 21%;  animation: float1 13.0s ease-in-out infinite 3.1s; } /* 7:30        */
+.ab-8  { top: 57%;  left:  6%;  animation: float5 12.2s ease-in-out infinite 0.4s; } /* 9 o'clock   */
+.ab-9  { top: 31%;  left:  6%;  animation: float2 13.8s ease-in-out infinite 1.1s; } /* 10:30       */
+.ab-10 { top:  9%;  left: 21%;  animation: float4 11.5s ease-in-out infinite 2.8s; } /* 11 o'clock  */
 
 /* ── Lineup card ── */
 .lineup-card {
@@ -499,16 +575,61 @@ a { text-decoration: none; }
 }
 
 .phone-mock-wrapper {
+    /* Contains phone (300px) + two cards bleeding right */
+    width: 580px;
+    height: 652px;
     flex-shrink: 0;
+    overflow: hidden;
 }
 
+/* All elements are siblings, absolutely positioned within the scene */
+.gameday-scene {
+    position: relative;
+    width: 580px;
+    /* Height = phone natural height at 300px wide (aspect ~0.46) ≈ 652px */
+    height: 652px;
+}
+
+.gameday-phone-img {
+    position: absolute;
+    width: 300px;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    /* Let it scale naturally — don't constrain height */
+}
+
+.gameday-card {
+    position: absolute;
+}
+
+/* Card 1: fills phone content area below "Now Batting" header — frontmost */
+.gameday-card-1 {
+    width: 276px;
+    left: 14px;
+    top: 112px;
+    z-index: 4;
+}
+
+/* Card 2: begins at phone's right edge, cascades slightly behind card 1 */
+.gameday-card-2 {
+    width: 264px;
+    left: 298px;
+    top: 126px;
+    z-index: 3;
+}
+
+/* Card 3: pre-cropped peek slice, clipped by wrapper overflow */
+.gameday-card-3 {
+    width: 248px;
+    left: 554px;
+    top: 140px;
+    z-index: 2;
+}
+
+/* Keep this stub so existing breakpoint overrides don't error */
 .phone-mock {
-    width: 390px;
-    min-height: 520px;
-    background: var(--color-white);
-    border-radius: 44px;
-    box-shadow: 0 8px 60px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(0,0,0,0.08);
-    overflow: hidden;
+    display: none;
     padding: 20px 0 32px;
     position: relative;
 }
@@ -900,6 +1021,79 @@ a { text-decoration: none; }
     padding: 0 24px;
 }
 
+/* Blog index landing page */
+.blog-index-hero {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 120px 24px 60px;
+    text-align: center;
+}
+.blog-index-hero h1 {
+    font-size: 52px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    margin-bottom: 12px;
+}
+.blog-index-hero p {
+    font-size: 18px;
+    color: var(--color-text-secondary);
+    margin: 0;
+}
+.blog-index-grid {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+.blog-index-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-white);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 20px;
+    padding: 32px;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.blog-index-card:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+    transform: translateY(-2px);
+}
+.blog-index-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin-bottom: 14px;
+}
+.blog-index-card h2 {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 12px;
+    letter-spacing: -0.3px;
+}
+.blog-index-card p {
+    font-size: 15px;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    flex: 1;
+    margin-bottom: 20px;
+}
+.blog-index-card .read-more {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+@media (max-width: 640px) {
+    .blog-index-hero h1 { font-size: 36px; }
+    .blog-index-grid { grid-template-columns: 1fr; }
+}
+
 .blog-section h2 {
     text-align: center;
     font-size: 28px;
@@ -1028,8 +1222,9 @@ details[open] > .faq-question::after { transform: rotate(45deg); }
    Site Footer (redesigned)
    ============================================================ */
 .site-footer {
-    background: var(--color-bg-secondary);
+    background: var(--color-white);
     padding: 48px 24px;
+    border-top: 1px solid rgba(0,0,0,0.07);
 }
 
 .footer-inner {
@@ -1181,7 +1376,7 @@ details[open] > .faq-question::after { transform: rotate(45deg); }
     border-radius: 8px;
 }
 
-.blog-post { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+.blog-post { max-width: 800px; margin: 0 auto; padding: 100px 1rem 2rem; }
 .post-meta { color: #666; margin-bottom: 2rem; }
 .post-intro { font-size: 1.15rem; color: #555; margin-bottom: 2rem; }
 
@@ -1214,7 +1409,7 @@ details[open] > .faq-question::after { transform: rotate(45deg); }
 /* ============================================================
    Legal Pages
    ============================================================ */
-.legal-content { max-width: 800px; margin: 0 auto; padding: 2rem; }
+.legal-content { max-width: 800px; margin: 0 auto; padding: 100px 2rem 2rem; }
 .legal-content h1 { font-size: 2.5rem; margin-bottom: 2rem; }
 .legal-content h2 { font-size: 1.8rem; margin: 2rem 0 1rem; text-align: left; }
 .legal-content p, .legal-content ul { margin-bottom: 1rem; line-height: 1.6; }
@@ -1229,7 +1424,7 @@ details[open] > .faq-question::after { transform: rotate(45deg); }
 /* ============================================================
    Contact Page
    ============================================================ */
-.contact-content { max-width: 800px; margin: 0 auto; padding: 2rem; }
+.contact-content { max-width: 800px; margin: 0 auto; padding: 100px 2rem 2rem; }
 
 .contact-app-info {
     display: flex;
@@ -1326,6 +1521,7 @@ details[open] > .faq-question::after { transform: rotate(45deg); }
 /* ── Mobile ── */
 @media (max-width: 640px) {
     .site-nav {
+        width: calc(100vw - 48px);
         padding: 8px 12px 8px 14px;
     }
 
@@ -1357,7 +1553,7 @@ details[open] > .faq-question::after { transform: rotate(45deg); }
     }
 
     .screenshot-img {
-        width: 260px;
+        width: 240px;
     }
 
     .shared-text h2,

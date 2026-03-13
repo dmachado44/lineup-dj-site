@@ -31,8 +31,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <header class="site-header" id="site-header">
+        <nav class="site-nav" id="site-nav">
+            <a class="nav-logo" href="index.html">
+                <img src="assets/newblue1024x1024.png" alt="Lineup DJ" class="nav-app-icon">
+                <span>Lineup DJ</span>
+            </a>
+            <div class="nav-links">
+                <a href="blog/index.html" class="nav-link">Blog</a>
+                <a href="index.html#cta" class="nav-link">About</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+                <a href="https://apps.apple.com/us/app/lineup-dj/id6743953226" class="nav-download-btn" target="_blank" rel="noopener noreferrer">
+                    <svg width="13" height="16" viewBox="0 0 13 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M10.44 8.37c-.02-2.1 1.72-3.12 1.8-3.17C11.14 3.36 9.5 3.14 8.91 3.12c-1.37-.14-2.68.8-3.38.8-.7 0-1.77-.78-2.91-.76C1.24 3.18.06 4.05-.5 5.33c-1.16 2-.3 5 .82 6.64.55.8 1.2 1.69 2.06 1.66.83-.03 1.14-.53 2.14-.53 1 0 1.28.53 2.16.51.9-.01 1.46-.8 2-1.6.64-.91.9-1.8.92-1.85-.02-.01-1.76-.68-1.78-2.69zM8.28 1.54C8.77.97 9.1.18 9.01-.66 8.28-.62 7.41-.17 6.9.41c-.47.52-.88 1.34-.77 2.13.82.06 1.66-.4 2.15-.99z" fill="white"/>
+                    </svg>
+                    Download
+                </a>
+            </div>
+        </nav>
+    </header>
+
     <main class="legal-content">
-        <a href="index.html" class="back-link">← Back to Home</a>
         <h1>Lineup DJ Terms of Service</h1>
         <p><strong>Last Updated:</strong> February 9, 2026</p>
 
@@ -83,10 +102,37 @@
         <p>Dan Machado<br>support@lineupdj.app</p>
     </main>
 
-    <footer>
-        <a href="contact.html">Contact</a> |
-        <a href="privacy.html">Privacy Policy</a> |
-        <a href="terms.html">Terms of Service</a>
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-left">
+                <div class="footer-logo">
+                    <img src="assets/newblue1024x1024.png" alt="Lineup DJ" class="footer-icon">
+                    <span>Lineup DJ</span>
+                </div>
+                <div class="footer-legal">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <span class="footer-sep">·</span>
+                    <a href="terms.html">Terms of Service</a>
+                </div>
+            </div>
+            <nav class="footer-right" aria-label="Footer navigation">
+                <a href="blog/index.html" class="footer-nav-link">Blog</a>
+                <a href="index.html#cta" class="footer-nav-link">About</a>
+                <a href="contact.html" class="footer-nav-link">Contact</a>
+            </nav>
+        </div>
     </footer>
+    <script>
+    (function() {
+        var header = document.getElementById('site-header');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 20) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        }, { passive: true });
+    })();
+    </script>
 </body>
 </html>
