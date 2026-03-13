@@ -321,6 +321,17 @@ a { text-decoration: none; }
     transform: translateX(0);
 }
 
+.reveal-up {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-up.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 /* ============================================================
    Shared Lineup Section
    ============================================================ */
@@ -1199,7 +1210,7 @@ a { text-decoration: none; }
    ============================================================ */
 .faq-section {
     padding: 60px 24px;
-    background: var(--light-gray);
+    background: var(--color-white);
 }
 
 .faq-section h2 {
@@ -1225,9 +1236,20 @@ a { text-decoration: none; }
 }
 
 .faq-question::-webkit-details-marker { display: none; }
-.faq-question::after { content: '+'; font-size: 1.5rem; transition: transform 0.2s; }
+.faq-question::after { content: '+'; font-size: 1.5rem; transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
 details[open] > .faq-question::after { transform: rotate(45deg); }
-.faq-answer { padding: 0 0 1rem; color: var(--color-text-secondary); line-height: 1.6; }
+.faq-answer {
+    padding: 0 0 1rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.25s ease 0.05s, transform 0.25s ease 0.05s;
+}
+details[open] > .faq-answer {
+    opacity: 1;
+    transform: translateY(0);
+}
 
 /* ============================================================
    Site Footer (redesigned)
@@ -1309,6 +1331,16 @@ details[open] > .faq-question::after { transform: rotate(45deg); }
 }
 
 .footer-nav-link:hover { opacity: 0.6; }
+
+.footer-instagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.75;
+    transition: opacity 0.15s;
+}
+
+.footer-instagram:hover { opacity: 1; }
 
 .footer-download-btn {
     display: flex;

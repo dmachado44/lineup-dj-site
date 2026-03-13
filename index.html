@@ -98,11 +98,11 @@
     <!-- SHARED LINEUP SECTION -->
     <section class="shared-section" id="shared">
         <div class="shared-inner">
-            <div class="shared-text">
+            <div class="shared-text reveal-up" style="--delay:0ms">
                 <h2>A Shared Lineup for<br>the Whole Team</h2>
                 <p>Parents can add their player's walkout music while coaches stay in control of the lineup.</p>
             </div>
-            <div class="shared-visual">
+            <div class="shared-visual reveal-up" style="--delay:120ms">
                 <!-- Floating avatar bubbles - positioned around the lineup card -->
                 <div class="avatar-bubble ab-1"><div class="default-avatar-svg"></div></div>
                 <div class="avatar-bubble ab-2"><div class="default-avatar-svg"></div></div>
@@ -174,11 +174,11 @@
     <!-- GAMEDAY SECTION -->
     <section class="gameday-section" id="gameday">
         <div class="gameday-inner">
-            <div class="gameday-text reveal-right" style="--delay:0ms">
+            <div class="gameday-text reveal-up" style="--delay:0ms">
                 <h2>Run Your Entire Walkout Song Lineup From One App</h2>
                 <p>Tap through players, trigger their intro, and play walkout music instantly during the game.</p>
             </div>
-            <div class="phone-mock-wrapper">
+            <div class="phone-mock-wrapper reveal-up" style="--delay:100ms">
                 <div class="gameday-scene">
                     <img src="assets/phone ui.png" alt="Lineup DJ app interface" class="gameday-phone-img">
                     <img src="assets/player card 1.png" alt="Jake Thompson" class="gameday-card gameday-card-1 reveal-right" style="--delay:100ms">
@@ -192,11 +192,11 @@
     <!-- ANNOUNCER SECTION -->
     <section class="announcer-section" id="announcer">
         <div class="announcer-inner">
-            <div class="announcer-heading">
+            <div class="announcer-heading reveal-up" style="--delay:0ms">
                 <h2>Professional Announcer-Style Player Introductions</h2>
                 <p>Make every player feel like a big leaguer with custom announcer intros before their walkout song.</p>
             </div>
-            <div class="announcer-card" id="announcer-card">
+            <div class="announcer-card reveal-up" style="--delay:80ms" id="announcer-card">
                 <div class="announcer-avatar-wrap" id="announcer-avatar-wrap">
                     <!-- JS will render the active announcer avatar here -->
                 </div>
@@ -225,7 +225,7 @@
             </div>
 
             <!-- Announcer selector row -->
-            <div class="announcer-selector" id="announcer-selector" role="group" aria-label="Choose announcer">
+            <div class="announcer-selector reveal-up" style="--delay:160ms" id="announcer-selector" role="group" aria-label="Choose announcer">
                 <!-- JS will render selector avatars here -->
             </div>
         </div>
@@ -233,7 +233,7 @@
 
     <!-- CTA SECTION -->
     <section class="cta-section" id="cta">
-        <div class="cta-inner">
+        <div class="cta-inner reveal-up" style="--delay:0ms">
             <h2>Create Walkout Songs for<br>Your Team Today</h2>
             <a href="https://apps.apple.com/us/app/lineup-dj/id6743953226" class="app-store-button" target="_blank" rel="noopener noreferrer">
                 <img src="assets/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store">
@@ -244,12 +244,12 @@
 
     <!-- BLOG SECTION -->
     <section class="blog-section">
-        <h2>Latest from Our Blog</h2>
+        <h2 class="reveal-up" style="--delay:0ms">Latest from Our Blog</h2>
         <div class="blog-carousel">
             <button class="carousel-btn carousel-prev" type="button" aria-label="Previous post">←</button>
             <div class="carousel-viewport">
                 <div class="blog-carousel-track">
-                    <a href="blog/top-25-walkout-songs-kids-2026.html" class="blog-card">
+                    <a href="blog/top-25-walkout-songs-kids-2026.html" class="blog-card reveal-up" style="--delay:60ms">
                         <div class="blog-card-meta">
                             <time datetime="2026-02-11">February 11, 2026</time>
                             <span>·</span>
@@ -259,7 +259,7 @@
                         <p>Movie hits, game anthems, and 15-second crowd winners—the ultimate guide for youth baseball and softball.</p>
                         <span class="read-more">Read More →</span>
                     </a>
-                    <a href="blog/family-friendly-walkout-songs.html" class="blog-card">
+                    <a href="blog/family-friendly-walkout-songs.html" class="blog-card reveal-up" style="--delay:140ms">
                         <div class="blog-card-meta">
                             <time datetime="2025-04-24">April 24, 2025</time>
                             <span>·</span>
@@ -278,19 +278,39 @@
 
     <!-- FAQ SECTION -->
     <section class="faq-section">
-        <h2>Frequently Asked Questions</h2>
+        <h2 class="reveal-up" style="--delay:0ms">Frequently Asked Questions</h2>
         <div class="faq-container">
-            <details class="faq-item">
-                <summary class="faq-question">Do I need an Apple Music subscription in order for Lineup DJ to work?</summary>
-                <p class="faq-answer">Yes, Lineup DJ requires an active Apple Music subscription to search for and play walkout songs. The AI voice introductions work independently of the music subscription.</p>
+            <details class="faq-item reveal-up" style="--delay:60ms">
+                <summary class="faq-question">Do I need an Apple Music subscription for Lineup DJ to work?</summary>
+                <p class="faq-answer">Yes. Lineup DJ uses Apple Music to search for and play walkout songs. An active Apple Music subscription, including the free trial, is required to add and play songs during games.</p>
             </details>
-            <details class="faq-item">
+            <details class="faq-item reveal-up" style="--delay:80ms">
+                <summary class="faq-question">Do all parents need to pay for Lineup DJ?</summary>
+                <p class="faq-answer">No. Only one person on the team needs a paid Lineup DJ subscription to run Gameday mode during games. Parents can join the team and set up their player's walkout song and introduction for free.</p>
+            </details>
+            <details class="faq-item reveal-up" style="--delay:100ms">
+                <summary class="faq-question">Can parents add their player's walkout song themselves?</summary>
+                <p class="faq-answer">Yes. Coaches can share their team with parents using a simple invite code. Each parent can then add their player's walkout song and introduction so the lineup stays updated automatically.</p>
+            </details>
+            <details class="faq-item reveal-up" style="--delay:120ms">
                 <summary class="faq-question">What sports is Lineup DJ best for?</summary>
-                <p class="faq-answer">Lineup DJ is great for any sport where player introductions and walkout songs enhance the game-day atmosphere, such as baseball, softball, basketball, hockey, and more!</p>
+                <p class="faq-answer">Lineup DJ is designed primarily for youth baseball and softball teams, including Little League, travel ball, coach pitch, and tee-ball. Any sport that uses player introductions or walkout music can also use Lineup DJ.</p>
             </details>
-            <details class="faq-item">
-                <summary class="faq-question">How does the AI voice work?</summary>
-                <p class="faq-answer">Lineup DJ uses advanced text-to-speech technology to create natural-sounding voice introductions for each player based on the names you enter in the lineup.</p>
+            <details class="faq-item reveal-up" style="--delay:140ms">
+                <summary class="faq-question">How do walkout songs work in youth baseball?</summary>
+                <p class="faq-answer">Walkout songs are short clips of music that play when a player walks up to bat. With Lineup DJ, coaches can assign a walkout song to each player and trigger the music instantly during the game.</p>
+            </details>
+            <details class="faq-item reveal-up" style="--delay:160ms">
+                <summary class="faq-question">Can I choose the exact part of the walkout song that plays?</summary>
+                <p class="faq-answer">Yes. Lineup DJ lets you trim the exact moment of a song so players hear their favorite part when they walk up to the plate.</p>
+            </details>
+            <details class="faq-item reveal-up" style="--delay:180ms">
+                <summary class="faq-question">Does Lineup DJ include player introductions?</summary>
+                <p class="faq-answer">Yes. Lineup DJ includes announcer-style player introductions that play before the walkout song, making every at-bat feel like a big-league moment for youth players.</p>
+            </details>
+            <details class="faq-item reveal-up" style="--delay:200ms">
+                <summary class="faq-question">Can Lineup DJ run the full batting lineup during a game?</summary>
+                <p class="faq-answer">Yes. Coaches can run the entire lineup from the app, trigger player introductions, and play walkout music for each batter throughout the game.</p>
             </details>
         </div>
     </section>
@@ -314,6 +334,9 @@
                 <a href="blog/index.html" class="footer-nav-link">Blog</a>
                 <a href="#cta" class="footer-nav-link">About</a>
                 <a href="contact.html" class="footer-nav-link">Contact</a>
+                <a href="https://www.instagram.com/lineupdj_app" class="footer-instagram" target="_blank" rel="noopener noreferrer" aria-label="Lineup DJ on Instagram">
+                    <img src="assets/Instagram_Glyph_Black.svg" alt="" aria-hidden="true" width="20" height="20">
+                </a>
                 <a href="https://apps.apple.com/us/app/lineup-dj/id6743953226" class="footer-download-btn" target="_blank" rel="noopener noreferrer">
                     <img src="assets/apple icon.svg" alt="" aria-hidden="true" width="14" height="17">
                     Download
@@ -452,8 +475,37 @@
             });
         }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
 
-        document.querySelectorAll('.reveal-right').forEach(function(el) {
+        document.querySelectorAll('.reveal-right, .reveal-up').forEach(function(el) {
             observer.observe(el);
+        });
+    })();
+
+    // ─── FAQ animated accordion ───────────────────────────────────────────────
+    (function() {
+        document.querySelectorAll('.faq-item').forEach(function(details) {
+            var summary = details.querySelector('summary');
+            summary.addEventListener('click', function(e) {
+                e.preventDefault();
+                details.style.overflow = 'hidden';
+                if (details.open) {
+                    var closing = details.animate(
+                        [{ height: details.scrollHeight + 'px' }, { height: summary.scrollHeight + 'px' }],
+                        { duration: 280, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+                    );
+                    closing.onfinish = function() {
+                        details.open = false;
+                        details.style.overflow = '';
+                    };
+                } else {
+                    details.open = true;
+                    details.animate(
+                        [{ height: summary.scrollHeight + 'px' }, { height: details.scrollHeight + 'px' }],
+                        { duration: 320, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+                    ).onfinish = function() {
+                        details.style.overflow = '';
+                    };
+                }
+            });
         });
     })();
 
