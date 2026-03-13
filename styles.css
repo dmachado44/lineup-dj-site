@@ -165,46 +165,46 @@ a { text-decoration: none; }
    Hero Section
    ============================================================ */
 .hero-section {
-    padding-top: 120px;
-    padding-bottom: 60px;
+    padding-top: 130px;
+    padding-bottom: 80px;
     text-align: center;
     background: var(--color-white);
 }
 
 .hero-inner {
-    max-width: 620px;
+    max-width: 640px;
     margin: 0 auto;
     padding: 0 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 20px;
 }
 
 .hero-icon {
-    width: 80px;
-    height: 80px;
-    border-radius: 18.75px;
-    box-shadow: 0 8.75px 36.25px rgba(247, 187, 176, 0.4);
-    margin-bottom: 4px;
+    width: 96px;
+    height: 96px;
+    border-radius: 22px;
+    box-shadow: 0 10px 40px rgba(247, 187, 176, 0.45);
+    margin-bottom: 8px;
 }
 
 .hero-section h1 {
-    font-size: 34px;
+    font-size: 54px;
     font-weight: 700;
-    line-height: 41px;
-    letter-spacing: 0.4px;
+    line-height: 60px;
+    letter-spacing: -1.5px;
     color: var(--color-black);
     margin: 0;
 }
 
 .hero-sub {
-    font-size: 17px;
+    font-size: 19px;
     font-weight: 400;
-    line-height: 22px;
-    letter-spacing: -0.43px;
+    line-height: 26px;
+    letter-spacing: -0.3px;
     color: var(--color-gray);
-    max-width: 480px;
+    max-width: 460px;
     margin: 0;
 }
 
@@ -237,24 +237,33 @@ a { text-decoration: none; }
    Screenshots Section
    ============================================================ */
 .screenshots-section {
-    padding: 40px 0 60px;
+    padding: 60px 0 80px;
+    background: #F5F5F7;
     overflow: hidden;
 }
 
 .screenshots-track {
     display: flex;
-    gap: 20px;
-    padding: 0 60px;
+    gap: 24px;
     align-items: flex-start;
+    /* Center the strip so screenshots bleed off both sides */
     width: max-content;
+    margin: 0 auto;
+    padding: 12px max(24px, calc(50vw - 900px));
 }
 
 .screenshot-img {
-    width: 310px;
+    width: 400px;
     height: auto;
-    border-radius: 20px;
-    box-shadow: 0 20px 25px rgba(211, 255, 196, 0.3), 0 8px 24px rgba(0,0,0,0.12);
+    border-radius: 24px;
+    box-shadow: 0 24px 48px rgba(0,0,0,0.10), 0 8px 16px rgba(0,0,0,0.06);
     flex-shrink: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.screenshot-img:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 32px 64px rgba(0,0,0,0.14), 0 12px 24px rgba(0,0,0,0.08);
 }
 
 /* ============================================================
@@ -1271,10 +1280,10 @@ details[open] > .faq-question::after { transform: rotate(45deg); }
 /* ── Large / Desktop ── */
 @media (max-width: 1100px) {
     .screenshots-track {
-        padding: 0 32px;
+        padding: 12px 32px;
     }
     .screenshot-img {
-        width: 260px;
+        width: 320px;
     }
 }
 
@@ -1328,20 +1337,27 @@ details[open] > .faq-question::after { transform: rotate(45deg); }
 
     .hero-section {
         padding-top: 100px;
+        padding-bottom: 60px;
     }
 
     .hero-section h1 {
-        font-size: 28px;
-        line-height: 34px;
+        font-size: 36px;
+        line-height: 42px;
+        letter-spacing: -0.8px;
+    }
+
+    .hero-icon {
+        width: 80px;
+        height: 80px;
     }
 
     .screenshots-track {
-        padding: 0 20px;
-        gap: 12px;
+        padding: 12px 20px;
+        gap: 16px;
     }
 
     .screenshot-img {
-        width: 200px;
+        width: 260px;
     }
 
     .shared-text h2,
