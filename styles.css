@@ -13,6 +13,7 @@
     --color-black: #000000;
     --color-white: #ffffff;
     --color-gray: #8E8E93;
+    --color-text-secondary: #6C6C70;
     --color-gray-3: #C7C7CC;
     --color-gray-4: #D1D1D6;
     --color-gray-5: #E5E5EA;
@@ -236,7 +237,7 @@ a { text-decoration: none; }
     font-weight: 400;
     line-height: 26px;
     letter-spacing: -0.3px;
-    color: var(--color-gray);
+    color: var(--color-text-secondary);
     max-width: 460px;
     margin: 0;
 }
@@ -353,7 +354,7 @@ a { text-decoration: none; }
 
 .shared-text p {
     font-size: 17px;
-    color: var(--color-gray);
+    color: var(--color-text-secondary);
     line-height: 22px;
     letter-spacing: -0.43px;
 }
@@ -569,7 +570,7 @@ a { text-decoration: none; }
 
 .gameday-text p {
     font-size: 17px;
-    color: var(--color-gray);
+    color: var(--color-text-secondary);
     line-height: 22px;
     letter-spacing: -0.43px;
 }
@@ -872,7 +873,7 @@ a { text-decoration: none; }
 
 .announcer-desc {
     font-size: 17px;
-    color: var(--color-gray);
+    color: var(--color-text-secondary);
     letter-spacing: -0.43px;
 }
 
@@ -1226,7 +1227,7 @@ a { text-decoration: none; }
 .faq-question::-webkit-details-marker { display: none; }
 .faq-question::after { content: '+'; font-size: 1.5rem; transition: transform 0.2s; }
 details[open] > .faq-question::after { transform: rotate(45deg); }
-.faq-answer { padding: 0 0 1rem; color: #555; line-height: 1.6; }
+.faq-answer { padding: 0 0 1rem; color: var(--color-text-secondary); line-height: 1.6; }
 
 /* ============================================================
    Site Footer (redesigned)
@@ -1272,7 +1273,7 @@ details[open] > .faq-question::after { transform: rotate(45deg); }
 
 .footer-desc {
     font-size: 15px;
-    color: var(--color-gray);
+    color: var(--color-text-secondary);
     line-height: 22px;
     letter-spacing: -0.23px;
 }
@@ -1387,8 +1388,8 @@ details[open] > .faq-question::after { transform: rotate(45deg); }
 }
 
 .blog-post { max-width: 800px; margin: 0 auto; padding: 100px 1rem 2rem; }
-.post-meta { color: #666; margin-bottom: 2rem; }
-.post-intro { font-size: 1.15rem; color: #555; margin-bottom: 2rem; }
+.post-meta { color: var(--color-text-secondary); margin-bottom: 2rem; }
+.post-intro { font-size: 1.15rem; color: var(--color-text-secondary); margin-bottom: 2rem; }
 
 .blog-post .tip {
     background: #f0f9ff;
@@ -1402,9 +1403,9 @@ details[open] > .faq-question::after { transform: rotate(45deg); }
 .blog-post h1 { font-size: 2.5rem; margin-bottom: 1rem; }
 .blog-post h2 { font-size: 1.75rem; margin: 2rem 0 1rem; }
 .blog-post h3 { font-size: 1.25rem; margin: 1.5rem 0 1rem; }
-.blog-post p { line-height: 1.6; margin-bottom: 1rem; }
+.blog-post p { line-height: 1.6; margin-bottom: 1rem; color: var(--color-text-secondary); }
 .blog-post ul, .blog-post ol { margin-bottom: 1rem; padding-left: 1.5rem; }
-.blog-post li { margin-bottom: 0.5rem; }
+.blog-post li { margin-bottom: 0.5rem; color: var(--color-text-secondary); }
 
 .cta-box {
     background: var(--light-gray);
@@ -1422,9 +1423,9 @@ details[open] > .faq-question::after { transform: rotate(45deg); }
 .legal-content { max-width: 800px; margin: 0 auto; padding: 100px 2rem 2rem; }
 .legal-content h1 { font-size: 2.5rem; margin-bottom: 2rem; }
 .legal-content h2 { font-size: 1.8rem; margin: 2rem 0 1rem; text-align: left; }
-.legal-content p, .legal-content ul { margin-bottom: 1rem; line-height: 1.6; }
+.legal-content p, .legal-content ul { margin-bottom: 1rem; line-height: 1.6; color: var(--color-text-secondary); }
 .legal-content ul { padding-left: 2rem; }
-.legal-content li { margin-bottom: 0.5rem; }
+.legal-content li { margin-bottom: 0.5rem; color: var(--color-text-secondary); }
 .legal-content hr { margin: 2em 0; }
 .legal-content a { color: var(--primary-color); text-decoration: none; }
 .legal-content a:hover { text-decoration: underline; }
