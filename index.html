@@ -434,98 +434,40 @@
             id: 'adam',
             name: 'Adam',
             desc: 'classic, smooth, been doing this since 1987',
-            audio: 'assets/audio/adam.mp3',
-            bgColor: '#F2F2F7',
-            shirtColor: '#78BEFF',
-            skinColor: '#F7BBB0',
-            hairColor: '#82777B',
-            borderColor: 'transparent'
-        },
-        {
-            id: 'chris',
-            name: 'Chris',
-            desc: 'warm, real, sounds like he genuinely cares',
-            audio: 'assets/audio/chris.mp3',
-            bgColor: '#F2F2F7',
-            shirtColor: '#D9D9D9',
-            skinColor: '#F7BBB0',
-            hairColor: '#5F220F',
-            borderColor: 'transparent'
-        },
-        {
-            id: 'marcus',
-            name: 'Marcus',
-            desc: 'kinetic, loud, always mid-sentence',
-            audio: 'assets/audio/marcus.mp3',
-            bgColor: '#F2F2F7',
-            shirtColor: '#65B319',
-            skinColor: '#D1906D',
-            hairColor: '#013244',
-            borderColor: '#000000'
+            audio: 'assets/audio/adam.mp3'
         },
         {
             id: 'tyler',
             name: 'Tyler',
+            desc: 'warm, real, sounds like he genuinely cares',
+            audio: 'assets/audio/tyler.mp3'
+        },
+        {
+            id: 'michael',
+            name: 'Michael',
+            desc: 'kinetic, loud, always mid-sentence',
+            audio: 'assets/audio/michael.mp3'
+        },
+        {
+            id: 'stephanie',
+            name: 'Stephanie',
             desc: 'laid back but never misses a beat',
-            audio: 'assets/audio/tyler.mp3',
-            bgColor: '#F2F2F7',
-            shirtColor: '#C07FC6',
-            skinColor: '#F7BBB0',
-            hairColor: '#FBE063',
-            borderColor: 'transparent'
+            audio: 'assets/audio/stephanie.mp3'
         },
         {
             id: 'jada',
             name: 'Jada',
             desc: 'bright, energetic, gets the crowd going',
-            audio: 'assets/audio/jada.mp3',
-            bgColor: '#F2F2F7',
-            shirtColor: '#FFD600',
-            skinColor: '#8B5E3C',
-            hairColor: '#1A0A00',
-            borderColor: 'transparent'
+            audio: 'assets/audio/jada.mp3'
         }
     ];
 
-    let activeAnnouncerIndex = 2; // Marcus is active by default
+    let activeAnnouncerIndex = 2; // Michael is active by default
     let announcerAudio = null;
     let isPlayingPreview = false;
 
     function buildAnnouncerSVG(a, size) {
-        const r = size / 2;
-        const border = a.borderColor !== 'transparent' ? `stroke="${a.borderColor}" stroke-width="4"` : '';
-        return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="${r}" cy="${r}" r="${r}" fill="${a.bgColor}" ${border}/>
-  <!-- Shirt / body at bottom -->
-  <ellipse cx="${r}" cy="${size * 0.9}" rx="${r * 0.72}" ry="${size * 0.26}" fill="${a.shirtColor}"/>
-  <!-- Neck -->
-  <rect x="${r - size * 0.09}" y="${size * 0.62}" width="${size * 0.18}" height="${size * 0.16}" fill="${a.skinColor}"/>
-  <!-- Head -->
-  <ellipse cx="${r}" cy="${size * 0.43}" rx="${r * 0.48}" ry="${size * 0.29}" fill="${a.skinColor}"/>
-  ${a.id === 'marcus' ? `
-  <!-- Beard (Marcus) -->
-  <ellipse cx="${r}" cy="${size * 0.65}" rx="${r * 0.37}" ry="${size * 0.15}" fill="${a.hairColor}"/>
-  <ellipse cx="${r}" cy="${size * 0.56}" rx="${r * 0.31}" ry="${size * 0.10}" fill="${a.skinColor}"/>` : ''}
-  ${a.id === 'chris' ? `
-  <!-- Beard (Chris) -->
-  <ellipse cx="${r}" cy="${size * 0.64}" rx="${r * 0.42}" ry="${size * 0.14}" fill="${a.hairColor}"/>
-  <ellipse cx="${r}" cy="${size * 0.57}" rx="${r * 0.35}" ry="${size * 0.10}" fill="${a.skinColor}"/>` : ''}
-  ${(a.id !== 'marcus') ? `
-  <!-- Hair -->
-  <ellipse cx="${r}" cy="${size * 0.22}" rx="${r * 0.48}" ry="${size * 0.13}" fill="${a.hairColor}"/>` : ''}
-  ${a.id === 'adam' ? `
-  <!-- Glasses (Adam) -->
-  <rect x="${r * 0.52}" y="${size * 0.38}" width="${r * 0.42}" height="${size * 0.14}" rx="${size * 0.04}" fill="none" stroke="${a.hairColor}" stroke-width="1.5"/>
-  <rect x="${r * 1.06}" y="${size * 0.38}" width="${r * 0.42}" height="${size * 0.14}" rx="${size * 0.04}" fill="none" stroke="${a.hairColor}" stroke-width="1.5"/>
-  <line x1="${r * 0.94}" y1="${size * 0.43}" x2="${r * 1.06}" y2="${size * 0.43}" stroke="${a.hairColor}" stroke-width="1.5"/>` : ''}
-  <!-- Eyes -->
-  <circle cx="${r * 0.78}" cy="${size * 0.44}" r="${size * 0.04}" fill="white"/>
-  <circle cx="${r * 1.22}" cy="${size * 0.44}" r="${size * 0.04}" fill="white"/>
-  <circle cx="${r * 0.79}" cy="${size * 0.445}" r="${size * 0.022}" fill="#333"/>
-  <circle cx="${r * 1.23}" cy="${size * 0.445}" r="${size * 0.022}" fill="#333"/>
-  <!-- Nose -->
-  <ellipse cx="${r}" cy="${size * 0.52}" rx="${size * 0.04}" ry="${size * 0.025}" fill="${a.id === 'jada' || a.id === 'marcus' ? '#7A4830' : '#E8A090'}"/>
-</svg>`;
+        return `<img src="assets/announcer-${a.id}-face.svg" width="${size}" height="${size}" alt="${a.name}" style="border-radius:50%;display:block;">`;
     }
 
     function renderAnnouncerCard(index) {
