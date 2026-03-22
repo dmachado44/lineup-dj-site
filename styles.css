@@ -1470,6 +1470,7 @@ details[open] > .faq-answer {
 
 .footer-nav-link:hover { opacity: 0.6; }
 
+.footer-tiktok,
 .footer-instagram {
     display: flex;
     align-items: center;
@@ -1478,6 +1479,7 @@ details[open] > .faq-answer {
     transition: opacity 0.15s;
 }
 
+.footer-tiktok:hover,
 .footer-instagram:hover { opacity: 1; }
 
 .footer-download-btn {
