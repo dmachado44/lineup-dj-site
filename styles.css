@@ -1274,6 +1274,27 @@ details[open] > .faq-answer {
     transform: translateY(0);
 }
 
+.faq-answer ul {
+    margin: 0 0 12px;
+    padding-left: 1.25rem;
+    list-style: disc;
+}
+.faq-answer li { margin-bottom: 6px; }
+.faq-answer li:last-child { margin-bottom: 0; }
+.faq-answer p { margin: 0 0 12px; color: var(--color-text-secondary); }
+.faq-answer p:last-child { margin-bottom: 0; }
+.faq-answer-sub {
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--color-black);
+    font-size: 0.95rem;
+}
+.faq-answer-rule {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    margin: 14px 0;
+}
+
 /* ============================================================
    About Page
    ============================================================ */
