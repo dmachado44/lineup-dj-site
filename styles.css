@@ -94,7 +94,7 @@ a { text-decoration: none; }
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 520px;
+    width: 600px;
     background: var(--color-nav-bg);
     backdrop-filter: blur(27px);
     -webkit-backdrop-filter: blur(27px);
