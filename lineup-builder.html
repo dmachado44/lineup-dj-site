@@ -2636,8 +2636,8 @@ function shuffleFielding() {
     const posPool = [...fieldPos].sort(() => Math.random() - 0.5);
     const takenThisInning = new Set();
 
-    // Helper: can this player take this position right now?
-    function canTake(playerId, pos) {
+    // Arrow function assigned to const — properly block-scoped, closes over this inning's takenThisInning
+    const canTake = (playerId, pos) => {
       if (takenThisInning.has(pos)) return false;
       if (pos === 'P' && rules.maxInningsPitched > 0 && inningsPitched[playerId] >= rules.maxInningsPitched) return false;
       if (!rules.allowBackToBack && inning > 0) {
@@ -2646,7 +2646,7 @@ function shuffleFielding() {
       }
       if (rules.maxSamePosition > 0 && (posTally[playerId][pos] || 0) >= rules.maxSamePosition) return false;
       return true;
-    }
+    };
 
     // Pass 1 — honor preferred positions (least-played pref first for variety)
     const assignedPlayers = new Set();
