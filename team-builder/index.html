@@ -1,0 +1,2412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team Builder – Lineup DJ</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.6/Sortable.min.js"></script>
+  <!-- Firebase (compat SDK) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── LINEUP DJ DESIGN TOKENS ── */
+    :root {
+      /* Brand colors from lineupdj.app */
+      --teal:        #D3FFC4;
+      --teal-light:  rgba(211, 255, 196, 0.25);
+      --orange:      #FF9500;
+      --green-cta:   #D3FFC4;
+      --green-dark:  #9AEC7F;
+      --black:       #000000;
+      --white:       #ffffff;
+
+      /* iOS-style grays */
+      --gray:        #8E8E93;
+      --text-secondary: #6C6C70;
+      --gray-3:      #C7C7CC;
+      --gray-4:      #D1D1D6;
+      --gray-5:      #E5E5EA;
+      --bg-secondary:#F2F2F7;
+      --bg:          #F2F2F7;
+      --border:      #E5E5EA;
+      --text:        #1C1C1E;
+
+      /* Semantic aliases */
+      --card:        #ffffff;
+      --muted:       #6C6C70;
+      --light:       #8E8E93;
+      --green:       #34C759;   /* iOS green */
+      --red:         #FF3B30;   /* iOS red */
+
+      /* Bench colors — warm amber hint */
+      --bench-bg:    #FFF8E7;
+      --bench-border:#FFD60A;
+
+      /* Radius */
+      --radius:      12px;
+      --radius-pill: 80px;
+      --radius-sm:   8px;
+    }
+
+    body {
+      font-family: -apple-system, "SF Pro Display", "SF Pro Text", system-ui, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── NAV ── */
+    .topbar {
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .topbar-logo {
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: -0.3px;
+      color: var(--black);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .topbar-logo .logo-mark {
+      width: 30px; height: 30px;
+      background: var(--black);
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+    .topbar-divider { width: 1px; height: 18px; background: var(--border); }
+    .topbar-title {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 400;
+      letter-spacing: -0.1px;
+    }
+    .topbar-spacer { flex: 1; }
+
+    /* ── AUTH TOPBAR ── */
+    .topbar-auth { display: flex; align-items: center; gap: 10px; }
+    .topbar-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--teal);
+      color: var(--black);
+      font-size: 12px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .topbar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .topbar-user-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--black);
+      max-width: 140px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .topbar-signout {
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      text-decoration: underline;
+    }
+    .topbar-signout:hover { color: var(--black); }
+
+    .topbar-back {
+      font-size: 14px;
+      color: var(--black);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .topbar-back:hover { opacity: 0.7; }
+
+    /* ── AUTH MODAL ── */
+    .auth-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .auth-overlay.hidden { display: none; }
+    .auth-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    .auth-logo {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 24px;
+    }
+    .auth-logo .logo-mark {
+      width: 34px; height: 34px;
+      background: var(--black);
+      color: var(--teal);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .auth-logo-name { font-weight: 700; font-size: 17px; }
+    .auth-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .auth-sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+    .auth-providers { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .auth-provider-btn {
+      display: flex; align-items: center; gap: 12px;
+      width: 100%;
+      padding: 13px 18px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--white);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      font-family: inherit;
+    }
+    .auth-provider-btn:hover { border-color: #aaa; background: #fafafa; }
+    .auth-provider-btn svg, .auth-provider-btn img { width: 20px; height: 20px; flex-shrink: 0; }
+    .auth-divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 20px 0;
+      font-size: 12px; color: var(--muted);
+    }
+    .auth-divider::before, .auth-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .auth-email-fields { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+    .auth-email-fields input { font-size: 14px; }
+    .auth-email-actions { display: flex; gap: 8px; }
+    .auth-email-actions .btn { flex: 1; font-size: 13px; }
+    .auth-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none;
+      font-size: 22px; color: var(--muted);
+      cursor: pointer; line-height: 1;
+    }
+    .auth-close:hover { color: var(--black); }
+    .auth-card { position: relative; }
+    .auth-error { font-size: 12px; color: #c0392b; margin-top: 8px; min-height: 16px; }
+    .auth-switch { font-size: 12px; color: var(--muted); text-align: center; margin-top: 12px; }
+    .auth-switch a { color: var(--black); cursor: pointer; text-decoration: underline; }
+
+    /* ── AUTH VIEW (full-screen) ── */
+    #view-auth {
+      display: none;
+      min-height: 100vh;
+      background: var(--bg-secondary);
+      flex: 1;
+    }
+    #view-auth.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .auth-page-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+    }
+    .auth-page-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+      justify-content: center;
+    }
+    .auth-page-logo .logo-mark {
+      width: 40px;
+      height: 40px;
+      background: var(--black);
+      color: var(--teal);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .auth-page-logo .logo-name {
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .auth-page-title {
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .auth-page-sub {
+      font-size: 14px;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    /* ── STEP WIZARD ── */
+    .wizard-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+    }
+    .wizard-steps {
+      max-width: 1220px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      height: 56px;
+      gap: 0;
+    }
+    .wstep {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 18px 0 0;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-3);
+      cursor: default;
+      user-select: none;
+      letter-spacing: -0.1px;
+    }
+    .wstep.active { color: var(--black); font-weight: 600; }
+    .wstep.done { color: var(--black); font-weight: 500; }
+    .wstep-num {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--gray-5);
+      color: var(--gray);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .wstep.active .wstep-num {
+      background: var(--black);
+      color: var(--white);
+    }
+    .wstep.done .wstep-num {
+      background: var(--teal);
+      color: var(--black);
+    }
+    .wstep-arrow { color: var(--gray-4); font-size: 14px; margin-right: 14px; }
+
+    /* ── MAIN LAYOUT ── */
+    .page { max-width: 1220px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 4px;
+      letter-spacing: -0.3px;
+    }
+    .card-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    /* ── FORMS ── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-grid.col3 { grid-template-columns: 1fr 1fr 1fr; }
+    @media (max-width: 600px) { .form-grid, .form-grid.col3 { grid-template-columns: 1fr; } }
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    input[type=text], input[type=date], input[type=time], input[type=number], select, textarea {
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      width: 100%;
+      -webkit-appearance: none;
+    }
+    input[type=text]::placeholder { color: var(--gray-3); }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(211,255,196,0.45);
+    }
+    textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 11px 22px;
+      border-radius: var(--radius-pill);
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+      white-space: nowrap;
+      letter-spacing: -0.1px;
+    }
+    /* Primary = black pill (matches lineupdj.app) */
+    .btn-primary {
+      background: var(--black);
+      color: var(--white);
+    }
+    .btn-primary:hover { background: #1C1C1E; }
+    .btn-primary:active { transform: scale(0.97); }
+
+    /* Teal accent */
+    .btn-teal {
+      background: var(--teal);
+      color: var(--black);
+      font-weight: 700;
+    }
+    .btn-teal:hover { background: #BFF5AE; }
+
+    /* Outline = black border pill */
+    .btn-outline {
+      background: var(--white);
+      color: var(--black);
+      border: 1.5px solid var(--black);
+    }
+    .btn-outline:hover { background: var(--black); color: var(--white); }
+
+    /* Ghost = light gray pill */
+    .btn-ghost {
+      background: var(--bg-secondary);
+      color: var(--text);
+      border: none;
+    }
+    .btn-ghost:hover { background: var(--gray-5); }
+
+    /* Danger */
+    .btn-danger {
+      background: rgba(255,59,48,0.08);
+      color: var(--red);
+      border: none;
+    }
+    .btn-danger:hover { background: rgba(255,59,48,0.14); }
+
+    .btn-sm { padding: 7px 16px; font-size: 13px; }
+    .btn-lg { padding: 15px 34px; font-size: 16px; letter-spacing: -0.2px; }
+    .btn-icon { padding: 7px 10px; border-radius: var(--radius-sm); }
+
+    /* Green CTA (matches lineupdj.app CTA section) */
+    .btn-cta {
+      background: var(--green-cta);
+      color: var(--black);
+      border: none;
+      font-weight: 700;
+    }
+    .btn-cta:hover { background: var(--green-dark); }
+
+    /* ── PLAYER MANAGEMENT ── */
+    .player-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .player-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: border-color 0.15s;
+    }
+    .player-row:hover { border-color: var(--gray-4); }
+    .player-row .drag-handle { cursor: grab; color: var(--gray-4); font-size: 16px; flex-shrink: 0; }
+    .player-row .drag-handle:active { cursor: grabbing; }
+
+    .player-num {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--black);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .player-row input[type=text] {
+      flex: 1;
+      min-width: 80px;
+      padding: 8px 12px;
+      font-size: 14px;
+      background: var(--white);
+    }
+
+    .pos-pills { display: flex; flex-wrap: wrap; gap: 6px; flex: 2; }
+    .pos-pill {
+      font-size: 11px;
+      background: var(--gray-5);
+      color: #555;
+      border-radius: 100px;
+      padding: 4px 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .pos-pill:hover { background: var(--gray-4); }
+    .pos-pill.selected {
+      background: var(--black);
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .add-player-row {
+      display: flex;
+      gap: 8px;
+      padding: 14px 18px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .add-player-row input { flex: 1; }
+
+    /* ── LEAGUE RULES ── */
+    .pos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .pos-toggle {
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--white);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .pos-toggle:hover { border-color: var(--gray-4); background: var(--bg-secondary); }
+    .pos-toggle.on {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+
+    .rule-card { margin-bottom: 20px; }
+    .rule-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .rule-row:last-child { border-bottom: none; }
+    .rule-label { font-size: 13px; font-weight: 500; }
+    .rule-input { max-width: 120px; }
+
+    .inning-control {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .inning-control button {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--white);
+      font-size: 16px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .inning-control button:hover { background: var(--bg-secondary); }
+    .inning-count {
+      font-size: 16px;
+      font-weight: 600;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    /* ── LINEUP ── */
+    .lineup-toolbar {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .toolbar-spacer { flex: 1; }
+    .lineup-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--white);
+    }
+    .lineup-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .lineup-table th, .lineup-table td {
+      padding: 12px 14px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .lineup-table th {
+      background: var(--bg-secondary);
+      font-weight: 600;
+      color: var(--text);
+      text-align: center;
+    }
+    .lineup-table tbody tr:hover { background: rgba(0,0,0,0.02); }
+    .lineup-table td:first-child { text-align: left; }
+    .lineup-table th:first-child { text-align: left; }
+
+    .player-cell {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .player-cell .drag-grip {
+      cursor: grab;
+      color: var(--gray-4);
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .player-cell .drag-grip:active { cursor: grabbing; }
+    .bat-order {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--black);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .player-name { font-weight: 500; margin-bottom: 4px; }
+    .fp-bar {
+      display: flex;
+      gap: 2px;
+      flex-wrap: wrap;
+      max-width: 120px;
+    }
+    .fp-seg {
+      width: 6px;
+      height: 6px;
+      border-radius: 2px;
+      background: #ccc;
+    }
+    .fp-seg.played { background: var(--black); }
+    .fp-seg.bench { background: var(--bench-border); }
+
+    .pos-select {
+      padding: 6px 8px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--white);
+      cursor: pointer;
+    }
+    .pos-select.filled { background: rgba(0,0,0,0.04); border-color: var(--black); }
+    .pos-select.bench { background: var(--bench-bg); border-color: var(--bench-border); }
+
+    .att-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 100px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .att-pill:hover { background: var(--gray-5); }
+    .att-pill.in { background: rgba(52,199,89,0.1); border-color: var(--green); }
+    .att-pill.out { background: rgba(255,59,48,0.1); border-color: var(--red); }
+    .att-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ccc;
+    }
+    .att-pill.in .att-dot { background: var(--green); }
+    .att-pill.out .att-dot { background: var(--red); }
+
+    .att-count { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+    .attendance-grid {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    /* ── SUMMARY ── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .summary-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+    }
+    .summary-player-name { font-weight: 600; font-size: 13px; margin-bottom: 8px; }
+    .summary-stat { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+
+    .tip {
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      background: #f0f7ff;
+      border: 1px solid #c3d9ff;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      color: #0055cc;
+      margin-bottom: 20px;
+    }
+    .tip-icon { flex-shrink: 0; font-size: 14px; }
+
+    .alert-warn {
+      padding: 12px 16px;
+      background: rgba(255, 149, 0, 0.1);
+      border: 1px solid var(--orange);
+      border-radius: var(--radius-sm);
+      color: #8B6914;
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+
+    .step-footer {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+
+    .export-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin-bottom: 20px;
+    }
+    .export-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .export-title { font-size: 24px; font-weight: 700; }
+    .export-meta { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    .import-status {
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-top: 8px;
+    }
+    .import-status.loading {
+      color: var(--muted);
+    }
+    .import-status.success {
+      background: rgba(52, 199, 89, 0.1);
+      color: #2a6b1e;
+    }
+    .import-status.error {
+      background: rgba(255, 59, 48, 0.1);
+      color: #8B3A1B;
+    }
+
+    /* ── DASHBOARD ── */
+    .dashboard-page {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 40px;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .dashboard-header-left h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .dashboard-sub {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .teams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    .team-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+      transition: box-shadow 0.2s;
+    }
+    .team-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    .team-card-name {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .team-card-current {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #2a6b1e;
+      background: rgba(211,255,196,0.4);
+      border-radius: 100px;
+      padding: 3px 10px;
+    }
+    .team-card-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .team-pill {
+      font-size: 12px;
+      background: #f0f0f0;
+      color: #555;
+      border-radius: 100px;
+      padding: 4px 12px;
+      font-weight: 500;
+    }
+    .team-card-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .team-card-actions .btn-create {
+      grid-column: 1 / -1;
+    }
+    .team-card-empty {
+      text-align: center;
+      padding: 60px 24px;
+    }
+    .team-card-empty-text {
+      font-size: 15px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    #view-dashboard {
+      display: none;
+    }
+    #view-dashboard.active {
+      display: block;
+    }
+    #view-builder {
+      display: none;
+    }
+    #view-builder.active {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .topbar { padding: 0 16px; }
+      .wizard-bar { padding: 0 16px; }
+      .page { padding: 32px 16px 60px; }
+      .dashboard-page { padding: 32px 16px; }
+      .teams-grid {
+        grid-template-columns: 1fr;
+      }
+      .dashboard-header {
+        flex-direction: column;
+      }
+      .dashboard-header-left {
+        width: 100%;
+      }
+      .auth-page-card {
+        padding: 40px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ VIEW 1: AUTH ══════════════ -->
+<div id="view-auth">
+  <div class="auth-page-card">
+    <div class="auth-page-logo">
+      <div class="logo-mark">🎵</div>
+      <div class="logo-name">Lineup DJ</div>
+    </div>
+    <h2 class="auth-page-title">Build your lineup</h2>
+    <p class="auth-page-sub">Sign in to manage your teams and create game-day lineups.</p>
+
+    <div class="auth-providers">
+      <button class="auth-provider-btn" onclick="signInWithGoogle()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Sign in with Google
+      </button>
+      <button class="auth-provider-btn" onclick="signInWithApple()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.05 13.5c-.91 2.18-.39 3.5 1.84 5.75 1.48 1.45 2.5 2.77 2.5 4.5 0 2.05-1.53 3.76-3.76 3.76-2.49 0-4.19-.92-5.15-2.76h-1.98c.97 2.29 3.92 4.5 7.48 4.5 4.05 0 7.45-2.73 7.45-6.72 0-2.98-2.05-4.9-4.3-6.72-1.22-.99-1.62-1.45-1.62-2.05 0-.87.73-1.72 2.58-1.72.96 0 1.46.17 2.05.83l1.18-1.49c-.73-.97-2.05-1.62-3.23-1.62-3.5 0-5.57 2.38-5.57 5.01 0 2.7 1.62 3.9 3.01 5.06 2.22 1.88 2.77 2.58 2.77 4.04 0 1.42-1.12 2.29-2.58 2.29-.96 0-1.88-.34-2.46-.96l-1.18 1.49c.73.87 2.29 1.72 3.76 1.72 2.67 0 4.65-1.7 4.65-4.05 0-2.38-1.28-3.5-3.23-5.06z" transform="translate(0,0) scale(1.2)"/>
+        </svg>
+        Sign in with Apple
+      </button>
+      <button class="auth-provider-btn" onclick="setAuthMode('signin'); document.getElementById('auth-email').focus()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+        </svg>
+        Sign in with Email
+      </button>
+    </div>
+
+    <div class="auth-divider">or</div>
+
+    <div class="auth-email-fields" id="auth-email-section" style="display:none;">
+      <input type="text" id="auth-name" placeholder="Your name (optional)" />
+      <input type="email" id="auth-email" placeholder="Email address" />
+      <input type="password" id="auth-password" placeholder="Password" />
+    </div>
+
+    <div class="auth-email-actions" id="auth-email-actions" style="display:none;">
+      <button class="btn btn-primary" id="auth-email-btn" onclick="signInWithEmail()">Sign In</button>
+      <button class="btn btn-ghost" id="auth-reset-btn" style="display:none;" onclick="sendPasswordReset()">Reset Password</button>
+    </div>
+
+    <div class="auth-error" id="auth-error"></div>
+
+    <div class="auth-switch" id="auth-switch">
+      <span id="auth-switch-text">Don't have an account?</span>
+      <a onclick="toggleAuthMode()" id="auth-switch-link">Create one</a>
+    </div>
+    <div class="auth-switch" style="display:none;" id="auth-reset-switch">
+      <a onclick="toggleResetMode()" id="auth-reset-link">← Back to sign in</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ VIEW 2: DASHBOARD ══════════════ -->
+<div id="view-dashboard">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-mark">🎵</div>
+      Lineup DJ
+    </div>
+    <div class="topbar-spacer"></div>
+    <div id="topbar-auth"></div>
+  </div>
+
+  <div class="dashboard-page">
+    <div class="dashboard-header">
+      <div class="dashboard-header-left">
+        <h1>Team Management</h1>
+        <p class="dashboard-sub">Manage your teams and create game-day lineups.</p>
+      </div>
+      <button class="btn btn-primary" onclick="enterBuilder(null, 1)">+ New Team</button>
+    </div>
+
+    <div class="teams-grid" id="teams-grid"></div>
+
+    <div class="team-card-empty" id="empty-state" style="display:none;">
+      <div style="font-size:48px;margin-bottom:16px;">⚙️</div>
+      <div class="team-card-empty-text">No teams yet</div>
+      <button class="btn btn-primary" onclick="enterBuilder(null, 1)">+ Create your first team</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ VIEW 3: BUILDER ══════════════ -->
+<div id="view-builder">
+  <div class="topbar">
+    <button class="topbar-back" onclick="backToDashboard()">← Back to Dashboard</button>
+    <div class="topbar-logo">
+      <div class="logo-mark">🎵</div>
+      Lineup DJ
+    </div>
+    <div class="topbar-spacer"></div>
+    <div id="topbar-auth-builder"></div>
+  </div>
+
+  <div class="wizard-bar">
+    <div class="wizard-steps">
+      <div class="wstep active" id="wstep-1">
+        <div class="wstep-num">1</div>
+        <span>Team Setup</span>
+      </div>
+      <div class="wstep-arrow">›</div>
+      <div class="wstep" id="wstep-2">
+        <div class="wstep-num">2</div>
+        <span>League Rules</span>
+      </div>
+      <div class="wstep-arrow">›</div>
+      <div class="wstep" id="wstep-3">
+        <div class="wstep-num">3</div>
+        <span>Roster</span>
+      </div>
+      <div class="wstep-arrow">›</div>
+      <div class="wstep" id="wstep-4">
+        <div class="wstep-num">4</div>
+        <span>Edit Lineup</span>
+      </div>
+      <div class="wstep-arrow">›</div>
+      <div class="wstep" id="wstep-5">
+        <div class="wstep-num">5</div>
+        <span>Export</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="page">
+
+    <!-- ══════════════ STEP 1: TEAM SETUP ══════════════ -->
+    <div id="step-1" class="step-panel" style="display:none;">
+      <div class="card">
+        <div class="card-title">Team Information</div>
+        <div class="card-sub">Create a new team or import an existing one from your Lineup DJ account.</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Team Name</label>
+            <input type="text" id="team-name" placeholder="e.g. Tigers, Dynamos" />
+          </div>
+          <div class="field">
+            <label>Sport</label>
+            <select id="team-sport">
+              <option value="Baseball">Baseball</option>
+              <option value="Softball">Softball</option>
+              <option value="Basketball">Basketball</option>
+              <option value="Soccer">Soccer</option>
+              <option value="Football">Football</option>
+              <option value="Lacrosse">Lacrosse</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Season</label>
+            <select id="team-season">
+              <option value="Spring">Spring</option>
+              <option value="Summer">Summer</option>
+              <option value="Fall">Fall</option>
+              <option value="Winter">Winter</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Year</label>
+            <input type="number" id="team-year" />
+          </div>
+          <div class="field">
+            <label>Level (optional)</label>
+            <input type="text" id="team-level" placeholder="e.g. U12, High School, Adult" />
+          </div>
+          <div class="field">
+            <label>Age Group (optional)</label>
+            <input type="text" id="team-age-group" placeholder="e.g. 12U, 14U" />
+          </div>
+          <div class="field full">
+            <label>Notes (optional)</label>
+            <textarea id="team-notes" placeholder="Any other team details..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Import from Lineup DJ</div>
+        <div class="card-sub">If you've already set up this team in Lineup DJ, paste your invite code below to import players.</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Team Invite Code</label>
+            <input type="text" id="team-import-code" placeholder="e.g. ABC123" />
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="importTeamByCode()" style="margin-top:8px;">🔗 Import Team</button>
+        <div id="import-status" class="import-status"></div>
+      </div>
+
+      <div class="step-footer">
+        <div></div>
+        <button class="btn btn-primary btn-lg" onclick="goToStep2()">Continue to League Rules →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════ STEP 2: LEAGUE RULES ══════════════ -->
+    <div id="step-2" class="step-panel" style="display:none;">
+      <div class="card">
+        <div class="card-title">Field Positions</div>
+        <div class="card-sub">Select which positions will be used in your lineup. Or choose a preset.</div>
+        <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" onclick="applyPreset('standard9')">Standard 9</button>
+          <button class="btn btn-ghost btn-sm" onclick="applyPreset('standard10')">Standard 10 (UTL)</button>
+          <button class="btn btn-ghost btn-sm" onclick="applyPreset('socLikeCo')">Soccer-like Co-ed</button>
+        </div>
+        <div class="pos-grid" id="pos-grid"></div>
+        <div style="font-size:12px;color:var(--muted);">
+          <strong id="pos-count-badge">9 selected</strong> positions · Use these in your lineup below
+        </div>
+      </div>
+
+      <div class="card rule-card">
+        <div class="card-title">League Rules</div>
+        <div class="card-sub">Set rules that guide the auto-assign algorithm.</div>
+
+        <div class="rule-row">
+          <label class="rule-label">
+            <input type="checkbox" id="rule-all-bat" onchange="saveRules()" /> All players must bat
+          </label>
+        </div>
+
+        <div class="rule-row">
+          <label class="rule-label">
+            <input type="checkbox" id="rule-back-to-back" onchange="saveRules()" checked /> Allow back-to-back at-bats
+          </label>
+        </div>
+
+        <div class="rule-row">
+          <label class="rule-label">Max times in same position per game:</label>
+          <select id="rule-max-same-pos" class="rule-input" onchange="saveRules()">
+            <option value="0">No limit</option>
+            <option value="1">Once</option>
+            <option value="2">Twice</option>
+            <option value="3">3× or more</option>
+          </select>
+        </div>
+
+        <div class="rule-row">
+          <label class="rule-label">
+            <input type="checkbox" id="rule-coed" onchange="saveRules()" /> Co-ed (equal M/F playing time)
+          </label>
+        </div>
+
+        <div class="rule-row">
+          <label class="rule-label">
+            <input type="checkbox" id="rule-pitcher-return" onchange="saveRules()" /> Pitcher can return to field
+          </label>
+        </div>
+
+        <div class="rule-row">
+          <label class="rule-label">Max innings pitched (0 = unlimited):</label>
+          <input type="number" id="rule-max-pitch" class="rule-input" value="0" min="0" onchange="saveRules()" />
+        </div>
+      </div>
+
+      <div class="card" style="background:#f9f9f9;border:none;">
+        <div style="font-size:13px;color:var(--muted);">
+          <strong>Your config:</strong> <span id="rules-summary"></span>
+        </div>
+      </div>
+
+      <div class="step-footer">
+        <button class="btn btn-ghost" onclick="goToStep1()">← Back to Team Setup</button>
+        <button class="btn btn-primary btn-lg" onclick="goToStep3()">Continue to Roster →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════ STEP 3: ROSTER ══════════════ -->
+    <div id="step-3" class="step-panel" style="display:none;">
+      <div class="card">
+        <div class="card-title">Game Information</div>
+        <div class="card-sub">Basic details for this game's lineup card</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Game / Event Name</label>
+            <input type="text" id="game-name" placeholder="e.g. Season Opener, Tournament Game 1" />
+          </div>
+          <div class="field">
+            <label>Opponent (optional)</label>
+            <input type="text" id="opponent" placeholder="e.g. Rockets, Yankees" />
+          </div>
+          <div class="field">
+            <label>Date</label>
+            <input type="date" id="game-date" />
+          </div>
+          <div class="field">
+            <label>Time (optional)</label>
+            <input type="time" id="game-time" />
+          </div>
+          <div class="field">
+            <label>Location (optional)</label>
+            <input type="text" id="game-location" placeholder="e.g. City Park, Diamond 3" />
+          </div>
+          <div class="field">
+            <label>Number of Innings</label>
+            <div class="inning-control">
+              <button onclick="changeInnings(-1)">−</button>
+              <span class="inning-count" id="inning-count">6</span>
+              <button onclick="changeInnings(1)">+</button>
+            </div>
+          </div>
+          <div class="field full">
+            <label>Notes (optional)</label>
+            <textarea id="game-notes" placeholder="Any special notes for this game..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Roster</div>
+        <div class="card-sub">Add players and tap their preferred positions — the auto-assign uses these to build fair lineups.</div>
+
+        <div class="tip">
+          <span class="tip-icon">💡</span>
+          <span>Click position badges to mark preferred positions for each player. The shuffle algorithm will honor these preferences when assigning fielding spots.</span>
+        </div>
+
+        <div id="player-list" class="player-list"></div>
+
+        <div class="add-player-row">
+          <input type="text" id="new-player-name" placeholder="Player name..." onkeydown="if(event.key==='Enter') addPlayer()" />
+          <button class="btn btn-primary btn-sm" onclick="addPlayer()">+ Add Player</button>
+        </div>
+      </div>
+
+      <div class="step-footer">
+        <button class="btn btn-ghost" onclick="goToStep2()">← Back to League Rules</button>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-size:13px;color:var(--muted);" id="step2-status"></div>
+          <button class="btn btn-primary btn-lg" onclick="goToStep4()">Continue to Edit Lineup →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ STEP 4: EDIT LINEUP ══════════════ -->
+    <div id="step-4" class="step-panel" style="display:none;">
+
+      <div class="card">
+        <div class="card-title">Attendance</div>
+        <div class="att-count" id="att-count">Select players attending today</div>
+        <div class="attendance-grid" id="attendance-grid"></div>
+      </div>
+
+      <div class="card" style="padding:16px;">
+        <div class="lineup-toolbar">
+          <div>
+            <div class="card-title" style="margin-bottom:2px;">Batting Order & Fielding Positions</div>
+            <div style="font-size:12px;color:var(--muted);">Drag rows to reorder batting order · Use dropdowns to assign positions per inning</div>
+          </div>
+          <div class="toolbar-spacer"></div>
+          <button class="btn btn-ghost btn-sm" onclick="shuffleBatting()" title="Randomly shuffle batting order">
+            🔀 Shuffle Batting
+          </button>
+          <button class="btn btn-teal btn-sm" onclick="shuffleFielding()" title="Auto-assign positions fairly across all innings">
+            ⚡ Auto-Assign Positions
+          </button>
+          <button class="btn btn-ghost btn-sm" onclick="clearFielding()">
+            🗑 Clear
+          </button>
+        </div>
+
+        <div id="conflicts-alert" class="alert-warn" style="display:none;"></div>
+
+        <div class="lineup-wrap">
+          <table class="lineup-table" id="lineup-table">
+            <thead id="lineup-thead"></thead>
+            <tbody id="lineup-tbody"></tbody>
+          </table>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);">
+          <span>🟦 Field position &nbsp; 🟨 Bench &nbsp; ⬜ Unassigned</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Playing Time Summary</div>
+        <div class="card-sub">Shows innings played vs benched per player</div>
+        <div class="summary-grid" id="pt-summary"></div>
+      </div>
+
+      <div class="step-footer">
+        <button class="btn btn-ghost" onclick="goToStep3()">← Back to Setup</button>
+        <button class="btn btn-cta btn-lg" onclick="goToStep5()">Save &amp; Export →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════ STEP 5: EXPORT ══════════════ -->
+    <div id="step-5" class="step-panel" style="display:none;">
+
+      <div class="export-card">
+        <div class="export-header">
+          <div>
+            <div class="export-title" id="export-title">Game Lineup</div>
+            <div class="export-meta" id="export-meta"></div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;" class="no-print">
+            <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Print</button>
+            <button class="btn btn-primary btn-sm" onclick="copyLineup()">📋 Copy</button>
+          </div>
+        </div>
+
+        <div class="lineup-wrap" style="margin-bottom:20px;">
+          <table class="lineup-table" id="export-table">
+            <thead id="export-thead"></thead>
+            <tbody id="export-tbody"></tbody>
+          </table>
+        </div>
+
+        <ol id="export-batting" style="display:none;"></ol>
+      </div>
+
+      <div class="step-footer">
+        <button class="btn btn-ghost" onclick="goToStep4()">← Back to Edit</button>
+        <button class="btn btn-outline" onclick="goToStep1()">🏠 New Lineup</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// FIREBASE CONFIG
+// ═══════════════════════════════════════════════════
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyA4yVZNO-Tn8rQQbmjB9zdK24jCNIilNvE",
+  authDomain:        "lineup-dj-b7080.firebaseapp.com",
+  projectId:         "lineup-dj-b7080",
+  storageBucket:     "lineup-dj-b7080.firebasestorage.app",
+  messagingSenderId: "639812808286",
+  appId:             "1:639812808286:web:c1fa2c5f9076e166ad0ecf",
+  measurementId:     "G-J92ZQFEH4G"
+};
+
+// ═══════════════════════════════════════════════════
+// FIREBASE INIT + AUTH
+// ═══════════════════════════════════════════════════
+let _db   = null;
+let _auth = null;
+let _authMode = 'signin'; // 'signin' | 'signup' | 'reset'
+
+function initFirebase() {
+  if (_db) return { db: _db, auth: _auth };
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    _auth = firebase.auth();
+    _db   = firebase.firestore();
+
+    // Listen for auth state changes
+    _auth.onAuthStateChanged(user => {
+      const topbarAuth = document.getElementById('topbar-auth');
+      const topbarAuthBuilder = document.getElementById('topbar-auth-builder');
+
+      if (user && !user.isAnonymous) {
+        const name = user.displayName || user.email || 'Signed in';
+        const initials = name.charAt(0).toUpperCase();
+        const photoURL = user.photoURL;
+        const authHTML = `
+          <div class="topbar-auth">
+            <div class="topbar-avatar" title="${name}">
+              ${photoURL ? `<img src="${photoURL}" alt="${initials}" />` : initials}
+            </div>
+            <span class="topbar-user-name">${name}</span>
+            <button class="topbar-signout" onclick="signOut()">Sign out</button>
+          </div>`;
+
+        if (topbarAuth) topbarAuth.innerHTML = authHTML;
+        if (topbarAuthBuilder) topbarAuthBuilder.innerHTML = authHTML;
+
+        loadUserTeams(user);
+        showView('dashboard');
+      } else {
+        if (topbarAuth) topbarAuth.innerHTML = '';
+        if (topbarAuthBuilder) topbarAuthBuilder.innerHTML = '';
+        _userTeams = [];
+        _activeTeamId = null;
+        showView('auth');
+      }
+    });
+
+    return { db: _db, auth: _auth };
+  } catch(e) {
+    console.error('Firebase init failed:', e);
+    return null;
+  }
+}
+
+// ── Auth functions ──
+async function signInWithGoogle() {
+  const fb = initFirebase();
+  if (!fb) return;
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await fb.auth.signInWithPopup(provider);
+  } catch(e) {
+    showAuthError(friendlyAuthError(e));
+  }
+}
+
+async function signInWithApple() {
+  const fb = initFirebase();
+  if (!fb) return;
+  try {
+    const provider = new firebase.auth.OAuthProvider('apple.com');
+    provider.addScope('email');
+    provider.addScope('name');
+    await fb.auth.signInWithPopup(provider);
+  } catch(e) {
+    if (e.code === 'auth/operation-not-supported-in-this-environment' ||
+        e.code === 'auth/popup-blocked') {
+      showAuthError('Apple Sign-In requires additional setup. Use Google or email for now.');
+    } else {
+      showAuthError(friendlyAuthError(e));
+    }
+  }
+}
+
+async function signInWithEmail() {
+  const fb = initFirebase();
+  if (!fb) return;
+  const email    = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const name     = document.getElementById('auth-name').value.trim();
+  if (!email || !password) { showAuthError('Please enter your email and password.'); return; }
+  try {
+    if (_authMode === 'signup') {
+      const cred = await fb.auth.createUserWithEmailAndPassword(email, password);
+      if (name) await cred.user.updateProfile({ displayName: name });
+    } else {
+      await fb.auth.signInWithEmailAndPassword(email, password);
+    }
+  } catch(e) {
+    showAuthError(friendlyAuthError(e));
+  }
+}
+
+async function sendPasswordReset() {
+  const fb = initFirebase();
+  if (!fb) return;
+  const email = document.getElementById('auth-email').value.trim();
+  if (!email) { showAuthError('Enter your email address first.'); return; }
+  try {
+    await fb.auth.sendPasswordResetEmail(email);
+    showAuthError('');
+    document.getElementById('auth-error').style.color = '#2a6b1e';
+    document.getElementById('auth-error').textContent = '✓ Reset email sent — check your inbox.';
+  } catch(e) {
+    showAuthError(friendlyAuthError(e));
+  }
+}
+
+async function signOut() {
+  const fb = initFirebase();
+  if (fb) await fb.auth.signOut();
+}
+
+function setAuthMode(mode) {
+  _authMode = mode;
+  const nameField  = document.getElementById('auth-name');
+  const resetBtn   = document.getElementById('auth-reset-btn');
+  const emailBtn   = document.getElementById('auth-email-btn');
+  const emailFields = document.getElementById('auth-email-section');
+  const emailActions = document.getElementById('auth-email-actions');
+  const switchText = document.getElementById('auth-switch-text');
+  const switchLink = document.getElementById('auth-switch-link');
+  const resetLink  = document.getElementById('auth-reset-link');
+  const resetSwitch = document.getElementById('auth-reset-switch');
+  document.getElementById('auth-error').textContent = '';
+
+  if (mode === 'signup') {
+    nameField.style.display = '';
+    emailFields.style.display = '';
+    emailActions.style.display = 'flex';
+    resetBtn.style.display  = 'none';
+    emailBtn.textContent    = 'Create Account';
+    switchText.textContent  = 'Already have an account?';
+    switchLink.textContent  = 'Sign in';
+    resetSwitch.style.display = 'none';
+  } else if (mode === 'reset') {
+    nameField.style.display = 'none';
+    emailFields.style.display = '';
+    emailActions.style.display = 'none';
+    resetBtn.style.display  = '';
+    resetBtn.innerHTML = '<button class="btn btn-primary" onclick="sendPasswordReset()">Send Reset Email</button>';
+    switchText.textContent  = '';
+    resetSwitch.style.display = 'block';
+  } else {
+    nameField.style.display = 'none';
+    emailFields.style.display = '';
+    emailActions.style.display = 'flex';
+    resetBtn.style.display  = 'none';
+    emailBtn.textContent    = 'Sign In';
+    switchText.textContent  = "Don't have an account?";
+    switchLink.textContent  = 'Create one';
+    resetSwitch.style.display = 'none';
+  }
+}
+
+function toggleAuthMode() {
+  setAuthMode(_authMode === 'signin' ? 'signup' : 'signin');
+}
+
+function toggleResetMode() {
+  setAuthMode(_authMode === 'reset' ? 'signin' : 'reset');
+}
+
+function showAuthError(msg) {
+  document.getElementById('auth-error').textContent = msg;
+}
+
+function friendlyAuthError(e) {
+  const map = {
+    'auth/user-not-found':       'No account found with that email.',
+    'auth/wrong-password':       'Incorrect password.',
+    'auth/email-already-in-use': 'An account with that email already exists.',
+    'auth/weak-password':        'Password must be at least 6 characters.',
+    'auth/invalid-email':        'Please enter a valid email address.',
+    'auth/popup-closed-by-user': 'Sign-in cancelled.',
+    'auth/cancelled-cancelled':  'Sign-in cancelled.',
+    'auth/network-request-failed': 'Network error — check your connection.',
+  };
+  return map[e.code] || e.message || 'Something went wrong. Please try again.';
+}
+
+// ═══════════════════════════════════════════════════
+// TEAM SELECTOR & TEAMS
+// ═══════════════════════════════════════════════════
+let _userTeams      = [];
+let _activeTeamId   = null;
+
+async function loadUserTeams(user) {
+  const fb = initFirebase();
+  if (!fb) return;
+  try {
+    const userDoc = await fb.db.collection('users').doc(user.uid).get();
+    const data = userDoc.exists ? userDoc.data() : {};
+    const ownedIds  = data.ownedTeamIds  || [];
+    const memberIds = data.memberTeamIds || [];
+    const allIds    = [...new Set([...ownedIds, ...memberIds])];
+
+    if (allIds.length === 0) {
+      _userTeams = [];
+      renderDashboard();
+      return;
+    }
+
+    const teamDocs = await Promise.all(
+      allIds.map(id => fb.db.collection('teams').doc(id).get())
+    );
+    _userTeams = teamDocs
+      .filter(d => d.exists)
+      .map(d => {
+        const data = d.data();
+        return {
+          id: d.id,
+          name: data.name || 'Unnamed Team',
+          sport: data.sport || 'Baseball',
+          level: data.level || '',
+          ageGroup: data.ageGroup || '',
+          season: data.season || 'Spring',
+          year: data.year || new Date().getFullYear()
+        };
+      });
+
+    renderDashboard();
+  } catch(e) {
+    console.error('loadUserTeams error:', e);
+  }
+}
+
+function renderDashboard() {
+  const grid = document.getElementById('teams-grid');
+  const emptyState = document.getElementById('empty-state');
+
+  if (_userTeams.length === 0) {
+    grid.innerHTML = '';
+    emptyState.style.display = 'block';
+    return;
+  }
+
+  emptyState.style.display = 'none';
+  grid.innerHTML = _userTeams.map(team => `
+    <div class="team-card">
+      <div class="team-card-name">${escHtml(team.name)}</div>
+      ${_activeTeamId === team.id ? '<div class="team-card-current">✓ Current</div>' : ''}
+      <div class="team-card-pills">
+        <span class="team-pill">${team.season} ${team.year}</span>
+        ${team.level ? `<span class="team-pill">${team.level}</span>` : ''}
+        ${team.ageGroup ? `<span class="team-pill">${team.ageGroup}</span>` : ''}
+      </div>
+      <div class="team-card-actions">
+        <button class="btn btn-primary btn-create" onclick="enterBuilder('${team.id}', 2)">Create Lineup →</button>
+        <button class="btn btn-ghost btn-sm" onclick="enterBuilder('${team.id}', 3)">Edit Roster</button>
+        <button class="btn btn-ghost btn-sm" onclick="enterBuilder('${team.id}', 1)">Edit Team</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function selectTeam(teamId, closeDropdown = true) {
+  const fb = initFirebase();
+  if (!fb) return;
+  _activeTeamId = teamId;
+
+  try {
+    const [teamDoc, playerSnap] = await Promise.all([
+      fb.db.collection('teams').doc(teamId).get(),
+      fb.db.collection('teams').doc(teamId).collection('players').get()
+    ]);
+
+    const teamData = teamDoc.exists ? teamDoc.data() : {};
+    const teamName = teamData.name || 'Unnamed Team';
+
+    state.teamName     = teamName;
+    state.teamSport    = teamData.sport    || state.teamSport    || 'Baseball';
+    state.teamLevel    = teamData.level    || state.teamLevel    || '';
+    state.teamAgeGroup = teamData.ageGroup || state.teamAgeGroup || '';
+    state.teamSeason   = teamData.season   || state.teamSeason   || 'Spring';
+    state.teamYear     = teamData.year     || state.teamYear     || new Date().getFullYear();
+    state.teamNotes    = teamData.notes    || state.teamNotes    || '';
+
+    const setField = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+    setField('team-name',      teamName);
+    setField('team-sport',     state.teamSport);
+    setField('team-level',     state.teamLevel);
+    setField('team-age-group', state.teamAgeGroup);
+    setField('team-season',    state.teamSeason);
+    setField('team-year',      state.teamYear);
+    setField('team-notes',     state.teamNotes);
+
+    const players = playerSnap.docs.map(doc => {
+      const d = doc.data();
+      return {
+        id:      'imp_' + doc.id,
+        name:    d.name   || 'Unknown',
+        prefPos: [],
+        gender:  'M'
+      };
+    });
+
+    state.players    = players;
+    state.attendance = {};
+    state.lineup     = [];
+    players.forEach(p => { state.attendance[p.id] = true; });
+    save();
+
+    const currentStep = [1,2,3,4,5].find(i =>
+      document.getElementById(`step-${i}`)?.style.display !== 'none'
+    );
+    if (currentStep === 3) { renderPlayerList(); updateStep2Status(); }
+    if (currentStep === 4) { renderAttendance(); renderLineupGrid(); renderPlayingTimeSummary(); }
+
+  } catch(e) {
+    console.error('selectTeam error:', e);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// VIEW MANAGEMENT
+// ═══════════════════════════════════════════════════
+function showView(view) {
+  document.getElementById('view-auth').classList.remove('active');
+  document.getElementById('view-dashboard').classList.remove('active');
+  document.getElementById('view-builder').classList.remove('active');
+
+  if (view === 'auth') document.getElementById('view-auth').classList.add('active');
+  if (view === 'dashboard') document.getElementById('view-dashboard').classList.add('active');
+  if (view === 'builder') document.getElementById('view-builder').classList.add('active');
+}
+
+function enterBuilder(teamId, startStep) {
+  if (teamId) {
+    selectTeam(teamId, false);
+  }
+  setStep(startStep);
+  showView('builder');
+}
+
+function backToDashboard() {
+  showView('dashboard');
+  renderDashboard();
+}
+
+// ═══════════════════════════════════════════════════
+// APP STATE & STORAGE
+// ═══════════════════════════════════════════════════
+const ALL_POSITIONS = ['P','C','1B','2B','3B','SS','LF','CF','RF','LCF','RCF','UTL1','UTL2','UTL3'];
+const POS_FULL = {
+  'P':'Pitcher','C':'Catcher','1B':'1st Base','2B':'2nd Base','3B':'3rd Base','SS':'Shortstop',
+  'LF':'Left Field','CF':'Center Field','RF':'Right Field','LCF':'Left-Center','RCF':'Right-Center',
+  'UTL1':'Utility 1','UTL2':'Utility 2','UTL3':'Utility 3'
+};
+const PRESETS = {
+  standard9: ['P','C','1B','2B','3B','SS','LF','CF','RF'],
+  standard10: ['P','C','1B','2B','3B','SS','LF','CF','RF','UTL1'],
+  socLikeCo: ['P','C','1B','2B','3B','SS','LF','CF','RF']
+};
+
+const state = {
+  teamName: '', teamSport: 'Baseball', teamLevel: '', teamAgeGroup: '', teamSeason: 'Spring', teamYear: new Date().getFullYear(), teamNotes: '',
+  gameName: '', opponent: '', gameDate: '', gameTime: '', gameLocation: '', gameNotes: '',
+  innings: 6,
+  leagueRules: {
+    activePositions: ['P','C','1B','2B','3B','SS','LF','CF','RF'],
+    allPlayersBat: false,
+    allowBackToBack: true,
+    maxSamePosition: 0,
+    coEd: false,
+    pitcherCanReturn: true,
+    maxInningsPitched: 0
+  },
+  players: [],
+  attendance: {},
+  lineup: [],
+};
+
+function init() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('game-date').value = today;
+
+  const saved = localStorage.getItem('lineupDJ_state');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed.leagueRules) Object.assign(state.leagueRules, parsed.leagueRules);
+      Object.assign(state, parsed);
+      state.leagueRules = Object.assign({}, parsed.leagueRules || state.leagueRules);
+
+      if (document.getElementById('team-name')) document.getElementById('team-name').value = state.teamName || '';
+      if (document.getElementById('team-year')) document.getElementById('team-year').value = state.teamYear || new Date().getFullYear();
+      if (document.getElementById('team-season')) document.getElementById('team-season').value = state.teamSeason || 'Spring';
+      if (document.getElementById('team-sport')) document.getElementById('team-sport').value = state.teamSport || 'Baseball';
+      if (document.getElementById('team-level')) document.getElementById('team-level').value = state.teamLevel || '';
+      if (document.getElementById('team-age-group')) document.getElementById('team-age-group').value = state.teamAgeGroup || '';
+      if (document.getElementById('team-notes')) document.getElementById('team-notes').value = state.teamNotes || '';
+      document.getElementById('game-name').value = state.gameName || '';
+      document.getElementById('opponent').value = state.opponent || '';
+      document.getElementById('game-date').value = state.gameDate || today;
+      document.getElementById('game-time').value = state.gameTime || '';
+      document.getElementById('game-location').value = state.gameLocation || '';
+      document.getElementById('game-notes').value = state.gameNotes || '';
+      document.getElementById('inning-count').textContent = state.innings;
+      document.getElementById('rule-all-bat').checked = state.leagueRules.allPlayersBat;
+      document.getElementById('rule-back-to-back').checked = state.leagueRules.allowBackToBack !== false;
+      document.getElementById('rule-max-same-pos').value = String(state.leagueRules.maxSamePosition || 0);
+      document.getElementById('rule-coed').checked = state.leagueRules.coEd;
+      document.getElementById('rule-pitcher-return').checked = state.leagueRules.pitcherCanReturn;
+      document.getElementById('rule-max-pitch').value = String(state.leagueRules.maxInningsPitched);
+    } catch(e) { /* ignore */ }
+  }
+
+  renderPosGrid();
+  updateRulesSummary();
+  renderPlayerList();
+  updateStep2Status();
+  initFirebase();
+}
+
+function save() {
+  state.gameName = document.getElementById('game-name').value.trim();
+  state.opponent = document.getElementById('opponent').value.trim();
+  state.gameDate = document.getElementById('game-date').value;
+  state.gameTime = document.getElementById('game-time').value;
+  state.gameLocation = document.getElementById('game-location').value.trim();
+  state.gameNotes = document.getElementById('game-notes').value.trim();
+  try { localStorage.setItem('lineupDJ_state', JSON.stringify(state)); } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════
+// LEAGUE RULES
+// ═══════════════════════════════════════════════════
+function getActiveFieldPositions() {
+  return state.leagueRules.activePositions.filter(p => p !== 'Bench');
+}
+
+function renderPosGrid() {
+  const grid = document.getElementById('pos-grid');
+  const active = state.leagueRules.activePositions;
+  grid.innerHTML = ALL_POSITIONS.map(pos => `
+    <button class="pos-toggle ${active.includes(pos) ? 'on' : ''}"
+            onclick="togglePos('${pos}')">
+      ${POS_FULL[pos] || pos}
+    </button>
+  `).join('');
+  document.getElementById('pos-count-badge').textContent = active.length + ' selected';
+  updateRulesSummary();
+}
+
+function togglePos(pos) {
+  const active = state.leagueRules.activePositions;
+  const idx = active.indexOf(pos);
+  if (idx === -1) active.push(pos);
+  else if (active.length > 1) active.splice(idx, 1);
+  renderPosGrid();
+  save();
+}
+
+function applyPreset(name) {
+  state.leagueRules.activePositions = [...(PRESETS[name] || PRESETS.standard9)];
+  renderPosGrid();
+  save();
+}
+
+function saveTeam() {
+  state.teamName     = (document.getElementById('team-name')?.value     || '').trim();
+  state.teamYear     = (document.getElementById('team-year')?.value     || new Date().getFullYear()).toString();
+  state.teamSeason   = document.getElementById('team-season')?.value   || 'Spring';
+  state.teamSport    = document.getElementById('team-sport')?.value    || 'Baseball';
+  state.teamLevel    = (document.getElementById('team-level')?.value    || '').trim();
+  state.teamAgeGroup = (document.getElementById('team-age-group')?.value || '').trim();
+  state.teamNotes    = (document.getElementById('team-notes')?.value    || '').trim();
+  save();
+}
+
+function saveRules() {
+  state.leagueRules.allPlayersBat = document.getElementById('rule-all-bat').checked;
+  state.leagueRules.allowBackToBack = document.getElementById('rule-back-to-back').checked;
+  state.leagueRules.maxSamePosition = parseInt(document.getElementById('rule-max-same-pos').value) || 0;
+  state.leagueRules.coEd = document.getElementById('rule-coed').checked;
+  state.leagueRules.pitcherCanReturn = document.getElementById('rule-pitcher-return').checked;
+  state.leagueRules.maxInningsPitched = parseInt(document.getElementById('rule-max-pitch').value) || 0;
+  updateRulesSummary();
+  save();
+}
+
+function updateRulesSummary() {
+  const r = state.leagueRules;
+  const parts = [
+    r.activePositions.length + ' positions',
+    state.innings + ' innings',
+    !r.allowBackToBack ? 'no back-to-back' : '',
+    r.maxSamePosition > 0 ? `max ${r.maxSamePosition}× same pos` : '',
+    r.maxInningsPitched > 0 ? `max ${r.maxInningsPitched} inn. pitched` : '',
+  ].filter(Boolean);
+  const el = document.getElementById('rules-summary');
+  if (el) el.textContent = parts.join(' · ');
+}
+
+function changeInnings(delta) {
+  state.innings = Math.max(1, Math.min(9, state.innings + delta));
+  document.getElementById('inning-count').textContent = state.innings;
+  state.lineup.forEach(row => {
+    while (row.positions.length < state.innings) row.positions.push('');
+    row.positions = row.positions.slice(0, state.innings);
+  });
+  save();
+}
+
+// ═══════════════════════════════════════════════════
+// PLAYERS
+// ═══════════════════════════════════════════════════
+function addPlayer() {
+  const input = document.getElementById('new-player-name');
+  const name = input.value.trim();
+  if (!name) return;
+  const id = 'p_' + Date.now();
+  state.players.push({ id, name, prefPos: [] });
+  state.attendance[id] = true;
+  input.value = '';
+  renderPlayerList();
+  updateStep2Status();
+  save();
+  input.focus();
+}
+
+function removePlayer(id) {
+  state.players = state.players.filter(p => p.id !== id);
+  delete state.attendance[id];
+  state.lineup = state.lineup.filter(r => r.playerId !== id);
+  renderPlayerList();
+  updateStep2Status();
+  save();
+}
+
+function togglePrefPos(playerId, pos) {
+  const player = state.players.find(p => p.id === playerId);
+  if (!player) return;
+  const idx = player.prefPos.indexOf(pos);
+  if (idx === -1) player.prefPos.push(pos);
+  else player.prefPos.splice(idx, 1);
+  renderPlayerList();
+  save();
+}
+
+function updatePlayerName(id, name) {
+  const p = state.players.find(p => p.id === id);
+  if (p) p.name = name;
+  save();
+}
+
+function renderPlayerList() {
+  const container = document.getElementById('player-list');
+  container.innerHTML = '';
+  state.players.forEach((player, idx) => {
+    const row = document.createElement('div');
+    row.className = 'player-row';
+    row.dataset.playerId = player.id;
+
+    row.innerHTML = `
+      <span class="drag-handle" title="Drag to reorder">⠿</span>
+      <div class="player-num">${idx + 1}</div>
+      <input type="text" value="${escHtml(player.name)}" placeholder="Player name"
+        onchange="updatePlayerName('${player.id}', this.value)"
+        style="flex:1;min-width:80px;" />
+      <div class="pos-pills">
+        ${getActiveFieldPositions().map(pos =>
+          `<span class="pos-pill ${player.prefPos.includes(pos) ? 'selected' : ''}"
+            onclick="togglePrefPos('${player.id}','${pos}')">${pos}</span>`
+        ).join('')}
+      </div>
+      <button class="btn btn-danger btn-icon btn-sm" onclick="removePlayer('${player.id}')" title="Remove player">✕</button>
+    `;
+
+    container.appendChild(row);
+  });
+
+  if (window._rosterSortable) window._rosterSortable.destroy();
+  window._rosterSortable = Sortable.create(container, {
+    animation: 160,
+    easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
+    handle: '.drag-handle',
+    ghostClass: 'sortable-ghost',
+    chosenClass: 'sortable-chosen',
+    dragClass: 'sortable-drag',
+    onEnd(evt) {
+      const { oldIndex, newIndex } = evt;
+      if (oldIndex === newIndex) return;
+      const [moved] = state.players.splice(oldIndex, 1);
+      state.players.splice(newIndex, 0, moved);
+      renderPlayerList();
+      save();
+    }
+  });
+}
+
+function updateStep2Status() {
+  const el = document.getElementById('step2-status');
+  el.textContent = `${state.players.length} player${state.players.length !== 1 ? 's' : ''} on roster`;
+}
+
+// ═══════════════════════════════════════════════════
+// STEP NAVIGATION
+// ═══════════════════════════════════════════════════
+function goToStep1() {
+  setStep(1);
+}
+
+function goToStep2() {
+  saveTeam();
+  setStep(2);
+}
+
+function goToStep3() {
+  saveRules();
+  setStep(3);
+  renderPlayerList();
+  updateStep2Status();
+}
+
+function goToStep4() {
+  save();
+  if (state.players.length === 0) {
+    alert('Please add at least one player before continuing.');
+    return;
+  }
+
+  const existingIds = state.lineup.map(r => r.playerId);
+  state.players.forEach(p => {
+    if (!existingIds.includes(p.id)) {
+      state.lineup.push({ playerId: p.id, positions: Array(state.innings).fill('') });
+    }
+  });
+  state.lineup = state.lineup.filter(r => state.players.find(p => p.id === r.playerId));
+  state.lineup.forEach(r => {
+    while (r.positions.length < state.innings) r.positions.push('');
+    r.positions = r.positions.slice(0, state.innings);
+  });
+  state.players.forEach(p => {
+    if (state.attendance[p.id] === undefined) state.attendance[p.id] = true;
+  });
+
+  setStep(4);
+  renderAttendance();
+  renderLineupGrid();
+  renderPlayingTimeSummary();
+}
+
+function goToStep5() {
+  save();
+  setStep(5);
+  renderExport();
+}
+
+function setStep(n) {
+  [1,2,3,4,5].forEach(i => {
+    document.getElementById(`step-${i}`).style.display = i === n ? '' : 'none';
+    const ws = document.getElementById(`wstep-${i}`);
+    ws.className = 'wstep' + (i === n ? ' active' : i < n ? ' done' : '');
+  });
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════════════════════════════════════════
+// ATTENDANCE
+// ═══════════════════════════════════════════════════
+function toggleAttendance(id) {
+  state.attendance[id] = !state.attendance[id];
+  renderAttendance();
+  renderLineupGrid();
+  renderPlayingTimeSummary();
+  save();
+}
+
+function renderAttendance() {
+  const grid = document.getElementById('attendance-grid');
+  const countEl = document.getElementById('att-count');
+  const attending = state.players.filter(p => state.attendance[p.id]);
+  countEl.textContent = `${attending.length} / ${state.players.length} players attending`;
+  grid.innerHTML = state.players.map(p => `
+    <div class="att-pill ${state.attendance[p.id] ? 'in' : 'out'}"
+         onclick="toggleAttendance('${p.id}')">
+      <span class="att-dot"></span>${escHtml(p.name)}
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// LINEUP GRID
+// ═══════════════════════════════════════════════════
+function renderLineupGrid() {
+  const thead = document.getElementById('lineup-thead');
+  const tbody = document.getElementById('lineup-tbody');
+  const attending = state.players.filter(p => state.attendance[p.id]);
+  const activeLineup = state.lineup.filter(r => {
+    const p = state.players.find(p => p.id === r.playerId);
+    return p && state.attendance[p.id];
+  });
+
+  let hRow = `<tr><th>Player</th>`;
+  for (let i = 1; i <= state.innings; i++) hRow += `<th>${i}</th>`;
+  hRow += `</tr>`;
+  thead.innerHTML = hRow;
+
+  tbody.innerHTML = '';
+  activeLineup.forEach((lineupRow, rowIdx) => {
+    const player = state.players.find(p => p.id === lineupRow.playerId);
+    if (!player) return;
+    const tr = document.createElement('tr');
+    tr.dataset.playerId = player.id;
+
+    let cells = `
+      <td>
+        <div class="player-cell">
+          <span class="drag-grip" title="Drag to reorder">⠿</span>
+          <div class="bat-order">${rowIdx + 1}</div>
+          <div>
+            <div class="player-name">${escHtml(player.name)}</div>
+            <div class="fp-bar">${lineupRow.positions.map(p =>
+              `<div class="fp-seg ${p === 'Bench' ? 'bench' : p ? 'played' : ''}"></div>`
+            ).join('')}</div>
+          </div>
+        </div>
+      </td>`;
+
+    for (let i = 0; i < state.innings; i++) {
+      const val = lineupRow.positions[i] || '';
+      const cls = val === 'Bench' ? 'bench' : val ? 'filled' : '';
+      cells += `
+        <td>
+          <select class="pos-select ${cls}" data-player="${player.id}" data-inning="${i}"
+                  onchange="onPosChange('${player.id}',${i},this.value)">
+            <option value="">—</option>
+            ${[...getActiveFieldPositions(), 'Bench'].map(pos =>
+              `<option value="${pos}" ${val===pos?'selected':''}>${pos}</option>`
+            ).join('')}
+          </select>
+        </td>`;
+    }
+
+    tr.innerHTML = cells;
+    tbody.appendChild(tr);
+  });
+
+  if (activeLineup.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="${state.innings + 1}" style="text-align:center;padding:24px;color:var(--muted);font-size:13px;">No players attending. Mark players as attending above.</td></tr>`;
+  }
+
+  if (window._lineupSortable) window._lineupSortable.destroy();
+  window._lineupSortable = Sortable.create(tbody, {
+    animation: 160,
+    easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
+    handle: '.drag-grip',
+    ghostClass: 'sortable-ghost',
+    chosenClass: 'sortable-chosen',
+    dragClass: 'sortable-drag',
+    onEnd(evt) {
+      const { oldIndex, newIndex } = evt;
+      if (oldIndex === newIndex) return;
+      const [moved] = activeLineup.splice(oldIndex, 1);
+      activeLineup.splice(newIndex, 0, moved);
+      state.lineup = [
+        ...state.lineup.filter(r => !activeLineup.includes(r)),
+        ...activeLineup
+      ];
+      renderLineupGrid();
+      renderPlayingTimeSummary();
+      save();
+    }
+  });
+}
+
+function onPosChange(playerId, inningIdx, value) {
+  const lineupRow = state.lineup.find(r => r.playerId === playerId);
+  if (lineupRow) {
+    lineupRow.positions[inningIdx] = value;
+    renderLineupGrid();
+    renderPlayingTimeSummary();
+    checkConflicts();
+    save();
+  }
+}
+
+function checkConflicts() {
+  const alert = document.getElementById('conflicts-alert');
+  const conflicts = [];
+  state.lineup.forEach(row => {
+    const pos = row.positions;
+    for (let i = 0; i < pos.length; i++) {
+      if (pos[i] && pos[i] !== 'Bench') {
+        const count = pos.filter((p, j) => p === pos[i] && j !== i && p && p !== 'Bench').length;
+        if (count > 0) {
+          const player = state.players.find(p => p.id === row.playerId);
+          conflicts.push(`${player?.name} is in ${pos[i]} multiple times in inning ${i+1}`);
+        }
+      }
+    }
+  });
+  if (conflicts.length > 0) {
+    alert.style.display = '';
+    alert.innerHTML = '⚠ ' + conflicts.slice(0, 3).join('<br>');
+  } else {
+    alert.style.display = 'none';
+  }
+}
+
+function shuffleBatting() {
+  const attending = state.players.filter(p => state.attendance[p.id]);
+  const shuffled = attending.sort(() => Math.random() - 0.5);
+  state.lineup = shuffled.map(p => state.lineup.find(r => r.playerId === p.id) || { playerId: p.id, positions: Array(state.innings).fill('') });
+  renderLineupGrid();
+  renderPlayingTimeSummary();
+  save();
+}
+
+function shuffleFielding() {
+  const attending = state.players.filter(p => state.attendance[p.id]);
+  const fieldPos = getActiveFieldPositions();
+
+  attending.forEach(player => {
+    const row = state.lineup.find(r => r.playerId === player.id);
+    if (!row) return;
+
+    for (let inning = 0; inning < state.innings; inning++) {
+      if (!row.positions[inning]) {
+        const sorted = [...attending].sort((a, b) => {
+          const aCount = state.lineup.find(r => r.playerId === a.id)?.positions.filter(p => p && p !== 'Bench').length || 0;
+          const bCount = state.lineup.find(r => r.playerId === b.id)?.positions.filter(p => p && p !== 'Bench').length || 0;
+          return aCount - bCount;
+        });
+
+        if (sorted[0].id === player.id && fieldPos.length > 0) {
+          const availablePos = fieldPos.filter(p => {
+            const used = row.positions.filter(pos => pos === p).length;
+            return (state.leagueRules.maxSamePosition === 0 || used < state.leagueRules.maxSamePosition);
+          });
+
+          if (availablePos.length > 0) {
+            const pref = player.prefPos.filter(p => availablePos.includes(p));
+            row.positions[inning] = pref.length > 0 ? pref[0] : availablePos[Math.floor(Math.random() * availablePos.length)];
+          } else {
+            row.positions[inning] = 'Bench';
+          }
+        } else {
+          row.positions[inning] = 'Bench';
+        }
+      }
+    }
+  });
+
+  renderLineupGrid();
+  renderPlayingTimeSummary();
+  checkConflicts();
+  save();
+}
+
+function clearFielding() {
+  state.lineup.forEach(row => {
+    row.positions = row.positions.map(() => '');
+  });
+  renderLineupGrid();
+  renderPlayingTimeSummary();
+  save();
+}
+
+function renderPlayingTimeSummary() {
+  const grid = document.getElementById('pt-summary');
+  const attending = state.players.filter(p => state.attendance[p.id]);
+  grid.innerHTML = attending.map(player => {
+    const row = state.lineup.find(r => r.playerId === player.id);
+    const played = row ? row.positions.filter(p => p && p !== 'Bench').length : 0;
+    const benched = row ? row.positions.filter(p => p === 'Bench').length : 0;
+    return `
+      <div class="summary-card">
+        <div class="summary-player-name">${escHtml(player.name)}</div>
+        <div class="summary-stat">Played: ${played}/${state.innings} innings</div>
+        <div class="summary-stat">Benched: ${benched}/${state.innings} innings</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════════
+function renderExport() {
+  const attending = state.players.filter(p => state.attendance[p.id]);
+  const activeLineup = state.lineup.filter(r => {
+    const p = state.players.find(p => p.id === r.playerId);
+    return p && state.attendance[p.id];
+  });
+
+  const title = document.getElementById('export-title');
+  const meta = document.getElementById('export-meta');
+  title.textContent = state.gameName || 'Game Lineup';
+  meta.innerHTML = [
+    state.opponent ? `<strong>vs</strong> ${escHtml(state.opponent)}` : '',
+    state.gameDate ? formatDate(state.gameDate) : '',
+    state.gameTime ? formatTime(state.gameTime) : ''
+  ].filter(Boolean).join(' · ');
+
+  const thead = document.getElementById('export-thead');
+  const tbody = document.getElementById('export-tbody');
+
+  let hRow = `<tr><th>Player</th>`;
+  for (let i = 1; i <= state.innings; i++) hRow += `<th>${i}</th>`;
+  hRow += `</tr>`;
+  thead.innerHTML = hRow;
+
+  tbody.innerHTML = activeLineup.map((lineupRow, rowIdx) => {
+    const player = state.players.find(p => p.id === lineupRow.playerId);
+    if (!player) return '';
+    let cells = `
+      <td>
+        <div class="player-cell" style="cursor:default;">
+          <div class="bat-order">${rowIdx + 1}</div>
+          <div style="flex:1;">${escHtml(player.name)}</div>
+        </div>
+      </td>`;
+    for (let i = 0; i < state.innings; i++) {
+      const val = lineupRow.positions[i] || '';
+      const cls = val === 'Bench' ? 'bench' : val ? 'filled' : '';
+      cells += `<td class="${cls}">${val}</td>`;
+    }
+    return `<tr>${cells}</tr>`;
+  }).join('');
+}
+
+function copyLineup() {
+  const table = document.getElementById('export-table');
+  const range = document.createRange();
+  range.selectNodeContents(table);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+  document.execCommand('copy');
+  sel.removeAllRanges();
+  alert('Lineup copied to clipboard!');
+}
+
+// ═══════════════════════════════════════════════════
+// IMPORT
+// ═══════════════════════════════════════════════════
+async function importTeamByCode() {
+  const codeInput = document.getElementById('team-import-code');
+  const statusEl  = document.getElementById('import-status');
+  const code = codeInput.value.trim().toUpperCase();
+
+  if (!code) {
+    statusEl.className = 'import-status error';
+    statusEl.textContent = 'Please enter an invite code.';
+    return;
+  }
+
+  const fb = initFirebase();
+  if (!fb) {
+    statusEl.className = 'import-status error';
+    statusEl.textContent = 'Firebase is not configured yet.';
+    return;
+  }
+
+  if (!fb.auth.currentUser || fb.auth.currentUser.isAnonymous) {
+    statusEl.className = 'import-status loading';
+    statusEl.textContent = 'Please sign in to import your team…';
+    return;
+  }
+
+  statusEl.className = 'import-status loading';
+  statusEl.textContent = 'Looking up team…';
+
+  try {
+    const snap = await fb.db.collection('teams')
+      .where('inviteCode', '==', code)
+      .limit(1)
+      .get();
+
+    if (snap.empty) {
+      statusEl.className = 'import-status error';
+      statusEl.textContent = `No team found for code "${code}". Double-check the code in your Lineup DJ app.`;
+      return;
+    }
+
+    const teamDoc = snap.docs[0];
+    const teamData = teamDoc.data();
+    const playerSnap = await fb.db.collection('teams').doc(teamDoc.id).collection('players').get();
+
+    const players = playerSnap.docs.map(doc => {
+      const d = doc.data();
+      return {
+        id: 'imp_' + doc.id,
+        name: d.name || 'Unknown',
+        prefPos: [],
+        gender: 'M'
+      };
+    });
+
+    state.teamName     = teamData.name || state.teamName;
+    state.teamSport    = teamData.sport || state.teamSport;
+    state.teamLevel    = teamData.level || state.teamLevel;
+    state.teamAgeGroup = teamData.ageGroup || state.teamAgeGroup;
+    state.teamNotes    = teamData.notes || state.teamNotes;
+    state.players      = players;
+    state.attendance   = {};
+    state.lineup       = [];
+    players.forEach(p => { state.attendance[p.id] = true; });
+
+    const setField = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+    setField('team-name', state.teamName);
+    setField('team-sport', state.teamSport);
+    setField('team-level', state.teamLevel);
+    setField('team-age-group', state.teamAgeGroup);
+    setField('team-notes', state.teamNotes);
+
+    save();
+    renderPlayerList();
+    updateStep2Status();
+
+    statusEl.className = 'import-status success';
+    statusEl.textContent = `✓ Loaded "${state.teamName}" with ${players.length} player${players.length !== 1 ? 's' : ''}.`;
+  } catch(e) {
+    console.error('importTeamByCode error:', e);
+    statusEl.className = 'import-status error';
+    statusEl.textContent = 'Error importing team. Please try again.';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════
+function escHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function formatDate(d) {
+  if (!d) return '';
+  const date = new Date(d + 'T00:00:00');
+  return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+function formatTime(t) {
+  if (!t) return '';
+  const [h, m] = t.split(':');
+  const hour = parseInt(h);
+  const min = m || '00';
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const hour12 = hour % 12 || 12;
+  return `${hour12}:${min} ${ampm}`;
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  init();
+});
+</script>
+
+</body>
+</html>
