@@ -1841,22 +1841,37 @@ async function selectTeam(teamId, closeDropdown = true) {
   const fb = initFirebase();
   if (!fb) return;
   if (closeDropdown) closeTeamDropdown();
-
   _activeTeamId = teamId;
-  const team = _userTeams.find(t => t.id === teamId);
-  if (team) {
-    document.getElementById('topbar-team-name').textContent = team.name;
-    // Update team name fields
-    state.teamName = team.name;
-    const nameField = document.getElementById('team-name');
-    if (nameField) nameField.value = team.name;
-  }
 
-  // Fetch players for this team
   try {
-    const playerSnap = await fb.db.collection('teams').doc(teamId)
-      .collection('players').get();
+    // Fetch team doc + players subcollection in parallel
+    const [teamDoc, playerSnap] = await Promise.all([
+      fb.db.collection('teams').doc(teamId).get(),
+      fb.db.collection('teams').doc(teamId).collection('players').get()
+    ]);
 
+    const teamData = teamDoc.exists ? teamDoc.data() : {};
+    const teamName = teamData.name || 'Unnamed Team';
+
+    // ── Update state ──
+    state.teamName     = teamName;
+    state.teamSport    = teamData.sport    || state.teamSport    || 'Baseball';
+    state.teamLevel    = teamData.level    || state.teamLevel    || '';
+    state.teamAgeGroup = teamData.ageGroup || state.teamAgeGroup || '';
+    state.teamNotes    = teamData.notes    || state.teamNotes    || '';
+
+    // ── Sync all Step 1 form fields ──
+    const setField = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+    setField('team-name',      teamName);
+    setField('team-sport',     state.teamSport);
+    setField('team-level',     state.teamLevel);
+    setField('team-age-group', state.teamAgeGroup);
+    setField('team-notes',     state.teamNotes);
+
+    // ── Update topbar selector text ──
+    document.getElementById('topbar-team-name').textContent = teamName;
+
+    // ── Load players ──
     const players = playerSnap.docs.map(doc => {
       const d = doc.data();
       return {
@@ -1868,18 +1883,27 @@ async function selectTeam(teamId, closeDropdown = true) {
       };
     });
 
-    state.players = players;
+    state.players    = players;
     state.attendance = {};
+    state.lineup     = [];
     players.forEach(p => { state.attendance[p.id] = true; });
     save();
     renderTeamDropdown();
 
-    // Show a brief confirmation on the import status if on step 1
+    // ── Refresh the currently visible step ──
+    const currentStep = [1,2,3,4,5].find(i =>
+      document.getElementById(`step-${i}`)?.style.display !== 'none'
+    );
+    if (currentStep === 3) { renderPlayerList(); updateStep2Status(); }
+    if (currentStep === 4) { renderAttendance(); renderLineupGrid(); renderPlayingTimeSummary(); }
+
+    // ── Feedback on Step 1 ──
     const statusEl = document.getElementById('import-status');
     if (statusEl) {
       statusEl.className = 'import-status success';
-      statusEl.textContent = `✓ Loaded "${team?.name}" with ${players.length} player${players.length !== 1 ? 's' : ''}.`;
+      statusEl.textContent = `✓ Loaded "${teamName}" with ${players.length} player${players.length !== 1 ? 's' : ''}.`;
     }
+
   } catch(e) {
     console.error('selectTeam error:', e);
   }
