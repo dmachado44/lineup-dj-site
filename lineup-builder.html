@@ -2366,8 +2366,16 @@ function goToStep4() {
 
   setStep(4);
   renderAttendance();
-  renderLineupGrid();
-  renderPlayingTimeSummary();
+
+  // Auto-assign positions on fresh entry (all positions empty = new game or fresh team load)
+  const allEmpty = state.lineup.every(r => r.positions.every(p => !p || p === ''));
+  if (allEmpty && state.lineup.length > 0) {
+    shuffleFielding(); // renders grid + summary internally
+  } else {
+    renderLineupGrid();
+    renderPlayingTimeSummary();
+  }
+
   if (!_activeTeamId) document.getElementById('topbar-team-name').textContent = state.teamName || state.gameName || '—';
 }
 
@@ -2580,117 +2588,116 @@ function shuffleFielding() {
   const numPlayers = attending.length;
   const numInnings = state.innings;
   const rules = state.leagueRules;
-
-  // Get active field positions from league rules
   const fieldPos = getActiveFieldPositions();
 
-  // Clear existing assignments
+  // Guard: nothing to assign
+  if (fieldPos.length === 0 || numInnings === 0) {
+    renderLineupGrid();
+    renderPlayingTimeSummary();
+    return;
+  }
+
+  // Reset all positions to empty
   attending.forEach(row => { row.positions = Array(numInnings).fill(''); });
 
-  // Per-player tracking
-  const benchCount = {};        // innings on bench
-  const inningsPitched = {};    // innings assigned 'P'
-  const posTally = {};          // { playerId: { pos: count } } — innings at each position
+  // Per-player tracking across the whole game
+  const benchCount = {};      // total innings on bench per player
+  const inningsPitched = {};  // total innings pitched per player
+  const posTally = {};        // { playerId: { pos: timesPlayed } }
   attending.forEach(r => {
     benchCount[r.playerId] = 0;
     inningsPitched[r.playerId] = 0;
     posTally[r.playerId] = {};
   });
 
-  // Helper: is assigning `pos` to `playerId` legal this inning?
-  // `posAssigned` = Set of positions already taken this inning
-  function canAssign(playerId, pos, posAssigned, inning) {
-    // Position already taken by someone else this inning
-    if (posAssigned.has(pos)) return false;
-
-    // Max innings pitched constraint (Pitcher-specific)
-    if (pos === 'P' && rules.maxInningsPitched > 0 && inningsPitched[playerId] >= rules.maxInningsPitched) {
-      return false;
-    }
-
-    // Back-to-back constraint: if NOT allowed, block same pos as previous inning
-    if (!rules.allowBackToBack && inning > 0) {
-      const row = attending.find(r => r.playerId === playerId);
-      if (row && row.positions[inning - 1] === pos) return false;
-    }
-
-    // Max same-position constraint: limit total innings at any one position
-    if (rules.maxSamePosition > 0) {
-      const count = (posTally[playerId][pos] || 0);
-      if (count >= rules.maxSamePosition) return false;
-    }
-
-    return true;
-  }
+  // How many players sit bench each inning
+  const benchNeeded = Math.max(0, numPlayers - fieldPos.length);
 
   for (let inning = 0; inning < numInnings; inning++) {
-    // Determine how many players sit bench this inning (fair rotation)
-    const benchNeeded = Math.max(0, numPlayers - fieldPos.length);
 
-    const toBench = [...attending]
-      .sort((a, b) => benchCount[a.playerId] - benchCount[b.playerId] + (Math.random() - 0.5) * 0.5)
-      .slice(0, benchNeeded);
-    const toBenchIds = new Set(toBench.map(r => r.playerId));
+    // ── Bench selection: rotate who sits, fewest bench-innings first ──
+    // Sort: ascending benchCount + small random tiebreak for variety
+    const sortedForBench = [...attending].sort((a, b) =>
+      (benchCount[a.playerId] - benchCount[b.playerId]) + (Math.random() - 0.5) * 0.1
+    );
+    const toBenchSet = new Set(sortedForBench.slice(0, benchNeeded).map(r => r.playerId));
 
-    toBench.forEach(r => {
+    // If more players than positions, rotate bench fairly
+    // Additional bench needed because someone has to sit (handled above via benchNeeded)
+    sortedForBench.slice(0, benchNeeded).forEach(r => {
       r.positions[inning] = 'Bench';
       benchCount[r.playerId]++;
     });
 
-    // Players who will take the field
-    const toField = attending.filter(r => !toBenchIds.has(r.playerId));
+    // ── Field assignment ──
+    const toField = attending.filter(r => !toBenchSet.has(r.playerId));
 
-    // Shuffled position pool for this inning
-    const availPos = [...fieldPos].sort(() => Math.random() - 0.5);
-    const posAssigned = new Set();
-    const playerAssigned = new Set();
+    // Shuffle positions for variety; build a mutable pool for this inning
+    const posPool = [...fieldPos].sort(() => Math.random() - 0.5);
+    const takenThisInning = new Set();
 
-    // Pass 1: honor preferred positions — prefer least-played preferred position for variety
+    // Helper: can this player take this position right now?
+    function canTake(playerId, pos) {
+      if (takenThisInning.has(pos)) return false;
+      if (pos === 'P' && rules.maxInningsPitched > 0 && inningsPitched[playerId] >= rules.maxInningsPitched) return false;
+      if (!rules.allowBackToBack && inning > 0) {
+        const row = attending.find(r => r.playerId === playerId);
+        if (row && row.positions[inning - 1] === pos) return false;
+      }
+      if (rules.maxSamePosition > 0 && (posTally[playerId][pos] || 0) >= rules.maxSamePosition) return false;
+      return true;
+    }
+
+    // Pass 1 — honor preferred positions (least-played pref first for variety)
+    const assignedPlayers = new Set();
     toField.forEach(r => {
       const player = state.players.find(p => p.id === r.playerId);
-      if (!player) return;
-      const prefMatch = [...player.prefPos]
-        // Sort preferred positions by how many times already played this game (ascending)
-        .sort((a, b) => (posTally[r.playerId][a] || 0) - (posTally[r.playerId][b] || 0))
-        .find(pos => availPos.includes(pos) && canAssign(r.playerId, pos, posAssigned, inning));
-      if (prefMatch) {
-        r.positions[inning] = prefMatch;
-        posAssigned.add(prefMatch);
-        playerAssigned.add(r.playerId);
-        if (prefMatch === 'P') inningsPitched[r.playerId]++;
-        posTally[r.playerId][prefMatch] = (posTally[r.playerId][prefMatch] || 0) + 1;
+      if (!player || !player.prefPos || player.prefPos.length === 0) return;
+      const best = [...player.prefPos]
+        .filter(pos => posPool.includes(pos) && canTake(r.playerId, pos))
+        .sort((a, b) => (posTally[r.playerId][a] || 0) - (posTally[r.playerId][b] || 0))[0];
+      if (best) {
+        r.positions[inning] = best;
+        takenThisInning.add(best);
+        posPool.splice(posPool.indexOf(best), 1);
+        assignedPlayers.add(r.playerId);
+        if (best === 'P') inningsPitched[r.playerId]++;
+        posTally[r.playerId][best] = (posTally[r.playerId][best] || 0) + 1;
       }
     });
 
-    // Pass 2: assign remaining players — prefer positions they haven't played yet
-    const remainingPlayers = toField.filter(r => !playerAssigned.has(r.playerId));
-    const openPos = availPos.filter(p => !posAssigned.has(p));
+    // Pass 2 — assign remaining field players from the remaining position pool
+    // Sort by total positions played ascending so least-played players get priority
+    const unassigned = toField
+      .filter(r => !assignedPlayers.has(r.playerId))
+      .sort((a, b) => Object.values(posTally[a.playerId]).reduce((s,v)=>s+v,0)
+                    - Object.values(posTally[b.playerId]).reduce((s,v)=>s+v,0));
 
-    remainingPlayers.forEach(r => {
-      // Sort eligible positions: least played first, random tiebreak — maximises variety
-      const eligible = openPos
-        .filter(p => canAssign(r.playerId, p, posAssigned, inning))
-        .sort((a, b) => {
-          const diff = (posTally[r.playerId][a] || 0) - (posTally[r.playerId][b] || 0);
-          return diff !== 0 ? diff : Math.random() - 0.5;
-        });
-      if (eligible.length > 0) {
-        const pick = eligible[0];
+    unassigned.forEach(r => {
+      // Find best available position: prefer ones this player hasn't played yet, random tiebreak
+      const available = posPool.filter(pos => canTake(r.playerId, pos));
+      const pick = available.sort((a, b) => {
+        const diff = (posTally[r.playerId][a] || 0) - (posTally[r.playerId][b] || 0);
+        return diff !== 0 ? diff : Math.random() - 0.5;
+      })[0];
+
+      if (pick) {
         r.positions[inning] = pick;
-        posAssigned.add(pick);
-        openPos.splice(openPos.indexOf(pick), 1);
+        takenThisInning.add(pick);
+        posPool.splice(posPool.indexOf(pick), 1);
         if (pick === 'P') inningsPitched[r.playerId]++;
         posTally[r.playerId][pick] = (posTally[r.playerId][pick] || 0) + 1;
       } else {
-        // Rules can't be fully satisfied — relax constraints and take any open spot
-        const fallback = openPos[0];
+        // Fallback: relax all constraints, just take any remaining slot
+        const fallback = posPool.find(pos => !takenThisInning.has(pos)) || posPool[0];
         if (fallback) {
           r.positions[inning] = fallback;
-          posAssigned.add(fallback);
-          openPos.splice(0, 1);
+          takenThisInning.add(fallback);
+          posPool.splice(posPool.indexOf(fallback), 1);
           if (fallback === 'P') inningsPitched[r.playerId]++;
           posTally[r.playerId][fallback] = (posTally[r.playerId][fallback] || 0) + 1;
         } else {
+          // More players than positions even after bench rotation — bench this player too
           r.positions[inning] = 'Bench';
           benchCount[r.playerId]++;
         }
