@@ -101,11 +101,73 @@
       letter-spacing: -0.1px;
     }
     .topbar-spacer { flex: 1; }
-    .topbar-team {
-      font-size: 13px;
-      color: var(--muted);
-      font-weight: 500;
+
+    /* ── TEAM SELECTOR ── */
+    .team-selector {
+      position: relative;
     }
+    .team-selector-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: none; border: 1.5px solid var(--border);
+      border-radius: 100px;
+      padding: 5px 12px 5px 14px;
+      font-size: 13px; font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      color: var(--black);
+      white-space: nowrap;
+      transition: border-color 0.15s, background 0.15s;
+      max-width: 220px;
+    }
+    .team-selector-btn:hover { border-color: #aaa; background: #fafafa; }
+    .team-selector-btn .team-label { color: var(--muted); font-weight: 400; margin-right: 2px; }
+    .team-selector-btn .team-caret { font-size: 10px; color: var(--muted); margin-left: 2px; }
+    .team-selector-btn .team-name-text {
+      overflow: hidden; text-overflow: ellipsis; max-width: 140px;
+    }
+    .team-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      min-width: 220px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      z-index: 100;
+      overflow: hidden;
+      display: none;
+    }
+    .team-dropdown.open { display: block; }
+    .team-dropdown-header {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+      text-transform: uppercase; color: var(--muted);
+      padding: 12px 16px 6px;
+    }
+    .team-dropdown-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 16px;
+      font-size: 13px; font-weight: 500;
+      cursor: pointer;
+      transition: background 0.1s;
+      color: var(--black);
+    }
+    .team-dropdown-item:hover { background: var(--bg-secondary); }
+    .team-dropdown-item.active { font-weight: 700; }
+    .team-dropdown-item.active::after {
+      content: '✓'; margin-left: auto; color: var(--black); font-size: 12px;
+    }
+    .team-dropdown-item.loading { color: var(--muted); cursor: default; }
+    .team-dropdown-divider { height: 1px; background: var(--border); margin: 4px 0; }
+    .team-dropdown-new {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 16px 14px;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer; color: var(--black);
+      transition: background 0.1s;
+    }
+    .team-dropdown-new:hover { background: var(--bg-secondary); }
+
     /* ── AUTH TOPBAR ── */
     .topbar-auth { display: flex; align-items: center; gap: 10px; }
     .topbar-avatar {
@@ -1030,7 +1092,20 @@
   <div class="topbar-divider"></div>
   <div class="topbar-title">Lineup Builder</div>
   <div class="topbar-spacer"></div>
-  <div class="topbar-team" id="topbar-team-name"></div>
+  <!-- Team selector — shown when signed in -->
+  <div class="team-selector" id="team-selector" style="display:none;">
+    <button class="team-selector-btn" onclick="toggleTeamDropdown(event)">
+      <span class="team-label">Team:</span>
+      <span class="team-name-text" id="topbar-team-name">—</span>
+      <span class="team-caret">▾</span>
+    </button>
+    <div class="team-dropdown" id="team-dropdown">
+      <div class="team-dropdown-header">Your Teams</div>
+      <div id="team-dropdown-list"><div class="team-dropdown-item loading">Loading…</div></div>
+      <div class="team-dropdown-divider"></div>
+      <div class="team-dropdown-new" onclick="openNewTeam()">＋ Create new team</div>
+    </div>
+  </div>
   <div class="topbar-auth" id="topbar-auth">
     <button class="btn btn-ghost btn-sm" onclick="openAuthModal()">Sign In</button>
   </div>
@@ -1510,11 +1585,12 @@ function initFirebase() {
 
     // Listen for auth state changes and update topbar
     _auth.onAuthStateChanged(user => {
-      const topbarAuth = document.getElementById('topbar-auth');
+      const topbarAuth     = document.getElementById('topbar-auth');
+      const teamSelector   = document.getElementById('team-selector');
       if (user && !user.isAnonymous) {
-        const name    = user.displayName || user.email || 'Signed in';
+        const name     = user.displayName || user.email || 'Signed in';
         const initials = name.charAt(0).toUpperCase();
-        const photoURL  = user.photoURL;
+        const photoURL = user.photoURL;
         topbarAuth.innerHTML = `
           <div class="topbar-auth">
             <div class="topbar-avatar" title="${name}">
@@ -1523,8 +1599,10 @@ function initFirebase() {
             <span class="topbar-user-name">${name}</span>
             <button class="topbar-signout" onclick="signOut()">Sign out</button>
           </div>`;
+        teamSelector.style.display = '';
         closeAuthModal();
-        // After sign-in, re-trigger import if a code was entered
+        loadUserTeams(user);
+        // Re-trigger import if a code was entered before sign-in
         const code = document.getElementById('team-import-code')?.value.trim();
         if (code) importTeamByCode();
       } else {
@@ -1532,6 +1610,9 @@ function initFirebase() {
           <div class="topbar-auth">
             <button class="btn btn-ghost btn-sm" onclick="openAuthModal()">Sign In</button>
           </div>`;
+        teamSelector.style.display = 'none';
+        _userTeams    = [];
+        _activeTeamId = null;
       }
     });
 
@@ -1691,11 +1772,148 @@ function friendlyAuthError(e) {
   return map[e.code] || e.message || 'Something went wrong. Please try again.';
 }
 
+// ═══════════════════════════════════════════════════
+// TEAM SELECTOR
+// ═══════════════════════════════════════════════════
+let _userTeams      = [];   // [{id, name}]
+let _activeTeamId   = null;
+
+function toggleTeamDropdown(e) {
+  e.stopPropagation();
+  document.getElementById('team-dropdown').classList.toggle('open');
+}
+
+function closeTeamDropdown() {
+  document.getElementById('team-dropdown').classList.remove('open');
+}
+
+async function loadUserTeams(user) {
+  const fb = initFirebase();
+  if (!fb) return;
+  try {
+    // Get user doc to find owned + member team IDs
+    const userDoc = await fb.db.collection('users').doc(user.uid).get();
+    const data = userDoc.exists ? userDoc.data() : {};
+    const ownedIds  = data.ownedTeamIds  || [];
+    const memberIds = data.memberTeamIds || [];
+    const allIds    = [...new Set([...ownedIds, ...memberIds])];
+
+    if (allIds.length === 0) {
+      _userTeams = [];
+      renderTeamDropdown();
+      return;
+    }
+
+    // Fetch each team doc
+    const teamDocs = await Promise.all(
+      allIds.map(id => fb.db.collection('teams').doc(id).get())
+    );
+    _userTeams = teamDocs
+      .filter(d => d.exists)
+      .map(d => ({ id: d.id, name: d.data().name || 'Unnamed Team' }));
+
+    renderTeamDropdown();
+
+    // Auto-select if only one team or if current state.teamName matches one
+    if (_userTeams.length === 1 && !_activeTeamId) {
+      await selectTeam(_userTeams[0].id, false);
+    }
+  } catch(e) {
+    console.error('loadUserTeams error:', e);
+  }
+}
+
+function renderTeamDropdown() {
+  const list = document.getElementById('team-dropdown-list');
+  if (_userTeams.length === 0) {
+    list.innerHTML = `<div class="team-dropdown-item loading">No teams yet</div>`;
+    return;
+  }
+  list.innerHTML = _userTeams.map(t => `
+    <div class="team-dropdown-item ${t.id === _activeTeamId ? 'active' : ''}"
+         onclick="selectTeam('${t.id}', true)">
+      ${t.name}
+    </div>
+  `).join('');
+}
+
+async function selectTeam(teamId, closeDropdown = true) {
+  const fb = initFirebase();
+  if (!fb) return;
+  if (closeDropdown) closeTeamDropdown();
+
+  _activeTeamId = teamId;
+  const team = _userTeams.find(t => t.id === teamId);
+  if (team) {
+    document.getElementById('topbar-team-name').textContent = team.name;
+    // Update team name fields
+    state.teamName = team.name;
+    const nameField = document.getElementById('team-name');
+    if (nameField) nameField.value = team.name;
+  }
+
+  // Fetch players for this team
+  try {
+    const playerSnap = await fb.db.collection('teams').doc(teamId)
+      .collection('players').get();
+
+    const players = playerSnap.docs.map(doc => {
+      const d = doc.data();
+      return {
+        id:      'imp_' + doc.id,
+        name:    d.name   || 'Unknown',
+        number:  d.number != null ? String(d.number) : '',
+        prefPos: [],
+        gender:  'M'
+      };
+    });
+
+    state.players = players;
+    state.attendance = {};
+    players.forEach(p => { state.attendance[p.id] = true; });
+    save();
+    renderTeamDropdown();
+
+    // Show a brief confirmation on the import status if on step 1
+    const statusEl = document.getElementById('import-status');
+    if (statusEl) {
+      statusEl.className = 'import-status success';
+      statusEl.textContent = `✓ Loaded "${team?.name}" with ${players.length} player${players.length !== 1 ? 's' : ''}.`;
+    }
+  } catch(e) {
+    console.error('selectTeam error:', e);
+  }
+}
+
+function openNewTeam() {
+  closeTeamDropdown();
+  _activeTeamId = null;
+  state.teamName = ''; state.players = []; state.attendance = {};
+  state.lineup = []; state.gameName = '';
+  const nameField = document.getElementById('team-name');
+  if (nameField) nameField.value = '';
+  const importCode = document.getElementById('team-import-code');
+  if (importCode) importCode.value = '';
+  const importStatus = document.getElementById('import-status');
+  if (importStatus) { importStatus.className = 'import-status'; importStatus.textContent = ''; }
+  document.getElementById('topbar-team-name').textContent = '—';
+  save();
+  goToStep1();
+}
+
+// ── Update onAuthStateChanged to load teams ──
+
 // Close modal when clicking overlay background
 document.addEventListener('DOMContentLoaded', () => {
   initFirebase();
   document.getElementById('auth-overlay').addEventListener('click', e => {
     if (e.target === document.getElementById('auth-overlay')) closeAuthModal();
+  });
+  // Close team dropdown when clicking outside
+  document.addEventListener('click', e => {
+    if (!document.getElementById('team-selector')?.contains(e.target)) {
+      closeTeamDropdown();
+    }
   });
 });
 
@@ -2126,7 +2344,7 @@ function goToStep4() {
   renderAttendance();
   renderLineupGrid();
   renderPlayingTimeSummary();
-  document.getElementById('topbar-team-name').textContent = state.teamName || state.gameName || '';
+  if (!_activeTeamId) document.getElementById('topbar-team-name').textContent = state.teamName || state.gameName || '—';
 }
 
 function goToStep5() {
