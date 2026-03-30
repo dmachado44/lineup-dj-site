@@ -947,10 +947,46 @@
       margin-bottom: 16px;
     }
 
+    .lineups-list { display: flex; flex-direction: column; gap: 12px; }
+    .lineup-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .lineup-item:hover { border-color: #aaa; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .lineup-item-info { display: flex; flex-direction: column; gap: 2px; }
+    .lineup-item-title { font-size: 16px; font-weight: 600; color: var(--text); }
+    .lineup-item-meta { font-size: 14px; color: var(--muted); }
+    .lineup-item-arrow { font-size: 18px; color: var(--muted); }
+    .lineup-detail-grid {
+      width: 100%; border-collapse: collapse;
+      font-size: 14px;
+    }
+    .lineup-detail-grid th, .lineup-detail-grid td {
+      padding: 8px 10px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .lineup-detail-grid th { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; }
+    .lineup-detail-grid td:first-child, .lineup-detail-grid th:first-child { text-align: left; }
+    .lineup-detail-grid td.bench { color: var(--muted); font-style: italic; }
+    .lineup-detail-grid td.filled { color: var(--text); font-weight: 500; }
+    .lineups-empty { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 15px; }
+
     #view-dashboard {
       display: none;
     }
     #view-dashboard.active {
+      display: block;
+    }
+    #view-lineups {
+      display: none;
+    }
+    #view-lineups.active {
       display: block;
     }
     #view-builder {
@@ -1329,6 +1365,53 @@
       <div class="text-muted" style="margin:16px 0 8px;font-size:15px;">Make sure you're signing in with the same method you use in the app.</div>
       <div class="auth-switch">
         <a onclick="signOut()" style="cursor:pointer;text-decoration:underline;">Sign out and try a different account</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ VIEW 2B: PAST LINEUPS ══════════════ -->
+<div id="view-lineups">
+  <div class="topbar">
+    <a class="topbar-logo" href="https://lineupdj.app">
+      <img class="logo-mark" src="assets/icon.png" alt="Lineup DJ">
+      Lineup DJ
+    </a>
+    <div class="topbar-spacer"></div>
+    <div id="topbar-auth-lineups"></div>
+  </div>
+
+  <div class="dashboard-page">
+    <div class="dashboard-header">
+      <div class="dashboard-header-left">
+        <h1 id="lineups-team-name">Past Lineups</h1>
+        <p class="dashboard-sub" id="lineups-team-sub">View saved game lineups</p>
+      </div>
+      <button class="btn btn-ghost" onclick="backToDashboard()">← Back to Dashboard</button>
+    </div>
+
+    <div id="lineups-list-container"></div>
+
+    <div id="lineup-detail-container" style="display:none;">
+      <div style="margin-bottom:16px;">
+        <button class="btn btn-ghost btn-sm" onclick="showLineupsList()">← Back to all lineups</button>
+      </div>
+      <div class="card">
+        <div class="export-header">
+          <div>
+            <div class="export-title" id="detail-title">Game Lineup</div>
+            <div class="export-meta" id="detail-meta"></div>
+          </div>
+          <div class="flex-row gap-sm flex-wrap">
+            <button class="btn btn-ghost btn-sm" onclick="printLineupDetail()">🖨 Print</button>
+          </div>
+        </div>
+        <div class="lineup-wrap mb-lg">
+          <table class="lineup-detail-grid" id="detail-table">
+            <thead id="detail-thead"></thead>
+            <tbody id="detail-tbody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -2045,6 +2128,7 @@ function renderDashboard() {
         </div>
         <div class="team-card-actions">
           <button class="btn btn-primary btn-create" onclick="enterBuilder('${team.id}', 'lineup', 3)">Create Lineup →</button>
+          <button class="btn btn-outline btn-create" onclick="openPastLineups('${team.id}')">📋 Past Lineups</button>
           <button class="btn btn-ghost btn-create" onclick="enterBuilder('${team.id}', 'settings', 1)">⚙ Manage Team Settings</button>
         </div>
       </div>
@@ -2159,11 +2243,13 @@ function showView(view) {
   document.getElementById('view-dashboard').classList.remove('active');
   document.getElementById('view-builder').classList.remove('active');
   document.getElementById('view-paywall').classList.remove('active');
+  document.getElementById('view-lineups').classList.remove('active');
 
   if (view === 'auth') document.getElementById('view-auth').classList.add('active');
   if (view === 'dashboard') document.getElementById('view-dashboard').classList.add('active');
   if (view === 'builder') document.getElementById('view-builder').classList.add('active');
   if (view === 'paywall') document.getElementById('view-paywall').classList.add('active');
+  if (view === 'lineups') document.getElementById('view-lineups').classList.add('active');
 }
 
 async function enterBuilder(teamId, mode, startStep) {
@@ -2435,6 +2521,135 @@ async function saveAndSetLineup() {
     _appMode = 'lineup';
     setStep(3);
   }
+}
+
+// ═══════════════════════════════════════════════════
+// PAST LINEUPS
+// ═══════════════════════════════════════════════════
+let _pastLineups = [];
+let _lineupsTeamId = null;
+let _lineupsTeamName = '';
+
+async function openPastLineups(teamId) {
+  const team = _userTeams.find(t => t.id === teamId);
+  _lineupsTeamId = teamId;
+  _lineupsTeamName = team ? team.name : 'Team';
+
+  document.getElementById('lineups-team-name').textContent = _lineupsTeamName + ' — Past Lineups';
+  document.getElementById('lineups-team-sub').textContent = 'View saved game lineups';
+
+  // Copy avatar HTML to lineups topbar
+  const authEl = document.getElementById('topbar-auth');
+  const lineupsAuthEl = document.getElementById('topbar-auth-lineups');
+  if (authEl && lineupsAuthEl) lineupsAuthEl.innerHTML = authEl.innerHTML;
+
+  showView('lineups');
+  showLineupsList();
+  await loadPastLineups(teamId);
+}
+
+async function loadPastLineups(teamId) {
+  const fb = initFirebase();
+  if (!fb) return;
+
+  const container = document.getElementById('lineups-list-container');
+  container.innerHTML = '<div class="lineups-empty">Loading lineups…</div>';
+
+  try {
+    const snap = await fb.db.collection('teams').doc(teamId)
+      .collection('lineups')
+      .orderBy('createdAt', 'desc')
+      .get();
+
+    _pastLineups = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    renderPastLineups();
+  } catch(e) {
+    console.error('Failed to load lineups:', e);
+    container.innerHTML = '<div class="lineups-empty">Failed to load lineups. Please try again.</div>';
+  }
+}
+
+function renderPastLineups() {
+  const container = document.getElementById('lineups-list-container');
+
+  if (_pastLineups.length === 0) {
+    container.innerHTML = `
+      <div class="lineups-empty">
+        <div style="font-size:32px;margin-bottom:12px;">📋</div>
+        No saved lineups yet.<br>Create a lineup and click "Save & Export" to save it here.
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = `<div class="lineups-list">${_pastLineups.map(lineup => {
+    const title = lineup.gameName || (lineup.opponent ? 'vs ' + lineup.opponent : 'Game Lineup');
+    const parts = [];
+    if (lineup.opponent && lineup.gameName) parts.push('vs ' + lineup.opponent);
+    if (lineup.gameDate) parts.push(formatDate(lineup.gameDate));
+    if (lineup.gameTime) parts.push(formatTime(lineup.gameTime));
+    if (!parts.length && lineup.createdAt) {
+      const d = lineup.createdAt.toDate ? lineup.createdAt.toDate() : new Date(lineup.createdAt);
+      parts.push(d.toLocaleDateString());
+    }
+    const playerCount = lineup.players ? lineup.players.length : 0;
+    parts.push(playerCount + ' player' + (playerCount !== 1 ? 's' : ''));
+
+    return `
+      <div class="lineup-item" onclick="viewLineupDetail('${lineup.id}')">
+        <div class="lineup-item-info">
+          <div class="lineup-item-title">${escHtml(title)}</div>
+          <div class="lineup-item-meta">${escHtml(parts.join(' · '))}</div>
+        </div>
+        <div class="lineup-item-arrow">›</div>
+      </div>`;
+  }).join('')}</div>`;
+}
+
+function showLineupsList() {
+  document.getElementById('lineups-list-container').style.display = '';
+  document.getElementById('lineup-detail-container').style.display = 'none';
+}
+
+function viewLineupDetail(lineupId) {
+  const lineup = _pastLineups.find(l => l.id === lineupId);
+  if (!lineup) return;
+
+  document.getElementById('lineups-list-container').style.display = 'none';
+  document.getElementById('lineup-detail-container').style.display = '';
+
+  const title = lineup.gameName || (lineup.opponent ? 'vs ' + lineup.opponent : 'Game Lineup');
+  document.getElementById('detail-title').textContent = title;
+
+  const metaParts = [];
+  if (lineup.opponent && lineup.gameName) metaParts.push('<strong>vs</strong> ' + escHtml(lineup.opponent));
+  if (lineup.gameDate) metaParts.push(formatDate(lineup.gameDate));
+  if (lineup.gameTime) metaParts.push(formatTime(lineup.gameTime));
+  if (lineup.gameLocation) metaParts.push(escHtml(lineup.gameLocation));
+  document.getElementById('detail-meta').innerHTML = metaParts.join(' · ');
+
+  const innings = lineup.innings || 6;
+  const thead = document.getElementById('detail-thead');
+  const tbody = document.getElementById('detail-tbody');
+
+  let hRow = '<tr><th>Player</th>';
+  for (let i = 1; i <= innings; i++) hRow += '<th>' + i + '</th>';
+  hRow += '</tr>';
+  thead.innerHTML = hRow;
+
+  const players = lineup.players || [];
+  tbody.innerHTML = players.map(p => {
+    let cells = '<td><div style="display:flex;align-items:center;gap:8px;"><div class="bat-order">' + p.batOrder + '</div><span>' + escHtml(p.name) + '</span></div></td>';
+    for (let i = 0; i < innings; i++) {
+      const val = (p.positions && p.positions[i]) || '';
+      const cls = val === 'Bench' ? 'bench' : val ? 'filled' : '';
+      cells += '<td class="' + cls + '">' + escHtml(val) + '</td>';
+    }
+    return '<tr>' + cells + '</tr>';
+  }).join('');
+}
+
+function printLineupDetail() {
+  window.print();
 }
 
 function backToDashboard() {
@@ -2739,10 +2954,53 @@ function goToStep4() {
   if (!hasPositions) shuffleFielding();
 }
 
-function goToStep5() {
+async function goToStep5() {
   save();
   setStep(5);
   renderExport();
+  await saveLineupToFirestore();
+}
+
+async function saveLineupToFirestore() {
+  const fb = initFirebase();
+  if (!fb || !_activeTeamId) return;
+
+  const attending = state.players.filter(p => state.attendance[p.id]);
+  const activeLineup = state.lineup.filter(r => {
+    const p = state.players.find(p => p.id === r.playerId);
+    return p && state.attendance[p.id];
+  });
+
+  if (activeLineup.length === 0) return;
+
+  const lineupData = {
+    gameName:     state.gameName || '',
+    opponent:     state.opponent || '',
+    gameDate:     state.gameDate || '',
+    gameTime:     state.gameTime || '',
+    gameLocation: state.gameLocation || '',
+    gameNotes:    state.gameNotes || '',
+    innings:      state.innings || 6,
+    players: activeLineup.map((row, idx) => {
+      const player = state.players.find(p => p.id === row.playerId);
+      return {
+        playerId:  row.playerId,
+        name:      player ? player.name : 'Unknown',
+        batOrder:  idx + 1,
+        positions: row.positions || []
+      };
+    }),
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    createdBy: fb.auth.currentUser ? fb.auth.currentUser.uid : ''
+  };
+
+  try {
+    await fb.db.collection('teams').doc(_activeTeamId)
+      .collection('lineups').add(lineupData);
+    console.log('Lineup saved to Firestore');
+  } catch(e) {
+    console.error('Failed to save lineup:', e);
+  }
 }
 
 function setStep(n) {
