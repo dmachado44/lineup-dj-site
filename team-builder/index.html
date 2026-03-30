@@ -619,14 +619,8 @@
       background: var(--white);
       color: var(--text);
       cursor: pointer;
-      min-width: 140px;
-      flex-shrink: 0;
-      -webkit-appearance: none;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238E8E93' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      padding-right: 32px;
+      width: 150px;
+      flex: 0 0 150px;
     }
 
     /* iOS-style toggle */
@@ -1368,6 +1362,7 @@
         <button id="step3-back" class="btn btn-ghost" onclick="goToStep2()">← Back to League Rules</button>
         <div style="display:flex;align-items:center;gap:12px;">
           <div style="font-size:13px;color:var(--muted);" id="step2-status"></div>
+          <button id="step3-save-exit" class="btn btn-outline btn-lg" style="display:none" onclick="saveAndExit()">Save &amp; Exit</button>
           <button id="step3-continue" class="btn btn-primary btn-lg" onclick="goToStep4()">Continue to Edit Lineup →</button>
         </div>
       </div>
@@ -1894,26 +1889,27 @@ function renderWizardBar() {
 }
 
 function updateStepFooters() {
-  const step1cont = document.getElementById('step1-continue');
-  const step3back = document.getElementById('step3-back');
-  const step3cont = document.getElementById('step3-continue');
-  const step4back = document.getElementById('step4-back');
+  const step1cont     = document.getElementById('step1-continue');
+  const step3back     = document.getElementById('step3-back');
+  const step3saveExit = document.getElementById('step3-save-exit');
+  const step3cont     = document.getElementById('step3-continue');
+  const step4back     = document.getElementById('step4-back');
   const gameInfoSection = document.getElementById('step3-game-info');
   const rosterSection   = document.getElementById('step3-roster');
 
   // Reset all to defaults first
-  if (step1cont) { step1cont.textContent = 'Continue to League Rules →'; step1cont.onclick = goToStep2; step1cont.style.display = ''; }
-  if (step3back) { step3back.style.display = ''; step3back.textContent = '← Back to League Rules'; step3back.onclick = goToStep2; }
-  if (step3cont) { step3cont.textContent = 'Continue to Edit Lineup →'; step3cont.onclick = goToStep4; }
-  if (step4back) { step4back.style.display = ''; step4back.textContent = '← Back to Setup'; step4back.onclick = goToStep3; }
+  if (step1cont)     { step1cont.textContent = 'Continue to League Rules →'; step1cont.onclick = goToStep2; step1cont.style.display = ''; }
+  if (step3back)     { step3back.style.display = ''; step3back.textContent = '← Back to League Rules'; step3back.onclick = goToStep2; }
+  if (step3saveExit) { step3saveExit.style.display = 'none'; }
+  if (step3cont)     { step3cont.textContent = 'Continue to Edit Lineup →'; step3cont.onclick = goToStep4; }
+  if (step4back)     { step4back.style.display = ''; step4back.textContent = '← Back to Setup'; step4back.onclick = goToStep3; }
 
   if (_appMode === 'setup') {
-    // Step 3 shows roster only
     if (gameInfoSection) gameInfoSection.style.display = 'none';
     if (rosterSection)   rosterSection.style.display = '';
-    if (step3cont) { step3cont.textContent = 'Set your first lineup →'; step3cont.onclick = enterLineupMode; }
+    if (step3saveExit) step3saveExit.style.display = '';
+    if (step3cont) { step3cont.textContent = 'Set your first lineup →'; step3cont.onclick = saveAndSetLineup; }
   } else if (_appMode === 'lineup') {
-    // Step 3 shows game info only; step 4 back button goes to Game Info
     if (gameInfoSection) gameInfoSection.style.display = '';
     if (rosterSection)   rosterSection.style.display = 'none';
     if (step3back) step3back.style.display = 'none';
@@ -1925,13 +1921,96 @@ function updateStepFooters() {
     if (step3back) step3back.style.display = 'none';
     if (step3cont) { step3cont.textContent = 'Done ✓'; step3cont.onclick = function() { save(); backToDashboard(); }; }
   } else if (_appMode === 'team') {
-    if (step1cont) { step1cont.textContent = 'Save Team ✓'; step1cont.onclick = function() { saveTeam(); backToDashboard(); }; }
+    if (step1cont) { step1cont.textContent = 'Save Team ✓'; step1cont.onclick = function() { saveTeamToFirestore().then(backToDashboard); }; }
   }
 }
 
 function enterLineupMode() {
   _appMode = 'lineup';
   setStep(3);
+}
+
+async function saveTeamToFirestore() {
+  const fb = initFirebase();
+  if (!fb || !fb.auth.currentUser) {
+    alert('Please sign in to save your team.');
+    return false;
+  }
+
+  saveTeam(); // flush form fields into state
+  if (!state.teamName) {
+    alert('Please enter a team name before saving.');
+    return false;
+  }
+
+  const uid = fb.auth.currentUser.uid;
+  const teamData = {
+    name:        state.teamName,
+    sport:       state.teamSport,
+    level:       state.teamLevel,
+    ageGroup:    state.teamAgeGroup,
+    season:      state.teamSeason,
+    year:        state.teamYear,
+    notes:       state.teamNotes,
+    leagueRules: state.leagueRules,
+    innings:     state.innings,
+    uid,
+    updatedAt:   firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  try {
+    let teamId = _activeTeamId;
+
+    if (!teamId) {
+      // Brand new team — create the doc and register it under the user
+      const ref = await fb.db.collection('teams').add({
+        ...teamData,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      teamId = ref.id;
+      _activeTeamId = teamId;
+      // Register team ID under the user's owned list
+      await fb.db.collection('users').doc(uid).set(
+        { ownedTeamIds: firebase.firestore.FieldValue.arrayUnion(teamId) },
+        { merge: true }
+      );
+    } else {
+      await fb.db.collection('teams').doc(teamId).set(teamData, { merge: true });
+    }
+
+    // Save players as a subcollection batch
+    if (state.players.length > 0) {
+      const batch = fb.db.batch();
+      state.players.forEach(player => {
+        // Strip any 'p_' prefix for the doc ID
+        const docId = player.id.replace(/^(imp_|p_)/, '') || player.id;
+        const ref = fb.db.collection('teams').doc(teamId).collection('players').doc(docId);
+        batch.set(ref, { name: player.name, prefPos: player.prefPos || [], gender: player.gender || '' });
+      });
+      await batch.commit();
+    }
+
+    // Refresh the in-memory team list so the dashboard shows the new team
+    await loadUserTeams(fb.auth.currentUser);
+    return true;
+  } catch(e) {
+    console.error('saveTeamToFirestore error:', e);
+    alert('Error saving team. Please try again.');
+    return false;
+  }
+}
+
+async function saveAndExit() {
+  const ok = await saveTeamToFirestore();
+  if (ok) backToDashboard();
+}
+
+async function saveAndSetLineup() {
+  const ok = await saveTeamToFirestore();
+  if (ok) {
+    _appMode = 'lineup';
+    setStep(3);
+  }
 }
 
 function backToDashboard() {
