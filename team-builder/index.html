@@ -521,61 +521,166 @@
     .add-player-row input { flex: 1; }
 
     /* ── LEAGUE RULES ── */
-    .pos-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-      gap: 8px;
-      margin-bottom: 20px;
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 18px;
     }
-    .pos-toggle {
-      padding: 10px 12px;
+    .pos-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .pos-header-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+    .pos-count-badge {
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--teal);
+      color: var(--black);
+      padding: 2px 9px;
+      border-radius: 100px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .preset-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0 18px;
+    }
+    .preset-btn {
+      padding: 8px 16px;
       border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-pill);
       background: var(--white);
       font-size: 13px;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.1s;
+      font-family: inherit;
+      color: var(--text);
+      transition: all 0.15s;
     }
-    .pos-toggle:hover { border-color: var(--gray-4); background: var(--bg-secondary); }
+    .preset-btn:hover { border-color: var(--black); background: var(--bg-secondary); }
+    .pos-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .pos-toggle {
+      padding: 9px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-pill);
+      background: var(--white);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .pos-toggle:hover { border-color: var(--gray-3); background: var(--bg-secondary); }
     .pos-toggle.on {
-      background: var(--black);
-      color: var(--white);
-      border-color: var(--black);
+      background: var(--teal);
+      color: var(--black);
+      border-color: var(--teal);
+      font-weight: 600;
     }
+    .pos-hint { font-size: 12px; color: var(--muted); }
 
-    .rule-card { margin-bottom: 20px; }
     .rule-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 0;
+      padding: 18px 0;
       border-bottom: 1px solid var(--border);
+      gap: 20px;
     }
     .rule-row:last-child { border-bottom: none; }
-    .rule-label { font-size: 13px; font-weight: 500; }
-    .rule-input { max-width: 120px; }
+    .rule-text { flex: 1; min-width: 0; }
+    .rule-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .rule-sub { font-size: 13px; color: var(--muted); line-height: 1.4; }
+    .rule-select {
+      padding: 9px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--white);
+      color: var(--text);
+      cursor: pointer;
+      min-width: 140px;
+      flex-shrink: 0;
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238E8E93' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+
+    /* iOS-style toggle */
+    .toggle-switch { position: relative; display: inline-block; flex-shrink: 0; cursor: pointer; }
+    .toggle-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      display: block;
+      width: 51px;
+      height: 31px;
+      background: var(--gray-4);
+      border-radius: 100px;
+      transition: background 0.2s;
+      position: relative;
+    }
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 27px;
+      height: 27px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+      transition: transform 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-track { background: #34C759; }
+    .toggle-switch input:checked + .toggle-track::after { transform: translateX(20px); }
 
     .inning-control {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
+      flex-shrink: 0;
     }
     .inning-control button {
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      border: 1px solid var(--border);
+      border: 1.5px solid var(--border);
       background: var(--white);
-      font-size: 16px;
+      font-size: 18px;
       cursor: pointer;
       font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
     }
-    .inning-control button:hover { background: var(--bg-secondary); }
+    .inning-control button:hover { background: var(--bg-secondary); border-color: var(--gray-3); }
     .inning-count {
-      font-size: 16px;
-      font-weight: 600;
-      min-width: 24px;
+      font-size: 20px;
+      font-weight: 700;
+      min-width: 28px;
       text-align: center;
     }
 
@@ -1083,67 +1188,116 @@
 
     <!-- ══════════════ STEP 2: LEAGUE RULES ══════════════ -->
     <div id="step-2" class="step-panel" style="display:none;">
+
+      <!-- Field Positions -->
       <div class="card">
-        <div class="card-title">Field Positions</div>
-        <div class="card-sub">Select which positions will be used in your lineup. Or choose a preset.</div>
-        <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
-          <button class="btn btn-ghost btn-sm" onclick="applyPreset('standard9')">Standard 9</button>
-          <button class="btn btn-ghost btn-sm" onclick="applyPreset('standard10')">Standard 10 (UTL)</button>
-          <button class="btn btn-ghost btn-sm" onclick="applyPreset('socLikeCo')">Soccer-like Co-ed</button>
+        <div class="section-label">Field Positions</div>
+        <div class="pos-header">
+          <span class="pos-header-label">Active Positions</span>
+          <span class="pos-count-badge" id="pos-count-badge">9 Selected</span>
+        </div>
+        <div style="font-size:13px;color:var(--muted);">Quick presets — or tap individual positions to customize:</div>
+        <div class="preset-row">
+          <button class="preset-btn" onclick="applyPreset('standard9')">⚾ Standard 9</button>
+          <button class="preset-btn" onclick="applyPreset('standard10')">🔟 Standard 10</button>
+          <button class="preset-btn" onclick="applyPreset('coachPitch')">🤾 Coach Pitch</button>
+          <button class="preset-btn" onclick="applyPreset('softball10')">🥎 Softball (10)</button>
         </div>
         <div class="pos-grid" id="pos-grid"></div>
-        <div style="font-size:12px;color:var(--muted);">
-          <strong id="pos-count-badge">9 selected</strong> positions · Use these in your lineup below
-        </div>
+        <div class="pos-hint">Teal = active in lineup · Tap to toggle on/off</div>
       </div>
 
-      <div class="card rule-card">
-        <div class="card-title">League Rules</div>
-        <div class="card-sub">Set rules that guide the auto-assign algorithm.</div>
+      <!-- Game Rules -->
+      <div class="card">
+        <div class="section-label">Game Rules</div>
 
         <div class="rule-row">
-          <label class="rule-label">
-            <input type="checkbox" id="rule-all-bat" onchange="saveRules()" /> All players must bat
+          <div class="rule-text">
+            <div class="rule-title">Number of Innings</div>
+            <div class="rule-sub">How many innings does a typical game last?</div>
+          </div>
+          <div class="inning-control">
+            <button onclick="changeInnings(-1)">−</button>
+            <span class="inning-count" id="inning-count">6</span>
+            <button onclick="changeInnings(1)">+</button>
+          </div>
+        </div>
+
+        <div class="rule-row">
+          <div class="rule-text">
+            <div class="rule-title">All Players Bat</div>
+            <div class="rule-sub">Every player on the roster is included in the batting order</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="rule-all-bat" onchange="saveRules()" />
+            <span class="toggle-track"></span>
           </label>
         </div>
 
         <div class="rule-row">
-          <label class="rule-label">
-            <input type="checkbox" id="rule-back-to-back" onchange="saveRules()" checked /> Allow back-to-back at-bats
+          <div class="rule-text">
+            <div class="rule-title">Same Position Back-to-Back</div>
+            <div class="rule-sub">Allow a player to play the same position in consecutive innings</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="rule-back-to-back" onchange="saveRules()" />
+            <span class="toggle-track"></span>
           </label>
         </div>
 
         <div class="rule-row">
-          <label class="rule-label">Max times in same position per game:</label>
-          <select id="rule-max-same-pos" class="rule-input" onchange="saveRules()">
-            <option value="0">No limit</option>
-            <option value="1">Once</option>
-            <option value="2">Twice</option>
-            <option value="3">3× or more</option>
+          <div class="rule-text">
+            <div class="rule-title">Max Innings at Same Position</div>
+            <div class="rule-sub">Limit how many total innings a player can play any one position</div>
+          </div>
+          <select id="rule-max-same-pos" class="rule-select" onchange="saveRules()">
+            <option value="0">No Maximum</option>
+            <option value="1">1 inning</option>
+            <option value="2">2 innings</option>
+            <option value="3">3 innings</option>
           </select>
         </div>
 
         <div class="rule-row">
-          <label class="rule-label">
-            <input type="checkbox" id="rule-coed" onchange="saveRules()" /> Co-ed (equal M/F playing time)
+          <div class="rule-text">
+            <div class="rule-title">Co-Ed League</div>
+            <div class="rule-sub">Gender-specific rules apply (noted in export)</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="rule-coed" onchange="saveRules()" />
+            <span class="toggle-track"></span>
           </label>
-        </div>
-
-        <div class="rule-row">
-          <label class="rule-label">
-            <input type="checkbox" id="rule-pitcher-return" onchange="saveRules()" /> Pitcher can return to field
-          </label>
-        </div>
-
-        <div class="rule-row">
-          <label class="rule-label">Max innings pitched (0 = unlimited):</label>
-          <input type="number" id="rule-max-pitch" class="rule-input" value="0" min="0" onchange="saveRules()" />
         </div>
       </div>
 
-      <div class="card" style="background:#f9f9f9;border:none;">
-        <div style="font-size:13px;color:var(--muted);">
-          <strong>Your config:</strong> <span id="rules-summary"></span>
+      <!-- Pitching Rules -->
+      <div class="card">
+        <div class="section-label">Pitching Rules</div>
+
+        <div class="rule-row">
+          <div class="rule-text">
+            <div class="rule-title">Pitcher Can Return to Pitch</div>
+            <div class="rule-sub">Once a pitcher is removed they can return to the mound later</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="rule-pitcher-return" onchange="saveRules()" />
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+
+        <div class="rule-row">
+          <div class="rule-text">
+            <div class="rule-title">Max Innings Pitched Per Player</div>
+            <div class="rule-sub">Limit how many innings any one player can pitch per game</div>
+          </div>
+          <select id="rule-max-pitch" class="rule-select" onchange="saveRules()">
+            <option value="0">No Maximum</option>
+            <option value="1">1 inning</option>
+            <option value="2">2 innings</option>
+            <option value="3">3 innings</option>
+            <option value="4">4 innings</option>
+            <option value="5">5 innings</option>
+          </select>
         </div>
       </div>
 
@@ -1181,14 +1335,6 @@
             <div class="field">
               <label>Location (optional)</label>
               <input type="text" id="game-location" placeholder="e.g. City Park, Diamond 3" />
-            </div>
-            <div class="field">
-              <label>Number of Innings</label>
-              <div class="inning-control">
-                <button onclick="changeInnings(-1)">−</button>
-                <span class="inning-count" id="inning-count">6</span>
-                <button onclick="changeInnings(1)">+</button>
-              </div>
             </div>
             <div class="field full">
               <label>Notes (optional)</label>
@@ -1798,14 +1944,15 @@ function backToDashboard() {
 // ═══════════════════════════════════════════════════
 const ALL_POSITIONS = ['P','C','1B','2B','3B','SS','LF','CF','RF','LCF','RCF','UTL1','UTL2','UTL3'];
 const POS_FULL = {
-  'P':'Pitcher','C':'Catcher','1B':'1st Base','2B':'2nd Base','3B':'3rd Base','SS':'Shortstop',
-  'LF':'Left Field','CF':'Center Field','RF':'Right Field','LCF':'Left-Center','RCF':'Right-Center',
+  'P':'Pitcher','C':'Catcher','1B':'First Base','2B':'Second Base','3B':'Third Base','SS':'Shortstop',
+  'LF':'Left Field','CF':'Center Field','RF':'Right Field','LCF':'Left-Center Field','RCF':'Right-Center Field',
   'UTL1':'Utility 1','UTL2':'Utility 2','UTL3':'Utility 3'
 };
 const PRESETS = {
-  standard9: ['P','C','1B','2B','3B','SS','LF','CF','RF'],
+  standard9:  ['P','C','1B','2B','3B','SS','LF','CF','RF'],
   standard10: ['P','C','1B','2B','3B','SS','LF','CF','RF','UTL1'],
-  socLikeCo: ['P','C','1B','2B','3B','SS','LF','CF','RF']
+  coachPitch: ['P','C','1B','2B','3B','SS','LF','RF'],
+  softball10: ['P','C','1B','2B','3B','SS','LF','CF','RF','RCF']
 };
 
 const state = {
