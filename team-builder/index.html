@@ -744,26 +744,20 @@
     .att-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
-      border-radius: 100px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
+      padding: 9px 16px;
+      border-radius: var(--radius-pill);
+      background: var(--white);
+      border: 1.5px solid var(--border);
       font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
       cursor: pointer;
-      transition: all 0.1s;
+      font-family: inherit;
+      transition: all 0.15s;
     }
-    .att-pill:hover { background: var(--gray-5); }
-    .att-pill.in { background: rgba(52,199,89,0.1); border-color: var(--green); }
-    .att-pill.out { background: rgba(255,59,48,0.1); border-color: var(--red); }
-    .att-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #ccc;
-    }
-    .att-pill.in .att-dot { background: var(--green); }
-    .att-pill.out .att-dot { background: var(--red); }
+    .att-pill:hover { border-color: var(--gray-3); background: var(--bg-secondary); }
+    .att-pill.in { background: var(--teal); border-color: var(--teal); font-weight: 600; }
+    .att-pill.out { background: var(--white); border-color: var(--border); color: var(--muted); }
 
     .att-count { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
     .attendance-grid {
@@ -1423,7 +1417,7 @@
         <div class="attendance-grid" id="attendance-grid"></div>
       </div>
 
-      <div class="card" style="padding:16px;">
+      <div class="card">
         <div class="lineup-toolbar">
           <div>
             <div class="card-title" style="margin-bottom:2px;">Batting Order & Fielding Positions</div>
@@ -1433,8 +1427,8 @@
           <button class="btn btn-ghost btn-sm" onclick="shuffleBatting()" title="Randomly shuffle batting order">
             🔀 Shuffle Batting
           </button>
-          <button class="btn btn-teal btn-sm" onclick="shuffleFielding()" title="Auto-assign positions fairly across all innings">
-            ⚡ Auto-Assign Positions
+          <button class="btn btn-teal btn-sm" onclick="shuffleFielding()" title="Re-randomize position assignments across all innings">
+            ⚡ Rearrange Positions
           </button>
           <button class="btn btn-ghost btn-sm" onclick="clearFielding()">
             🗑 Clear
@@ -2377,6 +2371,10 @@ function goToStep4() {
   renderAttendance();
   renderLineupGrid();
   renderPlayingTimeSummary();
+
+  // Auto-assign positions on first visit if none are set yet
+  const hasPositions = state.lineup.some(r => r.positions && r.positions.some(p => p && p !== ''));
+  if (!hasPositions) shuffleFielding();
 }
 
 function goToStep5() {
@@ -2414,7 +2412,7 @@ function renderAttendance() {
   grid.innerHTML = state.players.map(p => `
     <div class="att-pill ${state.attendance[p.id] ? 'in' : 'out'}"
          onclick="toggleAttendance('${p.id}')">
-      <span class="att-dot"></span>${escHtml(p.name)}
+      ${escHtml(p.name)}
     </div>
   `).join('');
 }
