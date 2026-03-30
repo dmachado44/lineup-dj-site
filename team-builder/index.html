@@ -482,18 +482,20 @@
     .pos-pills { display: flex; flex-wrap: wrap; gap: 6px; }
     .pos-pill {
       font-size: 12px;
-      background: var(--gray-5);
-      color: #555;
-      border-radius: 100px;
-      padding: 4px 8px;
-      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--white);
+      color: var(--muted);
       cursor: pointer;
-      transition: all 0.1s;
+      transition: all 0.15s;
+      font-weight: 500;
     }
-    .pos-pill:hover { background: var(--gray-4); }
+    .pos-pill:hover { border-color: #aaa; }
     .pos-pill.selected {
-      background: var(--black);
-      color: var(--white);
+      background: var(--teal);
+      color: var(--black);
+      border-color: var(--teal);
       font-weight: 600;
     }
 
@@ -2940,11 +2942,14 @@ function renderPlayerList() {
           style="flex:1;min-width:80px;" />
         <button class="btn btn-danger btn-icon btn-sm" onclick="removePlayer('${player.id}')" title="Remove player">✕</button>
       </div>
-      <div class="pos-pills">
-        ${getActiveFieldPositions().map(pos =>
-          `<span class="pos-pill ${player.prefPos.includes(pos) ? 'selected' : ''}"
-            onclick="togglePrefPos('${player.id}','${pos}')">${pos}</span>`
-        ).join('')}
+      <div class="priority-row">
+        <span class="priority-label">Positions:</span>
+        <div class="pos-pills">
+          ${getActiveFieldPositions().map(pos =>
+            `<span class="pos-pill ${player.prefPos.includes(pos) ? 'selected' : ''}"
+              onclick="togglePrefPos('${player.id}','${pos}')">${pos}</span>`
+          ).join('')}
+        </div>
       </div>
       <div class="priority-row">
         <span class="priority-label">Prioritize:</span>
