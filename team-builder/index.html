@@ -1778,6 +1778,9 @@ async function selectTeam(teamId, closeDropdown = true) {
       fb.db.collection('teams').doc(teamId).collection('players').get()
     ]);
 
+    // Stale-check: if the user switched teams while this fetch was in-flight, discard results
+    if (_activeTeamId !== teamId) return;
+
     const teamData = teamDoc.exists ? teamDoc.data() : {};
     const teamName = teamData.name || 'Unnamed Team';
 
@@ -1854,13 +1857,17 @@ function showView(view) {
   if (view === 'builder') document.getElementById('view-builder').classList.add('active');
 }
 
-function enterBuilder(teamId, mode, startStep) {
+async function enterBuilder(teamId, mode, startStep) {
   _appMode = mode || 'setup';
   const builderEl = document.getElementById('view-builder');
 
   if (mode === 'settings') {
     builderEl.classList.add('settings-mode');
-    if (teamId) selectTeam(teamId, false);
+    if (teamId) {
+      await selectTeam(teamId, false);
+      // If another team was selected while loading, bail — that enterBuilder call will finish instead
+      if (_activeTeamId !== teamId) return;
+    }
     // Show steps 1–3 all at once; hide 4 and 5
     [1,2,3,4,5].forEach(i => {
       document.getElementById(`step-${i}`).style.display = (i <= 3) ? '' : 'none';
@@ -1871,7 +1878,9 @@ function enterBuilder(teamId, mode, startStep) {
   } else {
     builderEl.classList.remove('settings-mode');
     if (teamId) {
-      selectTeam(teamId, false);
+      await selectTeam(teamId, false);
+      // If another team was selected while loading, bail — that enterBuilder call will finish instead
+      if (_activeTeamId !== teamId) return;
     } else {
       resetForNewTeam();
     }
