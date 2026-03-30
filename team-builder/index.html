@@ -2206,6 +2206,7 @@ function togglePos(pos) {
   if (idx === -1) active.push(pos);
   else if (active.length > 1) active.splice(idx, 1);
   renderPosGrid();
+  renderPlayerList();  // keep roster pills in sync
   save();
 }
 
