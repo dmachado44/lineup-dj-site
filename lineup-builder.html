@@ -1113,26 +1113,8 @@
 
 <!-- STEP WIZARD -->
 <div class="wizard-bar">
-  <div class="wizard-steps">
-    <div class="wstep active" id="wstep-1">
-      <div class="wstep-num">1</div> Team
-    </div>
-    <div class="wstep-arrow">›</div>
-    <div class="wstep" id="wstep-2">
-      <div class="wstep-num">2</div> League Rules
-    </div>
-    <div class="wstep-arrow">›</div>
-    <div class="wstep" id="wstep-3">
-      <div class="wstep-num">3</div> Roster &amp; Setup
-    </div>
-    <div class="wstep-arrow">›</div>
-    <div class="wstep" id="wstep-4">
-      <div class="wstep-num">4</div> Edit Lineup
-    </div>
-    <div class="wstep-arrow">›</div>
-    <div class="wstep" id="wstep-5">
-      <div class="wstep-num">5</div> Export
-    </div>
+  <div class="wizard-steps" id="wizard-steps">
+    <!-- dynamically rendered by renderWizardBar() -->
   </div>
 </div>
 
@@ -1457,7 +1439,7 @@
       <button class="btn btn-ghost" onclick="goToStep2()">← Back to League Rules</button>
       <div style="display:flex;align-items:center;gap:12px;">
         <div style="font-size:13px;color:var(--muted);" id="step2-status"></div>
-        <button class="btn btn-primary btn-lg" onclick="goToStep4()">Continue to Edit Lineup →</button>
+        <button class="btn btn-primary btn-lg" id="step3-continue-btn" onclick="enterLineupMode()">Set your first lineup →</button>
       </div>
     </div>
   </div>
@@ -1513,7 +1495,7 @@
     </div>
 
     <div class="step-footer">
-      <button class="btn btn-ghost" onclick="goToStep3()">← Back to Setup</button>
+      <button class="btn btn-ghost" id="step4-back-btn" onclick="goToStep3()">← Back to Roster</button>
       <button class="btn btn-cta btn-lg" onclick="goToStep5()">Save &amp; Export →</button>
     </div>
   </div>
@@ -1929,6 +1911,7 @@ function openNewTeam() {
 
 // Close modal when clicking overlay background
 document.addEventListener('DOMContentLoaded', () => {
+  renderWizardBar();
   initFirebase();
   document.getElementById('auth-overlay').addEventListener('click', e => {
     if (e.target === document.getElementById('auth-overlay')) closeAuthModal();
@@ -2333,11 +2316,15 @@ function goToStep2() {
 }
 
 function goToStep3() {
-  // League Rules → Roster
+  // Coming back from lineup → roster: return to setup mode so the wizard bar is correct
+  if (_appMode === 'lineup') _appMode = 'setup';
   saveRules();
   setStep(3);
   renderPlayerList();
   updateStep2Status();
+  // Restore the step-3 continue button label
+  const btn = document.getElementById('step3-continue-btn');
+  if (btn) { btn.textContent = 'Set your first lineup →'; btn.onclick = enterLineupMode; }
 }
 
 function goToStep4() {
@@ -2385,13 +2372,108 @@ function goToStep5() {
   renderExport();
 }
 
+// ── App mode: controls which wizard bar and navigation are shown ──
+// 'setup'  → 3-step new-team flow (Team Setup › League Rules › Roster)
+// 'lineup' → 2-step lineup flow (Edit Lineup › Export)
+// 'roster' → single-view: edit roster only
+// 'team'   → single-view: edit team only
+let _appMode = 'setup';
+
+function renderWizardBar() {
+  const container = document.getElementById('wizard-steps');
+  if (!container) return;
+
+  if (_appMode === 'setup') {
+    const steps = [
+      { id: 1, label: 'Team Setup' },
+      { id: 2, label: 'League Rules' },
+      { id: 3, label: 'Roster' },
+    ];
+    container.innerHTML = steps.map((s, idx) => {
+      const cls = `wstep" id="wstep-${s.id}`;
+      return (idx > 0 ? '<div class="wstep-arrow">›</div>' : '') +
+        `<div class="wstep" id="wstep-${s.id}"><div class="wstep-num">${s.id}</div> ${s.label}</div>`;
+    }).join('');
+
+  } else if (_appMode === 'lineup') {
+    container.innerHTML = `
+      <div class="wstep" id="wstep-4"><div class="wstep-num">1</div> Edit Lineup</div>
+      <div class="wstep-arrow">›</div>
+      <div class="wstep" id="wstep-5"><div class="wstep-num">2</div> Export</div>`;
+
+  } else if (_appMode === 'roster') {
+    container.innerHTML = `<div class="wstep active" style="font-size:15px;">✏️ Edit Roster</div>`;
+
+  } else if (_appMode === 'team') {
+    container.innerHTML = `<div class="wstep active" style="font-size:15px;">✏️ Edit Team</div>`;
+  }
+
+  // Apply active/done classes based on current visible step
+  const currentStep = [1,2,3,4,5].find(i =>
+    document.getElementById(`step-${i}`) &&
+    document.getElementById(`step-${i}`).style.display !== 'none'
+  );
+  if (currentStep) _applyWizardActiveState(currentStep);
+}
+
+function _applyWizardActiveState(activeStep) {
+  [1,2,3,4,5].forEach(i => {
+    const el = document.getElementById(`wstep-${i}`);
+    if (!el) return;
+    el.className = 'wstep' + (i === activeStep ? ' active' : i < activeStep ? ' done' : '');
+  });
+}
+
 function setStep(n) {
   [1,2,3,4,5].forEach(i => {
     document.getElementById(`step-${i}`).style.display = i === n ? '' : 'none';
-    const ws = document.getElementById(`wstep-${i}`);
-    ws.className = 'wstep' + (i === n ? ' active' : i < n ? ' done' : '');
   });
+  renderWizardBar();
   window.scrollTo(0, 0);
+}
+
+// ── Mode entry points ──
+
+// Called from step 3 "Set your first lineup" button — transitions to 2-step lineup flow
+function enterLineupMode() {
+  _appMode = 'lineup';
+  goToStep4();
+}
+
+// Jump directly to roster editor (from dashboard "Edit Roster")
+function openEditRoster() {
+  _appMode = 'roster';
+  save();
+  // Sync lineup rows with current roster before going to step 3
+  const existingIds = state.lineup.map(r => r.playerId);
+  state.players.forEach(p => {
+    if (!existingIds.includes(p.id)) {
+      state.lineup.push({ playerId: p.id, positions: Array(state.innings).fill('') });
+    }
+  });
+  state.lineup = state.lineup.filter(r => state.players.find(p => p.id === r.playerId));
+  state.players.forEach(p => {
+    if (state.attendance[p.id] === undefined) state.attendance[p.id] = true;
+  });
+  setStep(3);
+  renderPlayerList();
+  updateStep2Status();
+  renderWizardBar();
+  // Show done button instead of "Set your first lineup"
+  const btn = document.getElementById('step3-continue-btn');
+  if (btn) { btn.textContent = 'Done ✓'; btn.onclick = () => { saveRules(); _appMode = 'setup'; }; }
+}
+
+// Jump directly to team settings (from dashboard "Edit Team")
+function openEditTeam() {
+  _appMode = 'team';
+  setStep(1);
+  renderWizardBar();
+  // Restore saved team fields
+  if (document.getElementById('team-name')) document.getElementById('team-name').value = state.teamName || '';
+  // Show done button instead of "Continue to League Rules"
+  const footerBtn = document.querySelector('#step-1 .step-footer .btn-primary');
+  if (footerBtn) { footerBtn.textContent = 'Save Team ✓'; footerBtn.onclick = () => { saveTeam(); _appMode = 'setup'; }; }
 }
 
 // ═══════════════════════════════════════════════════
