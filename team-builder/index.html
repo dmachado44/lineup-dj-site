@@ -2234,25 +2234,51 @@ function onPosChange(playerId, inningIdx, value) {
 }
 
 function checkConflicts() {
-  const alert = document.getElementById('conflicts-alert');
+  const alertEl = document.getElementById('conflicts-alert');
   const conflicts = [];
-  state.lineup.forEach(row => {
-    const pos = row.positions;
-    for (let i = 0; i < pos.length; i++) {
-      if (pos[i] && pos[i] !== 'Bench') {
-        const count = pos.filter((p, j) => p === pos[i] && j !== i && p && p !== 'Bench').length;
-        if (count > 0) {
-          const player = state.players.find(p => p.id === row.playerId);
-          conflicts.push(`${player?.name} is in ${pos[i]} multiple times in inning ${i+1}`);
+  const attending = state.players.filter(p => state.attendance[p.id]);
+
+  // Check 1: two players at the same position in the same inning (the real conflict)
+  for (let inning = 0; inning < state.innings; inning++) {
+    const posUsed = {};
+    attending.forEach(player => {
+      const row = state.lineup.find(r => r.playerId === player.id);
+      if (!row) return;
+      const pos = row.positions[inning];
+      if (pos && pos !== 'Bench') {
+        if (posUsed[pos]) {
+          conflicts.push(`${pos} is assigned to multiple players in inning ${inning + 1}`);
+        } else {
+          posUsed[pos] = player.name;
         }
       }
-    }
-  });
-  if (conflicts.length > 0) {
-    alert.style.display = '';
-    alert.innerHTML = '⚠ ' + conflicts.slice(0, 3).join('<br>');
+    });
+  }
+
+  // Check 2: maxSamePosition rule violation per player
+  const maxSame = state.leagueRules.maxSamePosition || 0;
+  if (maxSame > 0) {
+    attending.forEach(player => {
+      const row = state.lineup.find(r => r.playerId === player.id);
+      if (!row) return;
+      const posCounts = {};
+      row.positions.forEach(pos => {
+        if (pos && pos !== 'Bench') posCounts[pos] = (posCounts[pos] || 0) + 1;
+      });
+      Object.entries(posCounts).forEach(([pos, count]) => {
+        if (count > maxSame) {
+          conflicts.push(`${player.name} plays ${pos} ${count}× (max: ${maxSame})`);
+        }
+      });
+    });
+  }
+
+  const unique = [...new Set(conflicts)];
+  if (unique.length > 0) {
+    alertEl.style.display = '';
+    alertEl.innerHTML = '⚠ ' + unique.slice(0, 3).join('<br>');
   } else {
-    alert.style.display = 'none';
+    alertEl.style.display = 'none';
   }
 }
 
@@ -2312,21 +2338,31 @@ function shuffleFielding() {
           return;
         }
 
-        // Respect maxSamePosition rule
+        // Positions this player has already played earlier in this game
+        const playedSoFar = new Set(
+          row.positions.slice(0, inning).filter(p => p && p !== 'Bench')
+        );
+
+        // Prefer positions not yet played (variety first)
+        const fresh = available.filter(p => !playedSoFar.has(p));
+
+        // Apply maxSamePosition hard rule if set
         const maxSame = state.leagueRules.maxSamePosition || 0;
-        const ruleFiltered = maxSame === 0
+        const hardFiltered = maxSame === 0
           ? available
           : available.filter(p => {
               const timesPlayed = row.positions.slice(0, inning).filter(pos => pos === p).length;
               return timesPlayed < maxSame;
             });
-        const candidates = ruleFiltered.length > 0 ? ruleFiltered : available;
 
-        // Prefer the player's preferred positions
-        const preferred = candidates.filter(p => player.prefPos && player.prefPos.includes(p));
-        const pool = preferred.length > 0 ? preferred : candidates;
+        // Build pool: fresh positions first → fall back to rule-filtered → last resort any available
+        const basePool = fresh.length > 0 ? fresh : (hardFiltered.length > 0 ? hardFiltered : available);
+
+        // Within that pool, prefer the player's preferred positions
+        const preferred = basePool.filter(p => player.prefPos && player.prefPos.includes(p));
+        const pool = preferred.length > 0 ? preferred : basePool;
+
         const chosen = pool[Math.floor(Math.random() * pool.length)];
-
         row.positions[inning] = chosen;
         takenPositions.add(chosen);
       } else {
