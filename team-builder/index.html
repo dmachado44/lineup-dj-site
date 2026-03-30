@@ -509,7 +509,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 6px;
+      margin-bottom: 12px;
     }
     .pos-header-label {
       font-size: 11px;
@@ -1208,13 +1208,11 @@
       <div class="card">
         <div class="card-title">Import from Lineup DJ</div>
         <div class="card-sub">If you've already set up this team in Lineup DJ, paste your invite code below to import players.</div>
-        <div class="form-grid">
-          <div class="field">
-            <label>Team Invite Code</label>
-            <input type="text" id="team-import-code" placeholder="e.g. ABC123" />
-          </div>
+        <label style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);display:block;margin-bottom:8px;">Team Invite Code</label>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input type="text" id="team-import-code" placeholder="e.g. ABC123" style="flex:1;" />
+          <button class="btn btn-ghost btn-sm" onclick="importTeamByCode()" style="white-space:nowrap;flex-shrink:0;">🔗 Import Team</button>
         </div>
-        <button class="btn btn-ghost btn-sm" onclick="importTeamByCode()" style="margin-top:8px;">🔗 Import Team</button>
         <div id="import-status" class="import-status"></div>
       </div>
 
@@ -1236,9 +1234,9 @@
           <span class="pos-header-label">Active Positions</span>
           <span class="pos-count-badge" id="pos-count-badge">9 Selected</span>
         </div>
-        <div style="font-size:13px;color:var(--muted);">Tap a position to toggle it on or off for your lineup.</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:16px;">Tap a position to toggle it on or off for your lineup.</div>
         <div class="pos-grid" id="pos-grid"></div>
-        <div class="pos-hint">Teal = active in lineup · Tap to toggle on/off</div>
+        <div class="pos-hint" style="margin-top:14px;">Teal = active · Tap to toggle on/off</div>
       </div>
 
       <!-- Game Rules -->
