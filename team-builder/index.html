@@ -1833,11 +1833,14 @@ async function selectTeam(teamId, closeDropdown = true) {
 
     save();
 
-    const currentStep = [1,2,3,4,5].find(i =>
-      document.getElementById(`step-${i}`)?.style.display !== 'none'
-    );
-    if (currentStep === 3) { renderPlayerList(); updateStep2Status(); }
-    if (currentStep === 4) { renderAttendance(); renderLineupGrid(); renderPlayingTimeSummary(); }
+    // Always render ALL sections so the DOM is fresh regardless of which
+    // step is visible.  The elements always exist (just hidden), so this
+    // is safe and eliminates stale-DOM bugs when switching teams.
+    renderPlayerList();
+    updateStep2Status();
+    renderAttendance();
+    renderLineupGrid();
+    renderPlayingTimeSummary();
 
   } catch(e) {
     console.error('selectTeam error:', e);
@@ -2178,6 +2181,12 @@ function init() {
       if (parsed.leagueRules) Object.assign(state.leagueRules, parsed.leagueRules);
       Object.assign(state, parsed);
       state.leagueRules = Object.assign({}, parsed.leagueRules || state.leagueRules);
+
+      // Team-specific data must always come fresh from Firestore.
+      // Clear it so stale players from a previous team never appear.
+      state.players    = [];
+      state.attendance = {};
+      state.lineup     = [];
 
       if (document.getElementById('team-name')) document.getElementById('team-name').value = state.teamName || '';
       if (document.getElementById('team-year')) document.getElementById('team-year').value = state.teamYear || new Date().getFullYear();
