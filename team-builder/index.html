@@ -979,7 +979,7 @@
         <h1>Team Management</h1>
         <p class="dashboard-sub">Manage your teams and create game-day lineups.</p>
       </div>
-      <button class="btn btn-primary" onclick="enterBuilder(null, 1)">+ New Team</button>
+      <button class="btn btn-primary" onclick="enterBuilder(null, 'setup', 1)">+ New Team</button>
     </div>
 
     <div class="teams-grid" id="teams-grid"></div>
@@ -987,7 +987,7 @@
     <div class="team-card-empty" id="empty-state" style="display:none;">
       <div style="font-size:48px;margin-bottom:16px;">⚙️</div>
       <div class="team-card-empty-text">No teams yet</div>
-      <button class="btn btn-primary" onclick="enterBuilder(null, 1)">+ Create your first team</button>
+      <button class="btn btn-primary" onclick="enterBuilder(null, 'setup', 1)">+ Create your first team</button>
     </div>
   </div>
 </div>
@@ -1005,31 +1005,8 @@
   </div>
 
   <div class="wizard-bar">
-    <div class="wizard-steps">
-      <div class="wstep active" id="wstep-1">
-        <div class="wstep-num">1</div>
-        <span>Team Setup</span>
-      </div>
-      <div class="wstep-arrow">›</div>
-      <div class="wstep" id="wstep-2">
-        <div class="wstep-num">2</div>
-        <span>League Rules</span>
-      </div>
-      <div class="wstep-arrow">›</div>
-      <div class="wstep" id="wstep-3">
-        <div class="wstep-num">3</div>
-        <span>Roster</span>
-      </div>
-      <div class="wstep-arrow">›</div>
-      <div class="wstep" id="wstep-4">
-        <div class="wstep-num">4</div>
-        <span>Edit Lineup</span>
-      </div>
-      <div class="wstep-arrow">›</div>
-      <div class="wstep" id="wstep-5">
-        <div class="wstep-num">5</div>
-        <span>Export</span>
-      </div>
+    <div class="wizard-steps" id="wizard-steps">
+      <!-- Dynamically rendered by renderWizardBar() -->
     </div>
   </div>
 
@@ -1100,7 +1077,7 @@
 
       <div class="step-footer">
         <div></div>
-        <button class="btn btn-primary btn-lg" onclick="goToStep2()">Continue to League Rules →</button>
+        <button id="step1-continue" class="btn btn-primary btn-lg" onclick="goToStep2()">Continue to League Rules →</button>
       </div>
     </div>
 
@@ -1235,10 +1212,10 @@
       </div>
 
       <div class="step-footer">
-        <button class="btn btn-ghost" onclick="goToStep2()">← Back to League Rules</button>
+        <button id="step3-back" class="btn btn-ghost" onclick="goToStep2()">← Back to League Rules</button>
         <div style="display:flex;align-items:center;gap:12px;">
           <div style="font-size:13px;color:var(--muted);" id="step2-status"></div>
-          <button class="btn btn-primary btn-lg" onclick="goToStep4()">Continue to Edit Lineup →</button>
+          <button id="step3-continue" class="btn btn-primary btn-lg" onclick="goToStep4()">Continue to Edit Lineup →</button>
         </div>
       </div>
     </div>
@@ -1291,7 +1268,7 @@
       </div>
 
       <div class="step-footer">
-        <button class="btn btn-ghost" onclick="goToStep3()">← Back to Setup</button>
+        <button id="step4-back" class="btn btn-ghost" onclick="goToStep3()">← Back to Setup</button>
         <button class="btn btn-cta btn-lg" onclick="goToStep5()">Save &amp; Export →</button>
       </div>
     </div>
@@ -1350,6 +1327,8 @@ const FIREBASE_CONFIG = {
 let _db   = null;
 let _auth = null;
 let _authMode = 'signin'; // 'signin' | 'signup' | 'reset'
+let _appMode = 'setup';   // 'setup' | 'lineup' | 'roster' | 'team'
+let _currentStep = 1;
 
 function initFirebase() {
   if (_db) return { db: _db, auth: _auth };
@@ -1601,9 +1580,9 @@ function renderDashboard() {
         ${team.ageGroup ? `<span class="team-pill">${team.ageGroup}</span>` : ''}
       </div>
       <div class="team-card-actions">
-        <button class="btn btn-primary btn-create" onclick="enterBuilder('${team.id}', 2)">Create Lineup →</button>
-        <button class="btn btn-ghost btn-sm" onclick="enterBuilder('${team.id}', 3)">Edit Roster</button>
-        <button class="btn btn-ghost btn-sm" onclick="enterBuilder('${team.id}', 1)">Edit Team</button>
+        <button class="btn btn-primary btn-create" onclick="enterBuilder('${team.id}', 'lineup', 4)">Create Lineup →</button>
+        <button class="btn btn-ghost btn-sm" onclick="enterBuilder('${team.id}', 'roster', 3)">Edit Roster</button>
+        <button class="btn btn-ghost btn-sm" onclick="enterBuilder('${team.id}', 'team', 1)">Edit Team</button>
       </div>
     </div>
   `).join('');
@@ -1680,12 +1659,77 @@ function showView(view) {
   if (view === 'builder') document.getElementById('view-builder').classList.add('active');
 }
 
-function enterBuilder(teamId, startStep) {
+function enterBuilder(teamId, mode, startStep) {
+  _appMode = mode || 'setup';
   if (teamId) {
     selectTeam(teamId, false);
   }
   setStep(startStep);
   showView('builder');
+}
+
+function renderWizardBar() {
+  const container = document.getElementById('wizard-steps');
+  if (!container) return;
+
+  let steps = [];
+  if (_appMode === 'setup') {
+    steps = [
+      { step: 1, label: 'Team Setup' },
+      { step: 2, label: 'League Rules' },
+      { step: 3, label: 'Roster' }
+    ];
+  } else if (_appMode === 'lineup') {
+    steps = [
+      { step: 4, label: 'Edit Lineup' },
+      { step: 5, label: 'Export' }
+    ];
+  } else if (_appMode === 'roster') {
+    steps = [{ step: 3, label: 'Edit Roster' }];
+  } else if (_appMode === 'team') {
+    steps = [{ step: 1, label: 'Team Setup' }];
+  }
+
+  container.innerHTML = steps.map((item, i) => {
+    const displayNum = i + 1;
+    const isActive = _currentStep === item.step;
+    const isDone = _currentStep > item.step;
+    const cls = isActive ? 'wstep active' : isDone ? 'wstep done' : 'wstep';
+    const arrow = i > 0 ? '<div class="wstep-arrow">›</div>' : '';
+    return `${arrow}<div class="${cls}" id="wstep-${item.step}">
+      <div class="wstep-num">${displayNum}</div>
+      <span>${item.label}</span>
+    </div>`;
+  }).join('');
+}
+
+function updateStepFooters() {
+  const step1cont = document.getElementById('step1-continue');
+  const step3back = document.getElementById('step3-back');
+  const step3cont = document.getElementById('step3-continue');
+  const step4back = document.getElementById('step4-back');
+
+  // Reset all to defaults first
+  if (step1cont) { step1cont.textContent = 'Continue to League Rules →'; step1cont.onclick = goToStep2; step1cont.style.display = ''; }
+  if (step3back) { step3back.style.display = ''; step3back.textContent = '← Back to League Rules'; step3back.onclick = goToStep2; }
+  if (step3cont) { step3cont.textContent = 'Continue to Edit Lineup →'; step3cont.onclick = goToStep4; }
+  if (step4back) { step4back.style.display = ''; step4back.onclick = goToStep3; }
+
+  if (_appMode === 'setup') {
+    if (step3cont) { step3cont.textContent = 'Set your first lineup →'; step3cont.onclick = enterLineupMode; }
+  } else if (_appMode === 'roster') {
+    if (step3back) step3back.style.display = 'none';
+    if (step3cont) { step3cont.textContent = 'Done ✓'; step3cont.onclick = function() { save(); backToDashboard(); }; }
+  } else if (_appMode === 'team') {
+    if (step1cont) { step1cont.textContent = 'Save Team ✓'; step1cont.onclick = function() { saveTeam(); backToDashboard(); }; }
+  } else if (_appMode === 'lineup') {
+    if (step4back) step4back.style.display = 'none';
+  }
+}
+
+function enterLineupMode() {
+  _appMode = 'lineup';
+  goToStep4();
 }
 
 function backToDashboard() {
@@ -2004,11 +2048,12 @@ function goToStep5() {
 }
 
 function setStep(n) {
+  _currentStep = n;
   [1,2,3,4,5].forEach(i => {
     document.getElementById(`step-${i}`).style.display = i === n ? '' : 'none';
-    const ws = document.getElementById(`wstep-${i}`);
-    ws.className = 'wstep' + (i === n ? ' active' : i < n ? ' done' : '');
   });
+  renderWizardBar();
+  updateStepFooters();
   window.scrollTo(0, 0);
 }
 
