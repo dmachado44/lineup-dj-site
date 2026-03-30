@@ -2016,8 +2016,8 @@ async function selectTeam(teamId, closeDropdown = true) {
       return {
         id:      'imp_' + doc.id,
         name:    d.name   || 'Unknown',
-        prefPos: [],
-        gender:  'M'
+        prefPos: d.prefPos || [],
+        gender:  d.gender || ''
       };
     });
 
