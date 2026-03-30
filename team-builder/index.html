@@ -689,8 +689,19 @@
       text-align: center;
     }
     .lineup-table tbody tr:hover { background: rgba(0,0,0,0.02); }
-    .lineup-table td:first-child { text-align: left; }
-    .lineup-table th:first-child { text-align: left; }
+    .lineup-table tbody tr.sortable-ghost { background: #F4F4F5; opacity: 0.6; }
+    .lineup-table tbody tr.sortable-chosen { background: var(--white); }
+    .lineup-table tbody tr.sortable-drag { background: var(--white); opacity: 1; }
+    .lineup-table td:first-child,
+    .lineup-table th:first-child {
+      text-align: left;
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      background: var(--white);
+    }
+    .lineup-table th:first-child { background: var(--bg-secondary); }
+    .lineup-table tbody tr:hover td:first-child { background: rgba(0,0,0,0.02); }
 
     .player-cell {
       display: flex;
@@ -708,7 +719,7 @@
       width: 32px;
       height: 32px;
       border-radius: 8px;
-      background: var(--gray-5);
+      background: #F4F4F5;
       color: var(--text);
       font-size: 13px;
       font-weight: 600;
@@ -739,7 +750,7 @@
       font-family: inherit;
       border: 1px solid transparent;
       border-radius: 6px;
-      background: var(--gray-5);
+      background-color: #F4F4F5;
       color: var(--text);
       cursor: pointer;
       appearance: none;
@@ -749,8 +760,8 @@
       background-position: right 8px center;
       transition: background 0.1s, border-color 0.1s;
     }
-    .pos-select:hover { background-color: var(--gray-4); }
-    .pos-select.filled { background-color: var(--gray-5); border-color: var(--gray-3); font-weight: 500; }
+    .pos-select:hover { background-color: var(--gray-5); }
+    .pos-select.filled { background-color: #F4F4F5; border-color: var(--gray-3); font-weight: 500; }
     .pos-select.bench { background-color: var(--bench-bg); border-color: var(--bench-border); }
 
     .att-pill {
@@ -988,12 +999,11 @@
     .settings-mode #step-2,
     .settings-mode #step-3 { gap: 16px; }
 
-    /* Hide topbar back button in settings mode; use inline back link instead */
-    .settings-mode .topbar-back { display: none; }
+    /* Back button always lives in the content area, not the topbar */
+    #view-builder .topbar-back { display: none; }
 
-    /* Inline back nav above content */
-    #settings-back { display: none; }
-    .settings-mode #settings-back {
+    /* Inline back nav — always visible in builder */
+    #settings-back {
       display: flex;
       align-items: center;
       margin-bottom: 20px;
