@@ -2112,7 +2112,6 @@ async function loadUserTeams(user) {
       .filter(d => d.exists)
       .map(d => {
         const data = d.data();
-        console.log('Team doc fields for', data.name, ':', Object.keys(data).filter(k => /color|logo|theme|image/i.test(k)), data);
         return {
           id: d.id,
           name: data.name || 'Unnamed Team',
@@ -2122,7 +2121,7 @@ async function loadUserTeams(user) {
           season: data.season || 'Spring',
           year: data.year || new Date().getFullYear(),
           logoURL: data.logoURL || data.teamLogoURL || '',
-          primaryColor: data.primaryColor || data.teamColor || '',
+          primaryColor: data.color || data.primaryColor || data.teamColor || '',
           secondaryColor: data.secondaryColor || ''
         };
       });
