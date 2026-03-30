@@ -678,7 +678,10 @@
       padding: 12px 14px;
       text-align: center;
       border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
     }
+    .lineup-table th:last-child,
+    .lineup-table td:last-child { border-right: none; }
     .lineup-table th {
       background: var(--bg-secondary);
       font-weight: 600;
@@ -702,19 +705,19 @@
     }
     .player-cell .drag-grip:active { cursor: grabbing; }
     .bat-order {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      background: var(--black);
-      color: var(--white);
-      font-size: 11px;
-      font-weight: 700;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--gray-5);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
     }
-    .player-name { font-weight: 500; margin-bottom: 4px; }
+    .player-name { font-weight: 500; font-size: 15px; margin-bottom: 4px; }
     .fp-bar {
       display: flex;
       gap: 2px;
@@ -731,15 +734,24 @@
     .fp-seg.bench { background: var(--bench-border); }
 
     .pos-select {
-      padding: 6px 8px;
+      padding: 6px 24px 6px 10px;
       font-size: 12px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      background: var(--white);
+      font-family: inherit;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: var(--gray-5);
+      color: var(--text);
       cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238E8E93' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      transition: background 0.1s, border-color 0.1s;
     }
-    .pos-select.filled { background: rgba(0,0,0,0.04); border-color: var(--black); }
-    .pos-select.bench { background: var(--bench-bg); border-color: var(--bench-border); }
+    .pos-select:hover { background-color: var(--gray-4); }
+    .pos-select.filled { background-color: var(--gray-5); border-color: var(--gray-3); font-weight: 500; }
+    .pos-select.bench { background-color: var(--bench-bg); border-color: var(--bench-border); }
 
     .att-pill {
       display: inline-flex;
@@ -1444,9 +1456,6 @@
           </table>
         </div>
 
-        <div style="margin-top:12px;display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);">
-          <span>🟦 Field position &nbsp; 🟨 Bench &nbsp; ⬜ Unassigned</span>
-        </div>
       </div>
 
       <div class="card">
