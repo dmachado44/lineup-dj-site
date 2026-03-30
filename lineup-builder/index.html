@@ -2112,6 +2112,7 @@ async function loadUserTeams(user) {
       .filter(d => d.exists)
       .map(d => {
         const data = d.data();
+        console.log('Team doc fields for', data.name, ':', Object.keys(data).filter(k => /color|logo|theme|image/i.test(k)), data);
         return {
           id: d.id,
           name: data.name || 'Unnamed Team',
