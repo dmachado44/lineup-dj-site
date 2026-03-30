@@ -204,7 +204,8 @@
       transition: border-color 0.15s, background 0.15s;
       font-family: inherit;
     }
-    .auth-provider-btn:hover { border-color: #aaa; background: #fafafa; }
+    .auth-provider-btn:hover { border-color: #aaa; background: var(--bg-secondary); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .auth-provider-btn:active { transform: scale(0.98); }
     .auth-provider-btn svg, .auth-provider-btn img { width: 20px; height: 20px; flex-shrink: 0; }
     .auth-divider {
       display: flex; align-items: center; gap: 12px;
@@ -406,13 +407,14 @@
       white-space: nowrap;
       letter-spacing: -0.1px;
     }
+    .btn:active { transform: scale(0.97); }
+
     /* Primary = black pill (matches lineupdj.app) */
     .btn-primary {
       background: var(--black);
       color: var(--white);
     }
-    .btn-primary:hover { background: #1C1C1E; }
-    .btn-primary:active { transform: scale(0.97); }
+    .btn-primary:hover { background: #2C2C2E; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
 
     /* Teal accent */
     .btn-teal {
@@ -420,7 +422,7 @@
       color: var(--black);
       font-weight: 700;
     }
-    .btn-teal:hover { background: #BFF5AE; }
+    .btn-teal:hover { background: #7ACC58; box-shadow: 0 2px 8px rgba(150,229,110,0.35); }
 
     /* Outline = black border pill */
     .btn-outline {
@@ -428,15 +430,15 @@
       color: var(--black);
       border: 1.5px solid var(--black);
     }
-    .btn-outline:hover { background: var(--black); color: var(--white); }
+    .btn-outline:hover { background: var(--black); color: var(--white); box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
 
     /* Ghost = light gray pill */
     .btn-ghost {
-      background: var(--bg-secondary);
+      background: var(--white);
       color: var(--text);
-      border: none;
+      border: 1px solid var(--border);
     }
-    .btn-ghost:hover { background: var(--gray-5); }
+    .btn-ghost:hover { background: var(--bg-secondary); border-color: var(--gray-3); }
 
     /* Danger */
     .btn-danger {
@@ -444,7 +446,7 @@
       color: var(--red);
       border: none;
     }
-    .btn-danger:hover { background: rgba(255,59,48,0.14); }
+    .btn-danger:hover { background: rgba(255,59,48,0.18); }
 
     .btn-sm { padding: 8px 18px; font-size: 14px; }
     .btn-lg { padding: 15px 34px; font-size: 17px; letter-spacing: -0.2px; }
@@ -457,7 +459,7 @@
       border: none;
       font-weight: 700;
     }
-    .btn-cta:hover { background: var(--green-dark); }
+    .btn-cta:hover { background: var(--green-dark); box-shadow: 0 2px 8px rgba(150,229,110,0.35); }
 
     /* ── PLAYER MANAGEMENT ── */
     .player-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
@@ -491,7 +493,7 @@
       transition: all 0.15s;
       font-weight: 500;
     }
-    .pos-pill:hover { border-color: #aaa; }
+    .pos-pill:hover { border-color: #aaa; background: var(--bg-secondary); }
     .pos-pill.selected {
       background: var(--teal);
       color: var(--black);
@@ -526,7 +528,7 @@
       transition: all 0.15s;
       font-weight: 500;
     }
-    .priority-pill:hover { border-color: #aaa; }
+    .priority-pill:hover { border-color: #aaa; background: var(--bg-secondary); }
     .priority-pill.active {
       background: var(--teal);
       color: var(--black);
@@ -932,9 +934,9 @@
       border-radius: 16px;
       padding: 24px;
       position: relative;
-      transition: box-shadow 0.2s;
+      transition: box-shadow 0.2s, transform 0.2s;
     }
-    .team-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    .team-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); transform: translateY(-2px); }
     .team-card-name {
       font-size: 22px;
       font-weight: 700;
@@ -991,9 +993,10 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       cursor: pointer;
-      transition: border-color 0.15s, box-shadow 0.15s;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s, transform 0.15s;
     }
-    .lineup-item:hover { border-color: #aaa; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .lineup-item:hover { border-color: #aaa; box-shadow: 0 2px 8px rgba(0,0,0,0.06); background: var(--bg-secondary); }
+    .lineup-item:active { transform: scale(0.99); }
     .lineup-item-info { display: flex; flex-direction: column; gap: 2px; }
     .lineup-item-title { font-size: 16px; font-weight: 600; color: var(--text); }
     .lineup-item-meta { font-size: 14px; color: var(--muted); }
@@ -1266,7 +1269,7 @@
       font-family: inherit;
       transition: background 0.1s;
     }
-    .avatar-menu-item:hover { background: var(--bg-secondary); }
+    .avatar-menu-item:hover { background: var(--bg-secondary); color: var(--black); }
     .avatar-menu-item.danger { color: var(--red); }
   </style>
 </head>
