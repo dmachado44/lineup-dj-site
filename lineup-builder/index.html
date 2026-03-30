@@ -40,6 +40,8 @@
       --light:       #8E8E93;
       --green:       #34C759;   /* iOS green */
       --red:         #FF3B30;   /* iOS red */
+      --accent:      var(--teal);  /* team color override, defaults to green */
+      --accent-light: rgba(150, 229, 110, 0.2); /* light tint of accent */
 
       /* Bench colors — warm amber hint */
       --bench-bg:    #FFF8E7;
@@ -115,7 +117,7 @@
     .topbar-avatar {
       width: 30px; height: 30px;
       border-radius: 50%;
-      background: var(--teal);
+      background: var(--accent);
       color: var(--black);
       font-size: 12px;
       font-weight: 700;
@@ -327,7 +329,7 @@
       color: var(--white);
     }
     .wstep.done .wstep-num {
-      background: var(--teal);
+      background: var(--accent);
       color: var(--black);
     }
     .wstep-arrow { color: var(--gray-4); font-size: 14px; margin-right: 14px; }
@@ -386,8 +388,8 @@
     }
     input[type=text]::placeholder { color: var(--gray-3); }
     input:focus, select:focus, textarea:focus {
-      border-color: var(--teal);
-      box-shadow: 0 0 0 3px rgba(150,229,110,0.45);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-light);
     }
     textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
 
@@ -418,11 +420,11 @@
 
     /* Teal accent */
     .btn-teal {
-      background: var(--teal);
+      background: var(--accent);
       color: var(--black);
       font-weight: 700;
     }
-    .btn-teal:hover { background: #7ACC58; box-shadow: 0 2px 8px rgba(150,229,110,0.35); }
+    .btn-teal:hover { filter: brightness(0.9); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
 
     /* Outline = black border pill */
     .btn-outline {
@@ -454,12 +456,12 @@
 
     /* Green CTA (matches lineupdj.app CTA section) */
     .btn-cta {
-      background: var(--green-cta);
+      background: var(--accent);
       color: var(--black);
       border: none;
       font-weight: 700;
     }
-    .btn-cta:hover { background: var(--green-dark); box-shadow: 0 2px 8px rgba(150,229,110,0.35); }
+    .btn-cta:hover { filter: brightness(0.9); box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
 
     /* ── PLAYER MANAGEMENT ── */
     .player-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
@@ -495,9 +497,9 @@
     }
     .pos-pill:hover { border-color: #aaa; background: var(--bg-secondary); }
     .pos-pill.selected {
-      background: var(--teal);
+      background: var(--accent);
       color: var(--black);
-      border-color: var(--teal);
+      border-color: var(--accent);
       font-weight: 600;
     }
 
@@ -530,9 +532,9 @@
     }
     .priority-pill:hover { border-color: #aaa; background: var(--bg-secondary); }
     .priority-pill.active {
-      background: var(--teal);
+      background: var(--accent);
       color: var(--black);
-      border-color: var(--teal);
+      border-color: var(--accent);
       font-weight: 600;
     }
 
@@ -570,7 +572,7 @@
     .pos-count-badge {
       font-size: 12px;
       font-weight: 700;
-      background: var(--teal);
+      background: var(--accent);
       color: var(--black);
       padding: 2px 9px;
       border-radius: 100px;
@@ -616,9 +618,9 @@
     }
     .pos-toggle:hover { border-color: var(--gray-3); background: var(--bg-secondary); }
     .pos-toggle.on {
-      background: var(--teal);
+      background: var(--accent);
       color: var(--black);
-      border-color: var(--teal);
+      border-color: var(--accent);
       font-weight: 600;
     }
     .pos-hint { font-size: 13px; color: var(--muted); }
@@ -828,7 +830,7 @@
       transition: all 0.15s;
     }
     .att-pill:hover { border-color: var(--gray-3); background: var(--bg-secondary); }
-    .att-pill.in { background: var(--teal); border-color: var(--teal); font-weight: 600; }
+    .att-pill.in { background: var(--accent); border-color: var(--accent); font-weight: 600; }
     .att-pill.out { background: var(--white); border-color: var(--border); color: var(--muted); }
 
     .att-count { font-size: 14px; color: var(--muted); margin-bottom: 16px; }
@@ -2210,6 +2212,15 @@ async function selectTeam(teamId, closeDropdown = true) {
 
     // Apply team theming to the builder
     const currentTeam = _userTeams.find(t => t.id === teamId);
+    // Set accent color to team color (falls back to default teal/green via CSS)
+    const teamColor = currentTeam && currentTeam.primaryColor ? currentTeam.primaryColor : '';
+    if (teamColor) {
+      document.documentElement.style.setProperty('--accent', teamColor);
+      document.documentElement.style.setProperty('--accent-light', teamColor + '33');
+    } else {
+      document.documentElement.style.removeProperty('--accent');
+      document.documentElement.style.removeProperty('--accent-light');
+    }
     if (currentTeam) {
       const banner = document.getElementById('team-builder-banner');
       if (banner) {
@@ -2700,6 +2711,8 @@ function printLineupDetail() {
 }
 
 function backToDashboard() {
+  document.documentElement.style.removeProperty('--accent');
+  document.documentElement.style.removeProperty('--accent-light');
   showView('dashboard');
   renderDashboard();
 }
