@@ -748,7 +748,7 @@
       padding: 6px 24px 6px 10px;
       font-size: 12px;
       font-family: inherit;
-      border: 1px solid transparent;
+      border: none;
       border-radius: 6px;
       background-color: #F4F4F5;
       color: var(--text);
@@ -761,8 +761,8 @@
       transition: background 0.1s, border-color 0.1s;
     }
     .pos-select:hover { background-color: var(--gray-5); }
-    .pos-select.filled { background-color: #F4F4F5; border-color: var(--gray-3); font-weight: 500; }
-    .pos-select.bench { background-color: var(--bench-bg); border-color: var(--bench-border); }
+    .pos-select.filled { background-color: #F4F4F5; font-weight: 500; }
+    .pos-select.bench { background-color: var(--bench-bg); }
 
     .att-pill {
       display: inline-flex;
@@ -1835,10 +1835,26 @@ async function selectTeam(teamId, closeDropdown = true) {
       };
     });
 
-    state.players    = players;
-    state.attendance = {};
-    state.lineup     = [];
+    state.players      = players;
+    state.attendance   = {};
+    state.lineup       = [];
+    // Clear game-specific fields so they don't bleed across teams
+    state.gameName     = '';
+    state.opponent     = '';
+    state.gameDate     = new Date().toISOString().split('T')[0];
+    state.gameTime     = '';
+    state.gameLocation = '';
+    state.gameNotes    = '';
     players.forEach(p => { state.attendance[p.id] = true; });
+
+    const clearField = (id, val = '') => { const el = document.getElementById(id); if (el) el.value = val; };
+    clearField('game-name');
+    clearField('opponent');
+    clearField('game-date', state.gameDate);
+    clearField('game-time');
+    clearField('game-location');
+    clearField('game-notes');
+
     save();
 
     const currentStep = [1,2,3,4,5].find(i =>
