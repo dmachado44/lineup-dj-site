@@ -1670,9 +1670,45 @@ function enterBuilder(teamId, mode, startStep) {
   _appMode = mode || 'setup';
   if (teamId) {
     selectTeam(teamId, false);
+  } else {
+    resetForNewTeam();
   }
   setStep(startStep);
   showView('builder');
+}
+
+function resetForNewTeam() {
+  // Clear all team, game, and roster state
+  state.teamName = '';
+  state.teamSport = 'Baseball';
+  state.teamLevel = '';
+  state.teamAgeGroup = '';
+  state.teamSeason = 'Spring';
+  state.teamYear = new Date().getFullYear();
+  state.teamNotes = '';
+  state.gameName = '';
+  state.opponent = '';
+  state.gameDate = new Date().toISOString().split('T')[0];
+  state.gameTime = '';
+  state.gameLocation = '';
+  state.gameNotes = '';
+  state.players = [];
+  state.attendance = {};
+  state.lineup = [];
+
+  // Sync all form fields to blank
+  const textFields = ['team-name','team-level','team-age-group','team-notes',
+                      'game-name','opponent','game-location','game-notes','game-time'];
+  textFields.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+
+  const el = id => document.getElementById(id);
+  if (el('team-sport'))   el('team-sport').value   = 'Baseball';
+  if (el('team-season'))  el('team-season').value  = 'Spring';
+  if (el('team-year'))    el('team-year').value    = state.teamYear;
+  if (el('game-date'))    el('game-date').value    = state.gameDate;
+  if (el('inning-count')) el('inning-count').textContent = state.innings;
+
+  renderPlayerList();
 }
 
 function renderWizardBar() {
@@ -2231,38 +2267,74 @@ function shuffleBatting() {
 
 function shuffleFielding() {
   const attending = state.players.filter(p => state.attendance[p.id]);
-  const fieldPos = getActiveFieldPositions();
+  if (attending.length === 0) return;
 
+  const fieldPos = getActiveFieldPositions();
+  const numInnings = state.innings;
+
+  // Clear all positions so we start fresh
   attending.forEach(player => {
     const row = state.lineup.find(r => r.playerId === player.id);
-    if (!row) return;
-
-    for (let inning = 0; inning < state.innings; inning++) {
-      if (!row.positions[inning]) {
-        const sorted = [...attending].sort((a, b) => {
-          const aCount = state.lineup.find(r => r.playerId === a.id)?.positions.filter(p => p && p !== 'Bench').length || 0;
-          const bCount = state.lineup.find(r => r.playerId === b.id)?.positions.filter(p => p && p !== 'Bench').length || 0;
-          return aCount - bCount;
-        });
-
-        if (sorted[0].id === player.id && fieldPos.length > 0) {
-          const availablePos = fieldPos.filter(p => {
-            const used = row.positions.filter(pos => pos === p).length;
-            return (state.leagueRules.maxSamePosition === 0 || used < state.leagueRules.maxSamePosition);
-          });
-
-          if (availablePos.length > 0) {
-            const pref = player.prefPos.filter(p => availablePos.includes(p));
-            row.positions[inning] = pref.length > 0 ? pref[0] : availablePos[Math.floor(Math.random() * availablePos.length)];
-          } else {
-            row.positions[inning] = 'Bench';
-          }
-        } else {
-          row.positions[inning] = 'Bench';
-        }
-      }
-    }
+    if (row) row.positions = Array(numInnings).fill('');
   });
+
+  // Process one inning at a time — this is the key fix
+  for (let inning = 0; inning < numInnings; inning++) {
+
+    // Count how many field innings each player has been assigned so far
+    const fieldCount = {};
+    attending.forEach(p => {
+      const row = state.lineup.find(r => r.playerId === p.id);
+      fieldCount[p.id] = row
+        ? row.positions.slice(0, inning).filter(pos => pos && pos !== 'Bench').length
+        : 0;
+    });
+
+    // Shuffle first (to randomize ties), then sort by field count ascending
+    // so players who have played the fewest innings get first pick
+    const prioritized = [...attending]
+      .sort(() => Math.random() - 0.5)
+      .sort((a, b) => fieldCount[a.id] - fieldCount[b.id]);
+
+    const numCanPlay = Math.min(attending.length, fieldPos.length);
+    const takenPositions = new Set();
+
+    prioritized.forEach((player, idx) => {
+      const row = state.lineup.find(r => r.playerId === player.id);
+      if (!row) return;
+
+      if (idx < numCanPlay) {
+        // This player fields this inning — find the best available position
+        const available = fieldPos.filter(p => !takenPositions.has(p));
+
+        if (available.length === 0) {
+          row.positions[inning] = 'Bench';
+          return;
+        }
+
+        // Respect maxSamePosition rule
+        const maxSame = state.leagueRules.maxSamePosition || 0;
+        const ruleFiltered = maxSame === 0
+          ? available
+          : available.filter(p => {
+              const timesPlayed = row.positions.slice(0, inning).filter(pos => pos === p).length;
+              return timesPlayed < maxSame;
+            });
+        const candidates = ruleFiltered.length > 0 ? ruleFiltered : available;
+
+        // Prefer the player's preferred positions
+        const preferred = candidates.filter(p => player.prefPos && player.prefPos.includes(p));
+        const pool = preferred.length > 0 ? preferred : candidates;
+        const chosen = pool[Math.floor(Math.random() * pool.length)];
+
+        row.positions[inning] = chosen;
+        takenPositions.add(chosen);
+      } else {
+        // More players than positions — this player benches this inning
+        row.positions[inning] = 'Bench';
+      }
+    });
+  }
 
   renderLineupGrid();
   renderPlayingTimeSummary();
