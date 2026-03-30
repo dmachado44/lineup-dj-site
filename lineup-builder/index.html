@@ -970,12 +970,21 @@
       font-weight: 500;
     }
     .team-card-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-direction: column;
       gap: 8px;
     }
     .team-card-actions .btn-create {
-      grid-column: 1 / -1;
+      width: 100%;
+      justify-content: center;
+    }
+    .team-card-actions .btn-row {
+      display: flex;
+      gap: 8px;
+    }
+    .team-card-actions .btn-row .btn {
+      flex: 1;
+      justify-content: center;
     }
     .team-card-empty {
       text-align: center;
@@ -2168,8 +2177,10 @@ function renderDashboard() {
         </div>
         <div class="team-card-actions">
           <button class="btn btn-primary btn-create" onclick="enterBuilder('${team.id}', 'lineup', 3)">Create Lineup →</button>
-          <button class="btn btn-ghost btn-create" onclick="openPastLineups('${team.id}')">📋 Past Lineups</button>
-          <button class="btn btn-ghost btn-create" onclick="enterBuilder('${team.id}', 'settings', 1)">⚙ Manage Team Settings</button>
+          <div class="btn-row">
+            <button class="btn btn-ghost" onclick="openPastLineups('${team.id}')">Past Lineups</button>
+            <button class="btn btn-ghost" onclick="enterBuilder('${team.id}', 'settings', 1)">Team Settings</button>
+          </div>
         </div>
       </div>
     `;
