@@ -2120,7 +2120,6 @@ function renderDashboard() {
             <div class="team-card-name mb-0">${escHtml(team.name)}</div>
           </div>
         </div>
-        ${_activeTeamId === team.id ? '<div class="team-card-current">✓ Current</div>' : ''}
         <div class="team-card-pills">
           <span class="team-pill">${team.season} ${team.year}</span>
           ${team.level ? `<span class="team-pill">${team.level}</span>` : ''}
@@ -2128,7 +2127,7 @@ function renderDashboard() {
         </div>
         <div class="team-card-actions">
           <button class="btn btn-primary btn-create" onclick="enterBuilder('${team.id}', 'lineup', 3)">Create Lineup →</button>
-          <button class="btn btn-outline btn-create" onclick="openPastLineups('${team.id}')">📋 Past Lineups</button>
+          <button class="btn btn-ghost btn-create" onclick="openPastLineups('${team.id}')">📋 Past Lineups</button>
           <button class="btn btn-ghost btn-create" onclick="enterBuilder('${team.id}', 'settings', 1)">⚙ Manage Team Settings</button>
         </div>
       </div>
