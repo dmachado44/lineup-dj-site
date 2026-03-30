@@ -331,11 +331,11 @@
       margin-bottom: 20px;
     }
     .card-title {
-      font-size: 17px;
+      font-size: 20px;
       font-weight: 700;
       color: var(--black);
       margin-bottom: 4px;
-      letter-spacing: -0.3px;
+      letter-spacing: -0.4px;
     }
     .card-sub {
       font-size: 13px;
@@ -461,20 +461,6 @@
       transition: border-color 0.15s;
     }
     .player-row:hover { border-color: var(--gray-4); }
-    .player-row .drag-handle { cursor: grab; color: var(--gray-4); font-size: 16px; flex-shrink: 0; }
-    .player-row .drag-handle:active { cursor: grabbing; }
-
-    .player-num {
-      width: 26px; height: 26px;
-      border-radius: 50%;
-      background: var(--black);
-      color: var(--white);
-      font-size: 11px;
-      font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-
     .player-row input[type=text] {
       flex: 1;
       min-width: 80px;
@@ -513,11 +499,10 @@
 
     /* ── LEAGUE RULES ── */
     .section-label {
-      font-size: 11px;
+      font-size: 20px;
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
+      letter-spacing: -0.4px;
+      color: var(--black);
       margin-bottom: 18px;
     }
     .pos-header {
@@ -1251,13 +1236,7 @@
           <span class="pos-header-label">Active Positions</span>
           <span class="pos-count-badge" id="pos-count-badge">9 Selected</span>
         </div>
-        <div style="font-size:13px;color:var(--muted);">Quick presets — or tap individual positions to customize:</div>
-        <div class="preset-row">
-          <button class="preset-btn" onclick="applyPreset('standard9')">⚾ Standard 9</button>
-          <button class="preset-btn" onclick="applyPreset('standard10')">🔟 Standard 10</button>
-          <button class="preset-btn" onclick="applyPreset('coachPitch')">🤾 Coach Pitch</button>
-          <button class="preset-btn" onclick="applyPreset('softball10')">🥎 Softball (10)</button>
-        </div>
+        <div style="font-size:13px;color:var(--muted);">Tap a position to toggle it on or off for your lineup.</div>
         <div class="pos-grid" id="pos-grid"></div>
         <div class="pos-hint">Teal = active in lineup · Tap to toggle on/off</div>
       </div>
@@ -2332,8 +2311,6 @@ function renderPlayerList() {
     row.dataset.playerId = player.id;
 
     row.innerHTML = `
-      <span class="drag-handle" title="Drag to reorder">⠿</span>
-      <div class="player-num">${idx + 1}</div>
       <input type="text" value="${escHtml(player.name)}" placeholder="Player name"
         onchange="updatePlayerName('${player.id}', this.value)"
         style="flex:1;min-width:80px;" />
@@ -2349,23 +2326,6 @@ function renderPlayerList() {
     container.appendChild(row);
   });
 
-  if (window._rosterSortable) window._rosterSortable.destroy();
-  window._rosterSortable = Sortable.create(container, {
-    animation: 160,
-    easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
-    handle: '.drag-handle',
-    ghostClass: 'sortable-ghost',
-    chosenClass: 'sortable-chosen',
-    dragClass: 'sortable-drag',
-    onEnd(evt) {
-      const { oldIndex, newIndex } = evt;
-      if (oldIndex === newIndex) return;
-      const [moved] = state.players.splice(oldIndex, 1);
-      state.players.splice(newIndex, 0, moved);
-      renderPlayerList();
-      save();
-    }
-  });
 }
 
 function updateStep2Status() {
