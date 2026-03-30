@@ -959,6 +959,12 @@
     #view-builder.active {
       display: block;
     }
+    #view-paywall {
+      display: none;
+    }
+    #view-paywall.active {
+      display: block;
+    }
 
     /* ── SETTINGS MODE (flat all-in-one edit view) ── */
     .settings-mode .wizard-bar { display: none; }
@@ -1201,8 +1207,8 @@
       <img class="logo-mark" src="assets/icon.png" alt="Lineup DJ">
       <div class="logo-name">Lineup DJ</div>
     </a>
-    <h2 class="auth-page-title">Build your lineup</h2>
-    <p class="auth-page-sub">Sign in to manage your teams and create game-day lineups.</p>
+    <h2 class="auth-page-title">Welcome back</h2>
+    <p class="auth-page-sub">Sign in with your Lineup DJ account. A paid subscription in the iOS app is required to access this tool.</p>
 
     <div class="auth-providers">
       <button class="auth-provider-btn" onclick="signInWithGoogle()">
@@ -1220,7 +1226,7 @@
         </svg>
         Sign in with Apple
       </button>
-      <button class="auth-provider-btn" onclick="setAuthMode('signin'); document.getElementById('auth-email').focus()">
+      <button class="auth-provider-btn" onclick="showEmailFields()">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
           <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
         </svg>
@@ -1228,27 +1234,25 @@
       </button>
     </div>
 
-    <div class="auth-divider">or</div>
-
     <div class="auth-email-fields" id="auth-email-section" style="display:none;">
-      <input type="text" id="auth-name" placeholder="Your name (optional)" />
       <input type="email" id="auth-email" placeholder="Email address" />
       <input type="password" id="auth-password" placeholder="Password" />
     </div>
 
     <div class="auth-email-actions" id="auth-email-actions" style="display:none;">
       <button class="btn btn-primary" id="auth-email-btn" onclick="signInWithEmail()">Sign In</button>
-      <button class="btn btn-ghost" id="auth-reset-btn" style="display:none;" onclick="sendPasswordReset()">Reset Password</button>
     </div>
 
     <div class="auth-error" id="auth-error"></div>
 
-    <div class="auth-switch" id="auth-switch">
-      <span id="auth-switch-text">Don't have an account?</span>
-      <a onclick="toggleAuthMode()" id="auth-switch-link">Create one</a>
+    <div class="auth-switch" id="auth-reset-switch" style="display:none;">
+      <a onclick="toggleResetMode()" id="auth-reset-link">Forgot password?</a>
     </div>
-    <div class="auth-switch" style="display:none;" id="auth-reset-switch">
-      <a onclick="toggleResetMode()" id="auth-reset-link">← Back to sign in</a>
+
+    <div class="auth-divider">or</div>
+
+    <div class="auth-switch">
+      Don't have Lineup DJ yet? <a href="https://apps.apple.com/us/app/lineup-dj-walkout-songs/id6743953226" target="_blank">Get it on the App Store →</a>
     </div>
   </div>
 </div>
@@ -1279,6 +1283,36 @@
       <div class="empty-icon">⚙️</div>
       <div class="team-card-empty-text">No teams yet</div>
       <button class="btn btn-primary" onclick="enterBuilder(null, 'setup', 1)">+ Create your first team</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ VIEW 2b: PAYWALL BLOCKER ══════════════ -->
+<div id="view-paywall">
+  <div class="topbar">
+    <a class="topbar-logo" href="https://lineupdj.app">
+      <img class="logo-mark" src="assets/icon.png" alt="Lineup DJ">
+      Lineup DJ
+    </a>
+    <div class="topbar-spacer"></div>
+  </div>
+  <div id="view-auth" style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 64px);padding:20px;">
+    <div class="auth-page-card" style="text-align:center;">
+      <a class="auth-page-logo" href="https://lineupdj.app">
+        <img class="logo-mark" src="assets/icon.png" alt="Lineup DJ">
+        <div class="logo-name">Lineup DJ</div>
+      </a>
+      <h2 class="auth-page-title" id="paywall-title">Subscription Required</h2>
+      <p class="auth-page-sub" id="paywall-message">Your account doesn't have an active subscription. Subscribe in the Lineup DJ iOS app to unlock this tool.</p>
+      <div class="auth-providers">
+        <a class="auth-provider-btn" href="https://apps.apple.com/us/app/lineup-dj-walkout-songs/id6743953226" target="_blank" style="justify-content:center;font-weight:600;text-decoration:none;">
+          Download on the App Store →
+        </a>
+      </div>
+      <div class="text-muted" style="margin:16px 0 8px;">Make sure you're signing in with the same method you use in the app.</div>
+      <div class="auth-switch">
+        <a onclick="signOut()" style="cursor:pointer;text-decoration:underline;">Sign out and try a different account</a>
+      </div>
     </div>
   </div>
 </div>
@@ -1661,7 +1695,7 @@ const FIREBASE_CONFIG = {
 // ═══════════════════════════════════════════════════
 let _db   = null;
 let _auth = null;
-let _authMode = 'signin'; // 'signin' | 'signup' | 'reset'
+let _authMode = 'signin'; // 'signin' | 'reset'
 let _appMode = 'setup';   // 'setup' | 'lineup' | 'roster' | 'team'
 let _currentStep = 1;
 
@@ -1701,8 +1735,8 @@ function initFirebase() {
         if (topbarAuth) topbarAuth.innerHTML = authHTML;
         if (topbarAuthBuilder) topbarAuthBuilder.innerHTML = authHTML;
 
-        loadUserTeams(user);
-        showView('dashboard');
+        // Check subscription status before granting access
+        checkSubscription(user);
       } else {
         if (topbarAuth) topbarAuth.innerHTML = '';
         if (topbarAuthBuilder) topbarAuthBuilder.innerHTML = '';
@@ -1754,15 +1788,9 @@ async function signInWithEmail() {
   if (!fb) return;
   const email    = document.getElementById('auth-email').value.trim();
   const password = document.getElementById('auth-password').value;
-  const name     = document.getElementById('auth-name').value.trim();
   if (!email || !password) { showAuthError('Please enter your email and password.'); return; }
   try {
-    if (_authMode === 'signup') {
-      const cred = await fb.auth.createUserWithEmailAndPassword(email, password);
-      if (name) await cred.user.updateProfile({ displayName: name });
-    } else {
-      await fb.auth.signInWithEmailAndPassword(email, password);
-    }
+    await fb.auth.signInWithEmailAndPassword(email, password);
   } catch(e) {
     showAuthError(friendlyAuthError(e));
   }
@@ -1780,6 +1808,53 @@ async function sendPasswordReset() {
     document.getElementById('auth-error').textContent = '✓ Reset email sent — check your inbox.';
   } catch(e) {
     showAuthError(friendlyAuthError(e));
+  }
+}
+
+async function checkSubscription(user) {
+  const fb = initFirebase();
+  if (!fb) return;
+
+  const titleEl   = document.getElementById('paywall-title');
+  const msgEl     = document.getElementById('paywall-message');
+
+  try {
+    const userDoc = await fb.db.collection('users').doc(user.uid).get();
+
+    if (!userDoc.exists) {
+      // No user doc — they've never used the iOS app
+      titleEl.textContent = 'Account Not Found';
+      msgEl.textContent   = "We couldn't find a Lineup DJ account linked to this sign-in. This tool requires an active subscription in the iOS app.";
+      showView('paywall');
+      return;
+    }
+
+    const data   = userDoc.data();
+    const status = data.subscriptionStatus;
+
+    if (status === 'active') {
+      // Paid subscriber — let them in
+      loadUserTeams(user);
+      showView('dashboard');
+      return;
+    }
+
+    // Has an account but subscription isn't active
+    if (status === 'expired' || status === 'cancelled') {
+      titleEl.textContent = 'Subscription Expired';
+      msgEl.textContent   = "Your Lineup DJ subscription isn't currently active. Renew in the iOS app to continue using this tool.";
+    } else {
+      titleEl.textContent = 'Subscription Required';
+      msgEl.textContent   = "Your account doesn't have an active subscription. Subscribe in the Lineup DJ iOS app to unlock this tool.";
+    }
+    showView('paywall');
+
+  } catch(e) {
+    console.error('checkSubscription error:', e);
+    // On network error, let them through rather than blocking
+    // (Firestore rules still protect data)
+    loadUserTeams(user);
+    showView('dashboard');
   }
 }
 
@@ -1802,54 +1877,39 @@ document.addEventListener('click', (e) => {
   }
 });
 
-function setAuthMode(mode) {
-  _authMode = mode;
-  const nameField  = document.getElementById('auth-name');
-  const resetBtn   = document.getElementById('auth-reset-btn');
-  const emailBtn   = document.getElementById('auth-email-btn');
+function showEmailFields() {
   const emailFields = document.getElementById('auth-email-section');
   const emailActions = document.getElementById('auth-email-actions');
-  const switchText = document.getElementById('auth-switch-text');
-  const switchLink = document.getElementById('auth-switch-link');
-  const resetLink  = document.getElementById('auth-reset-link');
   const resetSwitch = document.getElementById('auth-reset-switch');
+  emailFields.style.display = '';
+  emailActions.style.display = 'flex';
+  resetSwitch.style.display = '';
+  document.getElementById('auth-email').focus();
   document.getElementById('auth-error').textContent = '';
-
-  if (mode === 'signup') {
-    nameField.style.display = '';
-    emailFields.style.display = '';
-    emailActions.style.display = 'flex';
-    resetBtn.style.display  = 'none';
-    emailBtn.textContent    = 'Create Account';
-    switchText.textContent  = 'Already have an account?';
-    switchLink.textContent  = 'Sign in';
-    resetSwitch.style.display = 'none';
-  } else if (mode === 'reset') {
-    nameField.style.display = 'none';
-    emailFields.style.display = '';
-    emailActions.style.display = 'none';
-    resetBtn.style.display  = '';
-    resetBtn.innerHTML = '<button class="btn btn-primary" onclick="sendPasswordReset()">Send Reset Email</button>';
-    switchText.textContent  = '';
-    resetSwitch.style.display = 'block';
-  } else {
-    nameField.style.display = 'none';
-    emailFields.style.display = '';
-    emailActions.style.display = 'flex';
-    resetBtn.style.display  = 'none';
-    emailBtn.textContent    = 'Sign In';
-    switchText.textContent  = "Don't have an account?";
-    switchLink.textContent  = 'Create one';
-    resetSwitch.style.display = 'none';
-  }
-}
-
-function toggleAuthMode() {
-  setAuthMode(_authMode === 'signin' ? 'signup' : 'signin');
 }
 
 function toggleResetMode() {
-  setAuthMode(_authMode === 'reset' ? 'signin' : 'reset');
+  _authMode = _authMode === 'reset' ? 'signin' : 'reset';
+  const emailBtn = document.getElementById('auth-email-btn');
+  const emailActions = document.getElementById('auth-email-actions');
+  const resetLink = document.getElementById('auth-reset-link');
+  document.getElementById('auth-error').textContent = '';
+
+  if (_authMode === 'reset') {
+    emailActions.style.display = 'none';
+    emailBtn.textContent    = 'Send Reset Email';
+    emailBtn.onclick        = sendPasswordReset;
+    resetLink.textContent   = '← Back to sign in';
+    // Show reset button instead of sign-in
+    emailActions.style.display = 'flex';
+    emailBtn.textContent = 'Send Reset Email';
+    emailBtn.setAttribute('onclick', 'sendPasswordReset()');
+  } else {
+    emailActions.style.display = 'flex';
+    emailBtn.textContent = 'Sign In';
+    emailBtn.setAttribute('onclick', 'signInWithEmail()');
+    resetLink.textContent = 'Forgot password?';
+  }
 }
 
 function showAuthError(msg) {
@@ -1858,14 +1918,16 @@ function showAuthError(msg) {
 
 function friendlyAuthError(e) {
   const map = {
-    'auth/user-not-found':       'No account found with that email.',
-    'auth/wrong-password':       'Incorrect password.',
-    'auth/email-already-in-use': 'An account with that email already exists.',
+    'auth/user-not-found':       'No account found with that email. Make sure you\'re using the email from your Lineup DJ account.',
+    'auth/wrong-password':       'Incorrect password. Try again or use "Forgot password?" below.',
+    'auth/invalid-credential':   'Incorrect email or password. Try again or use "Forgot password?" below.',
+    'auth/email-already-in-use': 'An account with that email already exists. Try signing in instead.',
     'auth/weak-password':        'Password must be at least 6 characters.',
     'auth/invalid-email':        'Please enter a valid email address.',
     'auth/popup-closed-by-user': 'Sign-in cancelled.',
     'auth/cancelled-cancelled':  'Sign-in cancelled.',
     'auth/network-request-failed': 'Network error — check your connection.',
+    'auth/too-many-requests':    'Too many attempts. Please wait a moment and try again.',
   };
   return map[e.code] || e.message || 'Something went wrong. Please try again.';
 }
@@ -2064,10 +2126,12 @@ function showView(view) {
   document.getElementById('view-auth').classList.remove('active');
   document.getElementById('view-dashboard').classList.remove('active');
   document.getElementById('view-builder').classList.remove('active');
+  document.getElementById('view-paywall').classList.remove('active');
 
   if (view === 'auth') document.getElementById('view-auth').classList.add('active');
   if (view === 'dashboard') document.getElementById('view-dashboard').classList.add('active');
   if (view === 'builder') document.getElementById('view-builder').classList.add('active');
+  if (view === 'paywall') document.getElementById('view-paywall').classList.add('active');
 }
 
 async function enterBuilder(teamId, mode, startStep) {
