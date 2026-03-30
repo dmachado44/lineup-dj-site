@@ -2558,10 +2558,15 @@ async function loadPastLineups(teamId) {
   try {
     const snap = await fb.db.collection('teams').doc(teamId)
       .collection('lineups')
-      .orderBy('createdAt', 'desc')
       .get();
 
     _pastLineups = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // Sort newest first (client-side to avoid requiring a Firestore index)
+    _pastLineups.sort((a, b) => {
+      const aTime = a.createdAt && a.createdAt.toDate ? a.createdAt.toDate().getTime() : 0;
+      const bTime = b.createdAt && b.createdAt.toDate ? b.createdAt.toDate().getTime() : 0;
+      return bTime - aTime;
+    });
     renderPastLineups();
   } catch(e) {
     console.error('Failed to load lineups:', e);
