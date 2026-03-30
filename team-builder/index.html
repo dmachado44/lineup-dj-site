@@ -971,6 +971,43 @@
       display: block;
     }
 
+    /* ── SETTINGS MODE (flat all-in-one edit view) ── */
+    .settings-mode .wizard-bar { display: none; }
+
+    /* Show steps 1–3 simultaneously */
+    .settings-mode #step-1,
+    .settings-mode #step-2,
+    .settings-mode #step-3 { display: flex !important; flex-direction: column; gap: 20px; }
+
+    /* Reorder step-1 cards: Import first, Team Info second */
+    .settings-mode #step-1 .card:nth-child(1) { order: 2; }
+    .settings-mode #step-1 .card:nth-child(2) { order: 1; }
+
+    /* Hide all per-step navigation footers */
+    .settings-mode .step-footer { display: none !important; }
+
+    /* 2-col grid for steps 2 and 3 */
+    #steps-2-3-wrap { display: contents; } /* invisible in wizard mode */
+    .settings-mode #steps-2-3-wrap {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 24px;
+      align-items: start;
+    }
+    .settings-mode #step-2,
+    .settings-mode #step-3 { gap: 16px; }
+
+    /* Settings save footer */
+    #settings-footer { display: none; }
+    .settings-mode #settings-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 0 8px;
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+    }
+
     @media (max-width: 768px) {
       .topbar { padding: 0 16px; }
       .wizard-bar { padding: 0 16px; }
@@ -978,6 +1015,9 @@
       .dashboard-page { padding: 32px 16px; }
       .teams-grid {
         grid-template-columns: 1fr;
+      }
+      .settings-mode #steps-2-3-wrap {
+        grid-template-columns: 1fr !important;
       }
       .dashboard-header {
         flex-direction: column;
@@ -1171,6 +1211,8 @@
       </div>
     </div>
 
+    <div id="steps-2-3-wrap">
+
     <!-- ══════════════ STEP 2: LEAGUE RULES ══════════════ -->
     <div id="step-2" class="step-panel" style="display:none;">
 
@@ -1357,6 +1399,14 @@
           <button id="step3-continue" class="btn btn-primary btn-lg" onclick="goToStep4()">Continue to Edit Lineup →</button>
         </div>
       </div>
+    </div>
+
+    </div><!-- /#steps-2-3-wrap -->
+
+    <!-- Settings mode save footer -->
+    <div id="settings-footer">
+      <div style="font-size:13px;color:var(--muted);">Changes are saved to your Lineup DJ account and will sync to the app.</div>
+      <button class="btn btn-primary btn-lg" onclick="saveAndExit()">Save Changes ✓</button>
     </div>
 
     <!-- ══════════════ STEP 4: EDIT LINEUP ══════════════ -->
@@ -1799,12 +1849,28 @@ function showView(view) {
 
 function enterBuilder(teamId, mode, startStep) {
   _appMode = mode || 'setup';
-  if (teamId) {
-    selectTeam(teamId, false);
+  const builderEl = document.getElementById('view-builder');
+
+  if (mode === 'settings') {
+    builderEl.classList.add('settings-mode');
+    if (teamId) selectTeam(teamId, false);
+    // Show steps 1–3 all at once; hide 4 and 5
+    [1,2,3,4,5].forEach(i => {
+      document.getElementById(`step-${i}`).style.display = (i <= 3) ? '' : 'none';
+    });
+    renderWizardBar();
+    updateStepFooters();
+    window.scrollTo(0, 0);
   } else {
-    resetForNewTeam();
+    builderEl.classList.remove('settings-mode');
+    if (teamId) {
+      selectTeam(teamId, false);
+    } else {
+      resetForNewTeam();
+    }
+    setStep(startStep);
   }
-  setStep(startStep);
+
   showView('builder');
 }
 
