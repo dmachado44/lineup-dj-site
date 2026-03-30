@@ -997,6 +997,30 @@
     .settings-mode #step-2,
     .settings-mode #step-3 { gap: 16px; }
 
+    /* Hide topbar back button in settings mode; use inline back link instead */
+    .settings-mode .topbar-back { display: none; }
+
+    /* Inline back nav above content */
+    #settings-back { display: none; }
+    .settings-mode #settings-back {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    #settings-back button {
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--black);
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    #settings-back button:hover { opacity: 0.6; }
+
     /* Settings save footer */
     #settings-footer { display: none; }
     .settings-mode #settings-footer {
@@ -1141,6 +1165,10 @@
   </div>
 
   <div class="page">
+
+    <div id="settings-back">
+      <button onclick="backToDashboard()">← Back to Dashboard</button>
+    </div>
 
     <!-- ══════════════ STEP 1: TEAM SETUP ══════════════ -->
     <div id="step-1" class="step-panel" style="display:none;">
