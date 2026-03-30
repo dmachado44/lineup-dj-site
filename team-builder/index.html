@@ -463,8 +463,8 @@
     .player-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
     .player-row {
       display: flex;
-      align-items: center;
-      gap: 12px;
+      flex-direction: column;
+      gap: 10px;
       padding: 14px 18px;
       background: var(--bg-secondary);
       border: 1px solid var(--border);
@@ -473,14 +473,13 @@
     }
     .player-row:hover { border-color: var(--gray-4); }
     .player-row input[type=text] {
-      flex: 1;
       min-width: 80px;
       padding: 8px 12px;
       font-size: 14px;
       background: var(--white);
     }
 
-    .pos-pills { display: flex; flex-wrap: wrap; gap: 6px; flex: 2; }
+    .pos-pills { display: flex; flex-wrap: wrap; gap: 6px; }
     .pos-pill {
       font-size: 12px;
       background: var(--gray-5);
