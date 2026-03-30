@@ -45,6 +45,17 @@
       --bench-bg:    #FFF8E7;
       --bench-border:#FFD60A;
 
+      /* Tip/Alert colors */
+      --tip-bg:      #f0f7ff;
+      --tip-border:  #c3d9ff;
+      --tip-text:    #0055cc;
+      --warn-text:   #8B6914;
+
+      /* Team theming */
+      --team-primary: #000000;
+      --team-secondary: #D3FFC4;
+      --team-logo: none;
+
       /* Radius */
       --radius:      12px;
       --radius-pill: 80px;
@@ -809,11 +820,11 @@
       display: flex;
       gap: 12px;
       padding: 12px 16px;
-      background: #f0f7ff;
-      border: 1px solid #c3d9ff;
+      background: var(--tip-bg);
+      border: 1px solid var(--tip-border);
       border-radius: var(--radius-sm);
       font-size: 12px;
-      color: #0055cc;
+      color: var(--tip-text);
       margin-bottom: 20px;
     }
     .tip-icon { flex-shrink: 0; font-size: 14px; }
@@ -823,7 +834,7 @@
       background: rgba(255, 149, 0, 0.1);
       border: 1px solid var(--orange);
       border-radius: var(--radius-sm);
-      color: #8B6914;
+      color: var(--warn-text);
       font-size: 12px;
       margin-bottom: 16px;
     }
@@ -837,13 +848,6 @@
       flex-wrap: wrap;
     }
 
-    .export-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px 32px;
-      margin-bottom: 20px;
-    }
     .export-header {
       display: flex;
       justify-content: space-between;
@@ -919,8 +923,8 @@
     }
     .team-pill {
       font-size: 12px;
-      background: #f0f0f0;
-      color: #555;
+      background: var(--gray-5);
+      color: var(--text-secondary);
       border-radius: 100px;
       padding: 4px 12px;
       font-weight: 500;
@@ -1037,6 +1041,71 @@
         padding: 40px 24px;
       }
     }
+
+    /* ── UTILITY CLASSES ── */
+    .hidden { display: none; }
+    .text-muted { font-size: 13px; color: var(--muted); }
+    .text-muted-sm { font-size: 12px; color: var(--muted); }
+    .text-hint { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+    .flex-row { display: flex; align-items: center; }
+    .flex-row.gap-sm { gap: 8px; }
+    .flex-row.gap-md { gap: 12px; }
+    .flex-row.gap-lg { gap: 16px; }
+    .flex-wrap { flex-wrap: wrap; }
+    .flex-1 { flex: 1; }
+    .mb-0 { margin-bottom: 0; }
+    .mb-sm { margin-bottom: 8px; }
+    .mb-md { margin-bottom: 16px; }
+    .mb-lg { margin-bottom: 20px; }
+    .mt-sm { margin-top: 8px; }
+    .mt-md { margin-top: 14px; }
+    .empty-icon { font-size: 48px; margin-bottom: 16px; }
+
+    /* ── TEAM THEMING ── */
+    .team-card {
+      border-top: 4px solid var(--border);
+    }
+    .team-card[data-primary] {
+      border-top-color: var(--tc-primary, var(--border));
+    }
+    .team-logo-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .team-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .team-card-header .team-logo-mark {
+      width: 40px;
+      height: 40px;
+    }
+    .team-builder-banner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 0;
+      margin-bottom: 8px;
+    }
+    .team-builder-banner .team-logo-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+    }
+    .team-builder-banner .team-banner-name {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .team-builder-banner .team-banner-meta {
+      font-size: 13px;
+      color: var(--muted);
+    }
   </style>
 </head>
 <body>
@@ -1044,7 +1113,7 @@
 <!-- ══════════════ VIEW 1: AUTH ══════════════ -->
 <div id="view-auth">
   <div class="auth-page-card">
-    <a class="auth-page-logo" href="https://lineupdj.app" style="text-decoration:none;color:inherit;">
+    <a class="auth-page-logo" href="https://lineupdj.app">
       <img class="logo-mark" src="assets/icon.png" alt="Lineup DJ">
       <div class="logo-name">Lineup DJ</div>
     </a>
@@ -1103,7 +1172,7 @@
 <!-- ══════════════ VIEW 2: DASHBOARD ══════════════ -->
 <div id="view-dashboard">
   <div class="topbar">
-    <a class="topbar-logo" href="https://lineupdj.app" style="text-decoration:none;color:inherit;">
+    <a class="topbar-logo" href="https://lineupdj.app">
       <img class="logo-mark" src="assets/icon.png" alt="Lineup DJ">
       Lineup DJ
     </a>
@@ -1123,7 +1192,7 @@
     <div class="teams-grid" id="teams-grid"></div>
 
     <div class="team-card-empty" id="empty-state" style="display:none;">
-      <div style="font-size:48px;margin-bottom:16px;">⚙️</div>
+      <div class="empty-icon">⚙️</div>
       <div class="team-card-empty-text">No teams yet</div>
       <button class="btn btn-primary" onclick="enterBuilder(null, 'setup', 1)">+ Create your first team</button>
     </div>
@@ -1134,7 +1203,7 @@
 <div id="view-builder">
   <div class="topbar">
     <button class="topbar-back" onclick="backToDashboard()">← Back to Dashboard</button>
-    <a class="topbar-logo" href="https://lineupdj.app" style="text-decoration:none;color:inherit;">
+    <a class="topbar-logo" href="https://lineupdj.app">
       <img class="logo-mark" src="assets/icon.png" alt="Lineup DJ">
       Lineup DJ
     </a>
@@ -1153,6 +1222,8 @@
     <div id="settings-back">
       <button onclick="backToDashboard()">← Back to Dashboard</button>
     </div>
+
+    <div id="team-builder-banner" class="team-builder-banner" style="display:none;"></div>
 
     <!-- ══════════════ STEP 1: TEAM SETUP ══════════════ -->
     <div id="step-1" class="step-panel" style="display:none;">
@@ -1223,9 +1294,9 @@
           <span class="pos-header-label">Active Positions</span>
           <span class="pos-count-badge" id="pos-count-badge">9 Selected</span>
         </div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:16px;">Tap a position to toggle it on or off for your lineup.</div>
+        <div class="text-hint">Tap a position to toggle it on or off for your lineup.</div>
         <div class="pos-grid" id="pos-grid"></div>
-        <div class="pos-hint" style="margin-top:14px;">Teal = active · Tap to toggle on/off</div>
+        <div class="pos-hint mt-md">Teal = active · Tap to toggle on/off</div>
       </div>
 
       <!-- Game Rules -->
@@ -1387,8 +1458,8 @@
 
       <div class="step-footer">
         <button id="step3-back" class="btn btn-ghost" onclick="goToStep2()">← Back to League Rules</button>
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="font-size:13px;color:var(--muted);" id="step2-status"></div>
+        <div class="flex-row gap-md">
+          <div class="text-muted" id="step2-status"></div>
           <button id="step3-save-exit" class="btn btn-outline btn-lg" style="display:none" onclick="saveAndExit()">Save &amp; Exit</button>
           <button id="step3-continue" class="btn btn-primary btn-lg" onclick="goToStep4()">Continue to Edit Lineup →</button>
         </div>
@@ -1399,7 +1470,7 @@
 
     <!-- Settings mode save footer -->
     <div id="settings-footer">
-      <div style="font-size:13px;color:var(--muted);">Changes are saved to your Lineup DJ account and will sync to the app.</div>
+      <div class="text-muted">Changes are saved to your Lineup DJ account and will sync to the app.</div>
       <button class="btn btn-primary btn-lg" onclick="saveAndExit()">Save Changes ✓</button>
     </div>
 
@@ -1415,8 +1486,8 @@
       <div class="card">
         <div class="lineup-toolbar">
           <div>
-            <div class="card-title" style="margin-bottom:2px;">Batting Order & Fielding Positions</div>
-            <div style="font-size:12px;color:var(--muted);">Drag rows to reorder batting order · Use dropdowns to assign positions per inning</div>
+            <div class="card-title mb-0">Batting Order & Fielding Positions</div>
+            <div class="text-muted-sm">Drag rows to reorder batting order · Use dropdowns to assign positions per inning</div>
           </div>
           <div class="toolbar-spacer"></div>
           <button class="btn btn-ghost btn-sm" onclick="shuffleBatting()" title="Randomly shuffle batting order">
@@ -1456,19 +1527,19 @@
     <!-- ══════════════ STEP 5: EXPORT ══════════════ -->
     <div id="step-5" class="step-panel" style="display:none;">
 
-      <div class="export-card">
+      <div class="card">
         <div class="export-header">
           <div>
             <div class="export-title" id="export-title">Game Lineup</div>
             <div class="export-meta" id="export-meta"></div>
           </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;" class="no-print">
+          <div class="flex-row gap-sm flex-wrap no-print">
             <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Print</button>
             <button class="btn btn-primary btn-sm" onclick="copyLineup()">📋 Copy</button>
           </div>
         </div>
 
-        <div class="lineup-wrap" style="margin-bottom:20px;">
+        <div class="lineup-wrap mb-lg">
           <table class="lineup-table" id="export-table">
             <thead id="export-thead"></thead>
             <tbody id="export-tbody"></tbody>
@@ -1729,7 +1800,10 @@ async function loadUserTeams(user) {
           level: data.level || '',
           ageGroup: data.ageGroup || '',
           season: data.season || 'Spring',
-          year: data.year || new Date().getFullYear()
+          year: data.year || new Date().getFullYear(),
+          logoURL: data.logoURL || data.teamLogoURL || '',
+          primaryColor: data.primaryColor || data.teamColor || '',
+          secondaryColor: data.secondaryColor || ''
         };
       });
 
@@ -1750,21 +1824,32 @@ function renderDashboard() {
   }
 
   emptyState.style.display = 'none';
-  grid.innerHTML = _userTeams.map(team => `
-    <div class="team-card">
-      <div class="team-card-name">${escHtml(team.name)}</div>
-      ${_activeTeamId === team.id ? '<div class="team-card-current">✓ Current</div>' : ''}
-      <div class="team-card-pills">
-        <span class="team-pill">${team.season} ${team.year}</span>
-        ${team.level ? `<span class="team-pill">${team.level}</span>` : ''}
-        ${team.ageGroup ? `<span class="team-pill">${team.ageGroup}</span>` : ''}
+  grid.innerHTML = _userTeams.map(team => {
+    const borderStyle = team.primaryColor ? `style="border-top-color:${team.primaryColor}"` : '';
+    const logoHtml = team.logoURL
+      ? `<img class="team-logo-mark" src="${team.logoURL}" alt="" />`
+      : '';
+    return `
+      <div class="team-card" ${borderStyle}>
+        <div class="team-card-header">
+          ${logoHtml}
+          <div>
+            <div class="team-card-name mb-0">${escHtml(team.name)}</div>
+          </div>
+        </div>
+        ${_activeTeamId === team.id ? '<div class="team-card-current">✓ Current</div>' : ''}
+        <div class="team-card-pills">
+          <span class="team-pill">${team.season} ${team.year}</span>
+          ${team.level ? `<span class="team-pill">${team.level}</span>` : ''}
+          ${team.ageGroup ? `<span class="team-pill">${team.ageGroup}</span>` : ''}
+        </div>
+        <div class="team-card-actions">
+          <button class="btn btn-primary btn-create" onclick="enterBuilder('${team.id}', 'lineup', 3)">Create Lineup →</button>
+          <button class="btn btn-ghost btn-create" onclick="enterBuilder('${team.id}', 'settings', 1)">⚙ Manage Team Settings</button>
+        </div>
       </div>
-      <div class="team-card-actions">
-        <button class="btn btn-primary btn-create" onclick="enterBuilder('${team.id}', 'lineup', 3)">Create Lineup →</button>
-        <button class="btn btn-ghost btn-create" onclick="enterBuilder('${team.id}', 'settings', 1)">⚙ Manage Team Settings</button>
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 async function selectTeam(teamId, closeDropdown = true) {
@@ -1800,6 +1885,25 @@ async function selectTeam(teamId, closeDropdown = true) {
     setField('team-season',    state.teamSeason);
     setField('team-year',      state.teamYear);
     setField('team-notes',     state.teamNotes);
+
+    // Apply team theming to the builder
+    const currentTeam = _userTeams.find(t => t.id === teamId);
+    if (currentTeam) {
+      const banner = document.getElementById('team-builder-banner');
+      if (banner) {
+        const logoHtml = currentTeam.logoURL
+          ? `<img class="team-logo-mark" src="${currentTeam.logoURL}" alt="" />`
+          : '';
+        banner.innerHTML = `
+          ${logoHtml}
+          <div>
+            <div class="team-banner-name">${escHtml(currentTeam.name)}</div>
+            <div class="team-banner-meta">${currentTeam.sport} · ${currentTeam.season} ${currentTeam.year}</div>
+          </div>
+        `;
+        banner.style.display = currentTeam.logoURL || currentTeam.primaryColor ? 'flex' : 'none';
+      }
+    }
 
     const players = playerSnap.docs.map(doc => {
       const d = doc.data();
