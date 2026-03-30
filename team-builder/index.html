@@ -855,23 +855,6 @@
     .export-title { font-size: 24px; font-weight: 700; }
     .export-meta { font-size: 13px; color: var(--muted); margin-top: 4px; }
 
-    .import-status {
-      font-size: 12px;
-      padding: 8px 12px;
-      border-radius: 6px;
-      margin-top: 8px;
-    }
-    .import-status.loading {
-      color: var(--muted);
-    }
-    .import-status.success {
-      background: rgba(52, 199, 89, 0.1);
-      color: #2a6b1e;
-    }
-    .import-status.error {
-      background: rgba(255, 59, 48, 0.1);
-      color: #8B3A1B;
-    }
 
     /* ── DASHBOARD ── */
     .dashboard-page {
@@ -1221,16 +1204,6 @@
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-title">Import from Lineup DJ</div>
-        <div class="card-sub">If you've already set up this team in Lineup DJ, paste your invite code below to import players.</div>
-        <label style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);display:block;margin-bottom:8px;">Team Invite Code</label>
-        <div style="display:flex;gap:10px;align-items:center;">
-          <input type="text" id="team-import-code" placeholder="e.g. ABC123" style="flex:1;" />
-          <button class="btn btn-ghost btn-sm" onclick="importTeamByCode()" style="white-space:nowrap;flex-shrink:0;">🔗 Import Team</button>
-        </div>
-        <div id="import-status" class="import-status"></div>
-      </div>
 
       <div class="step-footer">
         <div></div>
@@ -2808,9 +2781,9 @@ function copyLineup() {
 }
 
 // ═══════════════════════════════════════════════════
-// IMPORT
+// UTILS — importTeamByCode removed; sharing is handled in the iOS app
 // ═══════════════════════════════════════════════════
-async function importTeamByCode() {
+async function importTeamByCode_REMOVED() {
   const codeInput = document.getElementById('team-import-code');
   const statusEl  = document.getElementById('import-status');
   const code = codeInput.value.trim().toUpperCase();
