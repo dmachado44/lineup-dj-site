@@ -1153,61 +1153,68 @@
       </div>
     </div>
 
-    <!-- ══════════════ STEP 3: ROSTER ══════════════ -->
+    <!-- ══════════════ STEP 3: ROSTER / GAME INFO ══════════════ -->
     <div id="step-3" class="step-panel" style="display:none;">
-      <div class="card">
-        <div class="card-title">Game Information</div>
-        <div class="card-sub">Basic details for this game's lineup card</div>
-        <div class="form-grid">
-          <div class="field">
-            <label>Game / Event Name</label>
-            <input type="text" id="game-name" placeholder="e.g. Season Opener, Tournament Game 1" />
-          </div>
-          <div class="field">
-            <label>Opponent (optional)</label>
-            <input type="text" id="opponent" placeholder="e.g. Rockets, Yankees" />
-          </div>
-          <div class="field">
-            <label>Date</label>
-            <input type="date" id="game-date" />
-          </div>
-          <div class="field">
-            <label>Time (optional)</label>
-            <input type="time" id="game-time" />
-          </div>
-          <div class="field">
-            <label>Location (optional)</label>
-            <input type="text" id="game-location" placeholder="e.g. City Park, Diamond 3" />
-          </div>
-          <div class="field">
-            <label>Number of Innings</label>
-            <div class="inning-control">
-              <button onclick="changeInnings(-1)">−</button>
-              <span class="inning-count" id="inning-count">6</span>
-              <button onclick="changeInnings(1)">+</button>
+
+      <!-- Shown only in 'lineup' mode -->
+      <div id="step3-game-info" style="display:none;">
+        <div class="card">
+          <div class="card-title">Game Information</div>
+          <div class="card-sub">Basic details for this game's lineup card</div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Game / Event Name</label>
+              <input type="text" id="game-name" placeholder="e.g. Season Opener, Tournament Game 1" />
             </div>
-          </div>
-          <div class="field full">
-            <label>Notes (optional)</label>
-            <textarea id="game-notes" placeholder="Any special notes for this game..."></textarea>
+            <div class="field">
+              <label>Opponent (optional)</label>
+              <input type="text" id="opponent" placeholder="e.g. Rockets, Yankees" />
+            </div>
+            <div class="field">
+              <label>Date</label>
+              <input type="date" id="game-date" />
+            </div>
+            <div class="field">
+              <label>Time (optional)</label>
+              <input type="time" id="game-time" />
+            </div>
+            <div class="field">
+              <label>Location (optional)</label>
+              <input type="text" id="game-location" placeholder="e.g. City Park, Diamond 3" />
+            </div>
+            <div class="field">
+              <label>Number of Innings</label>
+              <div class="inning-control">
+                <button onclick="changeInnings(-1)">−</button>
+                <span class="inning-count" id="inning-count">6</span>
+                <button onclick="changeInnings(1)">+</button>
+              </div>
+            </div>
+            <div class="field full">
+              <label>Notes (optional)</label>
+              <textarea id="game-notes" placeholder="Any special notes for this game..."></textarea>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-title">Roster</div>
-        <div class="card-sub">Add players and tap their preferred positions — the auto-assign uses these to build fair lineups.</div>
+      <!-- Shown in 'setup' and 'roster' modes -->
+      <div id="step3-roster">
+        <div class="card">
+          <div class="card-title">Roster</div>
+          <div class="card-sub">Add players and tap their preferred positions — the auto-assign uses these to build fair lineups.</div>
 
-        <div class="tip">
-          <span class="tip-icon">💡</span>
-          <span>Click position badges to mark preferred positions for each player. The shuffle algorithm will honor these preferences when assigning fielding spots.</span>
-        </div>
+          <div class="tip">
+            <span class="tip-icon">💡</span>
+            <span>Click position badges to mark preferred positions for each player. The shuffle algorithm will honor these preferences when assigning fielding spots.</span>
+          </div>
 
-        <div id="player-list" class="player-list"></div>
+          <div id="player-list" class="player-list"></div>
 
-        <div class="add-player-row">
-          <input type="text" id="new-player-name" placeholder="Player name..." onkeydown="if(event.key==='Enter') addPlayer()" />
-          <button class="btn btn-primary btn-sm" onclick="addPlayer()">+ Add Player</button>
+          <div class="add-player-row">
+            <input type="text" id="new-player-name" placeholder="Player name..." onkeydown="if(event.key==='Enter') addPlayer()" />
+            <button class="btn btn-primary btn-sm" onclick="addPlayer()">+ Add Player</button>
+          </div>
         </div>
       </div>
 
@@ -1580,7 +1587,7 @@ function renderDashboard() {
         ${team.ageGroup ? `<span class="team-pill">${team.ageGroup}</span>` : ''}
       </div>
       <div class="team-card-actions">
-        <button class="btn btn-primary btn-create" onclick="enterBuilder('${team.id}', 'lineup', 4)">Create Lineup →</button>
+        <button class="btn btn-primary btn-create" onclick="enterBuilder('${team.id}', 'lineup', 3)">Create Lineup →</button>
         <button class="btn btn-ghost btn-sm" onclick="enterBuilder('${team.id}', 'roster', 3)">Edit Roster</button>
         <button class="btn btn-ghost btn-sm" onclick="enterBuilder('${team.id}', 'team', 1)">Edit Team</button>
       </div>
@@ -1681,6 +1688,7 @@ function renderWizardBar() {
     ];
   } else if (_appMode === 'lineup') {
     steps = [
+      { step: 3, label: 'Game Info' },
       { step: 4, label: 'Edit Lineup' },
       { step: 5, label: 'Export' }
     ];
@@ -1708,28 +1716,40 @@ function updateStepFooters() {
   const step3back = document.getElementById('step3-back');
   const step3cont = document.getElementById('step3-continue');
   const step4back = document.getElementById('step4-back');
+  const gameInfoSection = document.getElementById('step3-game-info');
+  const rosterSection   = document.getElementById('step3-roster');
 
   // Reset all to defaults first
   if (step1cont) { step1cont.textContent = 'Continue to League Rules →'; step1cont.onclick = goToStep2; step1cont.style.display = ''; }
   if (step3back) { step3back.style.display = ''; step3back.textContent = '← Back to League Rules'; step3back.onclick = goToStep2; }
   if (step3cont) { step3cont.textContent = 'Continue to Edit Lineup →'; step3cont.onclick = goToStep4; }
-  if (step4back) { step4back.style.display = ''; step4back.onclick = goToStep3; }
+  if (step4back) { step4back.style.display = ''; step4back.textContent = '← Back to Setup'; step4back.onclick = goToStep3; }
 
   if (_appMode === 'setup') {
+    // Step 3 shows roster only
+    if (gameInfoSection) gameInfoSection.style.display = 'none';
+    if (rosterSection)   rosterSection.style.display = '';
     if (step3cont) { step3cont.textContent = 'Set your first lineup →'; step3cont.onclick = enterLineupMode; }
+  } else if (_appMode === 'lineup') {
+    // Step 3 shows game info only; step 4 back button goes to Game Info
+    if (gameInfoSection) gameInfoSection.style.display = '';
+    if (rosterSection)   rosterSection.style.display = 'none';
+    if (step3back) step3back.style.display = 'none';
+    if (step3cont) { step3cont.textContent = 'Continue to Edit Lineup →'; step3cont.onclick = goToStep4; }
+    if (step4back) { step4back.style.display = ''; step4back.textContent = '← Back to Game Info'; step4back.onclick = goToStep3; }
   } else if (_appMode === 'roster') {
+    if (gameInfoSection) gameInfoSection.style.display = 'none';
+    if (rosterSection)   rosterSection.style.display = '';
     if (step3back) step3back.style.display = 'none';
     if (step3cont) { step3cont.textContent = 'Done ✓'; step3cont.onclick = function() { save(); backToDashboard(); }; }
   } else if (_appMode === 'team') {
     if (step1cont) { step1cont.textContent = 'Save Team ✓'; step1cont.onclick = function() { saveTeam(); backToDashboard(); }; }
-  } else if (_appMode === 'lineup') {
-    if (step4back) step4back.style.display = 'none';
   }
 }
 
 function enterLineupMode() {
   _appMode = 'lineup';
-  goToStep4();
+  setStep(3);
 }
 
 function backToDashboard() {
