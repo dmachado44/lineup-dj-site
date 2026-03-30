@@ -498,6 +498,41 @@
       font-weight: 600;
     }
 
+    .priority-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .priority-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .priority-pills {
+      display: flex;
+      gap: 4px;
+    }
+    .priority-pill {
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--white);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-weight: 500;
+    }
+    .priority-pill:hover { border-color: #aaa; }
+    .priority-pill.active {
+      background: var(--teal);
+      color: var(--black);
+      border-color: var(--teal);
+      font-weight: 600;
+    }
+
     .add-player-row {
       display: flex;
       gap: 8px;
@@ -2194,6 +2229,7 @@ async function selectTeam(teamId, closeDropdown = true) {
         id:      'imp_' + doc.id,
         name:    d.name   || 'Unknown',
         prefPos: d.prefPos || [],
+        fieldPriority: d.fieldPriority || 'both',
         gender:  d.gender || ''
       };
     });
@@ -2494,6 +2530,9 @@ async function saveTeamToFirestore() {
         if (player.prefPos && player.prefPos.length > 0) {
           playerData.prefPos = player.prefPos;
         }
+        if (player.fieldPriority && player.fieldPriority !== 'both') {
+          playerData.fieldPriority = player.fieldPriority;
+        }
         batch.set(ref, playerData, { merge: true }); // merge preserves all iOS fields
       });
       await batch.commit();
@@ -2665,6 +2704,8 @@ function backToDashboard() {
 // APP STATE & STORAGE
 // ═══════════════════════════════════════════════════
 const ALL_POSITIONS = ['P','C','1B','2B','3B','SS','LF','CF','RF','LCF','RCF','UTL1','UTL2','UTL3'];
+const INFIELD_POSITIONS = ['P','C','1B','2B','3B','SS'];
+const OUTFIELD_POSITIONS = ['LF','CF','RF','LCF','RCF'];
 const POS_FULL = {
   'P':'Pitcher','C':'Catcher','1B':'First Base','2B':'Second Base','3B':'Third Base','SS':'Shortstop',
   'LF':'Left Field','CF':'Center Field','RF':'Right Field','LCF':'Left-Center Field','RCF':'Right-Center Field',
@@ -2842,7 +2883,7 @@ function addPlayer() {
   const name = input.value.trim();
   if (!name) return;
   const id = 'p_' + Date.now();
-  state.players.push({ id, name, prefPos: [] });
+  state.players.push({ id, name, prefPos: [], fieldPriority: 'both' });
   state.attendance[id] = true;
   input.value = '';
   renderPlayerList();
@@ -2870,6 +2911,14 @@ function togglePrefPos(playerId, pos) {
   save();
 }
 
+function setFieldPriority(playerId, priority) {
+  const player = state.players.find(p => p.id === playerId);
+  if (!player) return;
+  player.fieldPriority = priority;
+  renderPlayerList();
+  save();
+}
+
 function updatePlayerName(id, name) {
   const p = state.players.find(p => p.id === id);
   if (p) p.name = name;
@@ -2884,17 +2933,28 @@ function renderPlayerList() {
     row.className = 'player-row';
     row.dataset.playerId = player.id;
 
+    const prio = player.fieldPriority || 'both';
     row.innerHTML = `
-      <input type="text" value="${escHtml(player.name)}" placeholder="Player name"
-        onchange="updatePlayerName('${player.id}', this.value)"
-        style="flex:1;min-width:80px;" />
+      <div style="display:flex;align-items:center;gap:8px;width:100%;">
+        <input type="text" value="${escHtml(player.name)}" placeholder="Player name"
+          onchange="updatePlayerName('${player.id}', this.value)"
+          style="flex:1;min-width:80px;" />
+        <button class="btn btn-danger btn-icon btn-sm" onclick="removePlayer('${player.id}')" title="Remove player">✕</button>
+      </div>
       <div class="pos-pills">
         ${getActiveFieldPositions().map(pos =>
           `<span class="pos-pill ${player.prefPos.includes(pos) ? 'selected' : ''}"
             onclick="togglePrefPos('${player.id}','${pos}')">${pos}</span>`
         ).join('')}
       </div>
-      <button class="btn btn-danger btn-icon btn-sm" onclick="removePlayer('${player.id}')" title="Remove player">✕</button>
+      <div class="priority-row">
+        <span class="priority-label">Prioritize:</span>
+        <div class="priority-pills">
+          <span class="priority-pill ${prio === 'infield' ? 'active' : ''}" onclick="setFieldPriority('${player.id}','infield')">Infield</span>
+          <span class="priority-pill ${prio === 'outfield' ? 'active' : ''}" onclick="setFieldPriority('${player.id}','outfield')">Outfield</span>
+          <span class="priority-pill ${prio === 'both' ? 'active' : ''}" onclick="setFieldPriority('${player.id}','both')">Both</span>
+        </div>
+      </div>
     `;
 
     container.appendChild(row);
@@ -3262,9 +3322,20 @@ function shuffleFielding() {
         // Build pool: fresh positions first → fall back to rule-filtered → last resort any available
         const basePool = fresh.length > 0 ? fresh : (hardFiltered.length > 0 ? hardFiltered : available);
 
-        // Within that pool, prefer the player's preferred positions
-        const preferred = basePool.filter(p => player.prefPos && player.prefPos.includes(p));
-        const pool = preferred.length > 0 ? preferred : basePool;
+        // Apply field priority — narrow to infield/outfield zone if set
+        const prio = player.fieldPriority || 'both';
+        let zonePool = basePool;
+        if (prio === 'infield') {
+          const zoneFiltered = basePool.filter(p => INFIELD_POSITIONS.includes(p));
+          if (zoneFiltered.length > 0) zonePool = zoneFiltered;
+        } else if (prio === 'outfield') {
+          const zoneFiltered = basePool.filter(p => OUTFIELD_POSITIONS.includes(p));
+          if (zoneFiltered.length > 0) zonePool = zoneFiltered;
+        }
+
+        // Within that zone pool, prefer the player's preferred positions
+        const preferred = zonePool.filter(p => player.prefPos && player.prefPos.includes(p));
+        const pool = preferred.length > 0 ? preferred : zonePool;
 
         const chosen = pool[Math.floor(Math.random() * pool.length)];
         row.positions[inning] = chosen;
