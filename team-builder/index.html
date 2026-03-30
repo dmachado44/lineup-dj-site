@@ -1793,6 +1793,7 @@ async function signInWithApple() {
     try {
       await fb.auth.signInWithPopup(provider);
     } catch(popupErr) {
+      console.error('Apple sign-in popup error:', popupErr.code, popupErr.message);
       if (popupErr.code === 'auth/operation-not-supported-in-this-environment' ||
           popupErr.code === 'auth/popup-blocked' ||
           popupErr.code === 'auth/popup-closed-by-user') {
@@ -1802,6 +1803,7 @@ async function signInWithApple() {
       }
     }
   } catch(e) {
+    console.error('Apple sign-in error:', e.code, e.message);
     showAuthError(friendlyAuthError(e));
   }
 }
