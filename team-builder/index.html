@@ -2077,18 +2077,48 @@ async function saveTeamToFirestore() {
         { merge: true }
       );
     } else {
-      // Existing team — update core fields only; preserve memberIds/ownerId as-is
-      await fb.db.collection('teams').doc(teamId).set(coreFields, { merge: true });
+      // SAFETY: verify the current user owns this team before writing.
+      // If they don't (e.g. _activeTeamId somehow points at another user's
+      // iOS team), treat it as a new team instead of overwriting foreign data.
+      const existingDoc = await fb.db.collection('teams').doc(teamId).get();
+      if (!existingDoc.exists || existingDoc.data().ownerId !== uid) {
+        console.warn('saveTeamToFirestore: not owner of team', teamId, '— creating new team instead');
+        const ref = await fb.db.collection('teams').add({
+          ...coreFields,
+          ownerId:   uid,
+          memberIds: [uid],
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        teamId = ref.id;
+        _activeTeamId = teamId;
+        await fb.db.collection('users').doc(uid).set(
+          { ownedTeamIds: firebase.firestore.FieldValue.arrayUnion(teamId) },
+          { merge: true }
+        );
+      } else {
+        // Confirmed owner — update core fields only; preserve memberIds/ownerId as-is
+        await fb.db.collection('teams').doc(teamId).set(coreFields, { merge: true });
+      }
     }
 
-    // Save players as a subcollection batch
+    // Save players as a subcollection batch.
+    // SAFETY: always use { merge: true } so iOS-only fields (walkoutSong,
+    // voiceIntro, jerseyNumber, etc.) are never touched or deleted.
+    // SAFETY: only write prefPos when it has actual values — writing an
+    // empty array would silently overwrite preferences set in the iOS app.
     if (state.players.length > 0) {
       const batch = fb.db.batch();
       state.players.forEach(player => {
-        // Strip any 'p_' prefix for the doc ID
         const docId = player.id.replace(/^(imp_|p_)/, '') || player.id;
         const ref = fb.db.collection('teams').doc(teamId).collection('players').doc(docId);
-        batch.set(ref, { name: player.name, prefPos: player.prefPos || [], gender: player.gender || '' });
+        const playerData = {
+          name:   player.name,
+          gender: player.gender || ''
+        };
+        if (player.prefPos && player.prefPos.length > 0) {
+          playerData.prefPos = player.prefPos;
+        }
+        batch.set(ref, playerData, { merge: true }); // merge preserves all iOS fields
       });
       await batch.commit();
     }
@@ -2843,6 +2873,11 @@ async function importTeamByCode() {
     state.lineup       = [];
     players.forEach(p => { state.attendance[p.id] = true; });
 
+    // SAFETY: clear _activeTeamId so that saving after an import always
+    // creates a NEW team in the web builder rather than writing back to
+    // the iOS source team and potentially overwriting its data.
+    _activeTeamId = null;
+
     const setField = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
     setField('team-name', state.teamName);
     setField('team-sport', state.teamSport);
@@ -2855,7 +2890,7 @@ async function importTeamByCode() {
     updateStep2Status();
 
     statusEl.className = 'import-status success';
-    statusEl.textContent = `✓ Loaded "${state.teamName}" with ${players.length} player${players.length !== 1 ? 's' : ''}.`;
+    statusEl.textContent = `✓ Loaded "${state.teamName}" with ${players.length} player${players.length !== 1 ? 's' : ''}. Save to add this team to your account.`;
   } catch(e) {
     console.error('importTeamByCode error:', e);
     statusEl.className = 'import-status error';
