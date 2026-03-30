@@ -2399,9 +2399,9 @@ function setStep(n) {
 function toggleAttendance(id) {
   state.attendance[id] = !state.attendance[id];
   renderAttendance();
-  renderLineupGrid();
-  renderPlayingTimeSummary();
-  save();
+  // Re-assign positions whenever attendance changes to avoid
+  // duplicate slots or gaps (shuffleFielding handles render + save)
+  shuffleFielding();
 }
 
 function renderAttendance() {
