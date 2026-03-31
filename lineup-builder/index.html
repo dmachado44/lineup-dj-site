@@ -364,6 +364,7 @@
       margin: 0 auto;
       display: flex;
       align-items: center;
+      justify-content: center;
       height: 56px;
       gap: 0;
     }
@@ -1054,7 +1055,7 @@
     .team-card-actions {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 12px;
     }
     .team-card-actions .btn-create {
       width: 100%;
@@ -1731,12 +1732,29 @@
             <input type="number" id="team-year" />
           </div>
           <div class="field">
-            <label>Level (optional)</label>
-            <input type="text" id="team-level" placeholder="e.g. U12, High School, Adult" />
+            <label>Level</label>
+            <select id="team-level">
+              <option value="">Select Level</option>
+              <option value="Recreational">Recreational</option>
+              <option value="Competitive">Competitive</option>
+              <option value="Travel">Travel</option>
+              <option value="School">School</option>
+              <option value="Adult League">Adult League</option>
+            </select>
           </div>
           <div class="field">
-            <label>Age Group (optional)</label>
-            <input type="text" id="team-age-group" placeholder="e.g. 12U, 14U" />
+            <label>Age Group</label>
+            <select id="team-age-group">
+              <option value="">Select Age Group</option>
+              <option value="T-Ball (4-6)">T-Ball (4-6)</option>
+              <option value="Coach Pitch (7-8)">Coach Pitch (7-8)</option>
+              <option value="Minor League (9-10)">Minor League (9-10)</option>
+              <option value="Little League (11-12)">Little League (11-12)</option>
+              <option value="Junior League (13-14)">Junior League (13-14)</option>
+              <option value="Senior League (15-16)">Senior League (15-16)</option>
+              <option value="High School (17-18)">High School (17-18)</option>
+              <option value="Adult (18+)">Adult (18+)</option>
+            </select>
           </div>
           <div class="field full">
             <label>Notes (optional)</label>
