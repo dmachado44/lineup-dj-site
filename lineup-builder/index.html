@@ -817,6 +817,8 @@
       left: 0;
       z-index: 2;
       background: var(--white);
+      width: 33%;
+      min-width: 200px;
     }
     .lineup-table th:first-child { background: var(--bg-secondary); }
     .lineup-table tbody tr:hover td:first-child { background: rgba(0,0,0,0.02); }
@@ -863,8 +865,9 @@
     .fp-seg.bench { background: var(--bench-border); }
 
     .pos-select {
-      padding: 6px 24px 6px 10px;
-      font-size: 12px;
+      padding: 9px 28px 9px 12px;
+      font-size: 13px;
+      height: 40px;
       font-family: inherit;
       border: none;
       border-radius: 6px;
@@ -1947,13 +1950,13 @@
           </div>
           <div class="toolbar-spacer"></div>
           <button class="btn btn-ghost btn-sm" onclick="shuffleBatting()" title="Randomly shuffle batting order">
-            🔀 Shuffle Batting
+            Shuffle Batting
           </button>
           <button class="btn btn-teal btn-sm" onclick="shuffleFielding()" title="Re-randomize position assignments across all innings">
-            ⚡ Rearrange Positions
+            Rearrange Positions
           </button>
           <button class="btn btn-ghost btn-sm" onclick="clearFielding()">
-            🗑 Clear
+            Clear
           </button>
         </div>
 
