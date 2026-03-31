@@ -517,6 +517,14 @@
     }
     .btn-danger:hover { background: rgba(255,59,48,0.18); }
 
+    /* Back nav — subtle tinted pill */
+    .btn-back {
+      background: #ECEDF1;
+      color: var(--text);
+      border: none;
+    }
+    .btn-back:hover { background: #E2E3E8; }
+
     .btn-sm { padding: 9px 20px; font-size: 14px; }
     .btn-lg { padding: 16px 36px; font-size: 17px; letter-spacing: -0.2px; }
     .btn-icon { padding: 7px 10px; border-radius: var(--radius-sm); }
@@ -848,12 +856,14 @@
       justify-content: center;
       flex-shrink: 0;
     }
-    .player-name { font-weight: 500; font-size: 16px; margin-bottom: 4px; }
+    .player-name { font-weight: 500; font-size: 16px; }
     .fp-bar {
       display: flex;
       gap: 2px;
       flex-wrap: wrap;
       max-width: 120px;
+      margin-left: auto;
+      flex-shrink: 0;
     }
     .fp-seg {
       width: 6px;
@@ -1160,18 +1170,20 @@
       margin-bottom: 20px;
     }
     #settings-back button {
-      background: none;
+      background: #ECEDF1;
       border: none;
       font-size: 14px;
       font-weight: 500;
       color: var(--black);
       cursor: pointer;
-      padding: 0;
+      padding: 9px 20px;
+      border-radius: var(--radius-pill);
       display: flex;
       align-items: center;
       gap: 4px;
+      transition: background 0.15s;
     }
-    #settings-back button:hover { opacity: 0.6; }
+    #settings-back button:hover { background: #E2E3E8; }
 
     /* Settings save footer */
     #settings-footer { display: none; }
@@ -1627,14 +1639,14 @@
         <h1 id="lineups-team-name">Past Lineups</h1>
         <p class="dashboard-sub" id="lineups-team-sub">View saved game lineups</p>
       </div>
-      <button class="btn btn-ghost" onclick="backToDashboard()">← Back to Dashboard</button>
+      <button class="btn btn-back" onclick="backToDashboard()">← Back to Dashboard</button>
     </div>
 
     <div id="lineups-list-container"></div>
 
     <div id="lineup-detail-container" style="display:none;">
       <div style="margin-bottom:16px;">
-        <button class="btn btn-ghost btn-sm" onclick="showLineupsList()">← Back to all lineups</button>
+        <button class="btn btn-back btn-sm" onclick="showLineupsList()">← Back to all lineups</button>
       </div>
       <div class="card">
         <div class="export-header">
@@ -1852,7 +1864,7 @@
       </div>
 
       <div class="step-footer">
-        <button class="btn btn-ghost" onclick="goToStep1()">← Back to Team Setup</button>
+        <button class="btn btn-back" onclick="goToStep1()">← Back to Team Setup</button>
         <button class="btn btn-primary btn-lg" onclick="goToStep3()">Continue to Roster →</button>
       </div>
     </div>
@@ -1915,7 +1927,7 @@
       </div>
 
       <div class="step-footer">
-        <button id="step3-back" class="btn btn-ghost" onclick="goToStep2()">← Back to League Rules</button>
+        <button id="step3-back" class="btn btn-back" onclick="goToStep2()">← Back to League Rules</button>
         <div style="flex:1;"></div>
         <div class="flex-row gap-md">
           <div class="text-muted" id="step2-status"></div>
@@ -1978,7 +1990,7 @@
       </div>
 
       <div class="step-footer">
-        <button id="step4-back" class="btn btn-ghost" onclick="goToStep3()">← Back to Setup</button>
+        <button id="step4-back" class="btn btn-back" onclick="goToStep3()">← Back to Setup</button>
         <button class="btn btn-cta btn-lg" onclick="goToStep5()">Save &amp; Export →</button>
       </div>
     </div>
@@ -2009,7 +2021,7 @@
       </div>
 
       <div class="step-footer">
-        <button class="btn btn-ghost" onclick="goToStep4()">← Back to Edit</button>
+        <button class="btn btn-back" onclick="goToStep4()">← Back to Edit</button>
         <button class="btn btn-outline" onclick="goToStep1()">🏠 New Lineup</button>
       </div>
     </div>
@@ -3419,12 +3431,10 @@ function renderLineupGrid() {
         <div class="player-cell">
           <span class="drag-grip" title="Drag to reorder">⠿</span>
           <div class="bat-order">${rowIdx + 1}</div>
-          <div>
-            <div class="player-name">${escHtml(player.name)}</div>
-            <div class="fp-bar">${lineupRow.positions.map(p =>
-              `<div class="fp-seg ${p === 'Bench' ? 'bench' : p ? 'played' : ''}"></div>`
-            ).join('')}</div>
-          </div>
+          <div class="player-name">${escHtml(player.name)}</div>
+          <div class="fp-bar">${lineupRow.positions.map(p =>
+            `<div class="fp-seg ${p === 'Bench' ? 'bench' : p ? 'played' : ''}"></div>`
+          ).join('')}</div>
         </div>
       </td>`;
 
