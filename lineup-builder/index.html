@@ -454,6 +454,13 @@
       width: 100%;
       -webkit-appearance: none;
     }
+    select {
+      padding-right: 40px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239BA2B0' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      cursor: pointer;
+    }
     input[type=text]::placeholder { color: var(--gray-3); }
     input:focus, select:focus, textarea:focus {
       border-color: var(--accent);
@@ -1711,11 +1718,7 @@
             <select id="team-sport">
               <option value="Baseball">Baseball</option>
               <option value="Softball">Softball</option>
-              <option value="Basketball">Basketball</option>
-              <option value="Soccer">Soccer</option>
-              <option value="Football">Football</option>
-              <option value="Lacrosse">Lacrosse</option>
-              <option value="Other">Other</option>
+              <option value="T-Ball">T-Ball</option>
             </select>
           </div>
           <div class="field">
