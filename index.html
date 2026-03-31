@@ -651,25 +651,28 @@
     <div class="fb-title">💬 Have Questions or Feedback?</div>
     <button class="fb-close" onclick="toggleFb()">×</button>
   </div>
-  <div class="fb-body" id="fb-form">
+  <form class="fb-body" id="fb-form" name="feedback" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+    <input type="hidden" name="form-name" value="feedback">
+    <input type="hidden" name="source" value="homepage">
+    <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
     <div class="fb-field">
       <label>Your Name</label>
-      <input type="text" id="fb-name" placeholder="Optional" />
+      <input type="text" name="name" id="fb-name" placeholder="Optional" />
     </div>
     <div class="fb-field">
       <label>Email</label>
-      <input type="email" id="fb-email" placeholder="So we can get back to you" />
+      <input type="email" name="email" id="fb-email" placeholder="So we can get back to you" />
     </div>
     <div class="fb-field" style="flex:1;display:flex;flex-direction:column;">
       <label>Message</label>
-      <textarea id="fb-msg" placeholder="Ideas, bugs, questions — we read everything..." style="flex:1;"></textarea>
+      <textarea name="message" id="fb-msg" placeholder="Ideas, bugs, questions — we read everything..." style="flex:1;"></textarea>
     </div>
-    <button class="fb-send" onclick="sendFb()">Send Message →</button>
-  </div>
+    <button type="submit" class="fb-send">Send Message →</button>
+  </form>
   <div class="fb-ok" id="fb-ok" style="display:none;">
     <div class="fb-ok-icon">✅</div>
     <div class="fb-ok-title">Thanks for reaching out!</div>
-    <div class="fb-ok-sub">Your email app will open with your message ready to send. We'll get back to you soon.</div>
+    <div class="fb-ok-sub">We read every message and will get back to you soon.</div>
   </div>
 </div>
 
@@ -681,14 +684,23 @@ function toggleFb(){
   if(_fbOpen){tab.style.display='none';panel.classList.remove('closing');panel.classList.add('open')}
   else{panel.classList.remove('open');panel.classList.add('closing');panel.addEventListener('animationend',function h(){panel.classList.remove('closing');panel.removeEventListener('animationend',h)},{once:true});tab.style.display=''}
 }
-function sendFb(){
-  var n=(document.getElementById('fb-name').value||'').trim(),e=(document.getElementById('fb-email').value||'').trim(),m=(document.getElementById('fb-msg').value||'').trim();
-  if(!m){document.getElementById('fb-msg').focus();return}
-  var s=encodeURIComponent('Have Questions or Feedback - Lineup DJ'),b=encodeURIComponent((n?'From: '+n+'\n':'')+(e?'Email: '+e+'\n':'')+'\n'+m);
-  window.location.href='mailto:hello@lineupdj.app?subject='+s+'&body='+b;
-  document.getElementById('fb-form').style.display='none';document.getElementById('fb-ok').style.display='';
-  setTimeout(function(){document.getElementById('fb-form').style.display='';document.getElementById('fb-ok').style.display='none';document.getElementById('fb-name').value='';document.getElementById('fb-email').value='';document.getElementById('fb-msg').value='';toggleFb()},4000);
-}
+document.getElementById('fb-form').addEventListener('submit',function(e){
+  e.preventDefault();
+  var form=e.target;
+  var msg=document.getElementById('fb-msg').value.trim();
+  if(!msg){document.getElementById('fb-msg').focus();return}
+  var btn=form.querySelector('.fb-send');
+  btn.disabled=true;btn.textContent='Sending...';
+  fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(new FormData(form)).toString()})
+  .then(function(){
+    document.getElementById('fb-form').style.display='none';
+    document.getElementById('fb-ok').style.display='';
+    form.reset();
+    setTimeout(function(){document.getElementById('fb-form').style.display='';document.getElementById('fb-ok').style.display='none';toggleFb()},4000);
+  })
+  .catch(function(){alert('Something went wrong. Please try again or email hello@lineupdj.app directly.')})
+  .finally(function(){btn.disabled=false;btn.textContent='Send Message →'});
+});
 </script>
 
 </body>
