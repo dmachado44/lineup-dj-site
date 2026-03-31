@@ -314,15 +314,28 @@
       justify-content: center;
     }
     .auth-page-logo .logo-mark {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      object-fit: cover;
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      object-fit: contain;
       flex-shrink: 0;
     }
     .auth-page-logo .logo-name {
       font-weight: 700;
       font-size: 18px;
+    }
+    .beta-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      background: var(--accent);
+      color: var(--black);
+      padding: 2px 7px;
+      border-radius: 20px;
+      vertical-align: middle;
+      position: relative;
+      top: -3px;
     }
     .auth-page-title {
       font-size: 26px;
@@ -1347,10 +1360,11 @@
       <img class="logo-mark" src="assets/icon.png" alt="Lineup DJ">
       <div class="logo-name">Lineup DJ</div>
     </a>
-    <h2 class="auth-page-title">Welcome back</h2>
+    <h2 class="auth-page-title">Welcome to Field Mix <span class="beta-tag">BETA</span></h2>
     <p class="auth-page-sub">Sign in with your Lineup DJ account. A paid subscription in the iOS app is required to access this tool.</p>
 
     <div class="auth-providers">
+      <!-- Google sign-in temporarily hidden until added to iOS app
       <button class="auth-provider-btn" onclick="signInWithGoogle()">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -1360,6 +1374,7 @@
         </svg>
         Sign in with Google
       </button>
+      -->
       <button class="auth-provider-btn" onclick="signInWithApple()">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
           <path d="M17.05 13.5c-.91 2.18-.39 3.5 1.84 5.75 1.48 1.45 2.5 2.77 2.5 4.5 0 2.05-1.53 3.76-3.76 3.76-2.49 0-4.19-.92-5.15-2.76h-1.98c.97 2.29 3.92 4.5 7.48 4.5 4.05 0 7.45-2.73 7.45-6.72 0-2.98-2.05-4.9-4.3-6.72-1.22-.99-1.62-1.45-1.62-2.05 0-.87.73-1.72 2.58-1.72.96 0 1.46.17 2.05.83l1.18-1.49c-.73-.97-2.05-1.62-3.23-1.62-3.5 0-5.57 2.38-5.57 5.01 0 2.7 1.62 3.9 3.01 5.06 2.22 1.88 2.77 2.58 2.77 4.04 0 1.42-1.12 2.29-2.58 2.29-.96 0-1.88-.34-2.46-.96l-1.18 1.49c.73.87 2.29 1.72 3.76 1.72 2.67 0 4.65-1.7 4.65-4.05 0-2.38-1.28-3.5-3.23-5.06z" transform="translate(0,0) scale(1.2)"/>
