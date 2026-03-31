@@ -614,5 +614,82 @@
     renderAnnouncerCard(activeAnnouncerIndex);
     renderAnnouncerSelector();
     </script>
+
+<!-- ─── FEEDBACK WIDGET ─── -->
+<style>
+  .fb-tab{position:fixed;bottom:0;right:32px;z-index:98;background:#1a3a6b;color:#fff;border:none;border-radius:10px 10px 0 0;padding:12px 22px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;transition:background .15s}
+  .fb-tab:hover{background:#234989}
+  @keyframes fbIn{0%{transform:translateY(100%)}60%{transform:translateY(-1.8%)}80%{transform:translateY(.6%)}100%{transform:translateY(0)}}
+  @keyframes fbOut{0%{transform:translateY(0)}100%{transform:translateY(100%)}}
+  .fb-panel{position:fixed;bottom:0;right:32px;z-index:99;width:600px;height:800px;max-width:calc(100vw - 48px);max-height:calc(100vh - 40px);background:#fff;border:1px solid #e5e7eb;border-radius:16px 16px 0 0;box-shadow:0 -4px 30px rgba(0,0,0,.12);display:flex;flex-direction:column;transform:translateY(100%)}
+  .fb-panel.open{animation:fbIn .55s cubic-bezier(.25,.9,.3,1.02) forwards}
+  .fb-panel.closing{animation:fbOut .25s ease forwards}
+  .fb-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid #e5e7eb}
+  .fb-title{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .fb-close{background:none;border:none;font-size:24px;color:#6b7280;cursor:pointer;width:36px;height:36px;display:flex;align-items:center;justify-content:center;line-height:1;border-radius:8px;transition:background .15s}
+  .fb-close:hover{background:#f9fafb;color:#1f2937}
+  .fb-body{padding:22px;display:flex;flex-direction:column;gap:16px;flex:1;overflow-y:auto}
+  .fb-body .fb-field{display:flex;flex-direction:column;gap:6px}
+  .fb-body .fb-field label{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#6b7280;font-weight:600}
+  .fb-body input,.fb-body textarea{font-size:15px;padding:12px 14px;border:1px solid #e5e7eb;border-radius:10px;font-family:inherit;outline:none;transition:border-color .15s}
+  .fb-body input:focus,.fb-body textarea:focus{border-color:#1a3a6b}
+  .fb-body textarea{min-height:200px;flex:1;resize:vertical}
+  .fb-send{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:80px;border:none;background:#1a3a6b;color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+  .fb-send:hover{background:#234989}
+  .fb-send:active{transform:scale(.98)}
+  .fb-ok{text-align:center;padding:32px 22px}
+  .fb-ok-icon{font-size:40px;margin-bottom:12px}
+  .fb-ok-title{font-size:18px;font-weight:600;margin-bottom:6px}
+  .fb-ok-sub{font-size:14px;color:#6b7280;line-height:1.5}
+  @media print{.fb-tab,.fb-panel{display:none!important}}
+  @media(max-width:660px){.fb-tab{right:16px;padding:10px 18px;font-size:14px}.fb-panel{right:0;width:100%;max-width:100%;border-radius:16px 16px 0 0}}
+</style>
+
+<button class="fb-tab" id="fb-tab" onclick="toggleFb()">💬 Have Questions or Feedback?</button>
+<div class="fb-panel" id="fb-panel">
+  <div class="fb-hdr">
+    <div class="fb-title">💬 Have Questions or Feedback?</div>
+    <button class="fb-close" onclick="toggleFb()">×</button>
+  </div>
+  <div class="fb-body" id="fb-form">
+    <div class="fb-field">
+      <label>Your Name</label>
+      <input type="text" id="fb-name" placeholder="Optional" />
+    </div>
+    <div class="fb-field">
+      <label>Email</label>
+      <input type="email" id="fb-email" placeholder="So we can get back to you" />
+    </div>
+    <div class="fb-field" style="flex:1;display:flex;flex-direction:column;">
+      <label>Message</label>
+      <textarea id="fb-msg" placeholder="Ideas, bugs, questions — we read everything..." style="flex:1;"></textarea>
+    </div>
+    <button class="fb-send" onclick="sendFb()">Send Message →</button>
+  </div>
+  <div class="fb-ok" id="fb-ok" style="display:none;">
+    <div class="fb-ok-icon">✅</div>
+    <div class="fb-ok-title">Thanks for reaching out!</div>
+    <div class="fb-ok-sub">Your email app will open with your message ready to send. We'll get back to you soon.</div>
+  </div>
+</div>
+
+<script>
+var _fbOpen=false;
+function toggleFb(){
+  _fbOpen=!_fbOpen;
+  var tab=document.getElementById('fb-tab'),panel=document.getElementById('fb-panel');
+  if(_fbOpen){tab.style.display='none';panel.classList.remove('closing');panel.classList.add('open')}
+  else{panel.classList.remove('open');panel.classList.add('closing');panel.addEventListener('animationend',function h(){panel.classList.remove('closing');panel.removeEventListener('animationend',h)},{once:true});tab.style.display=''}
+}
+function sendFb(){
+  var n=(document.getElementById('fb-name').value||'').trim(),e=(document.getElementById('fb-email').value||'').trim(),m=(document.getElementById('fb-msg').value||'').trim();
+  if(!m){document.getElementById('fb-msg').focus();return}
+  var s=encodeURIComponent('Have Questions or Feedback - Lineup DJ'),b=encodeURIComponent((n?'From: '+n+'\n':'')+(e?'Email: '+e+'\n':'')+'\n'+m);
+  window.location.href='mailto:hello@lineupdj.app?subject='+s+'&body='+b;
+  document.getElementById('fb-form').style.display='none';document.getElementById('fb-ok').style.display='';
+  setTimeout(function(){document.getElementById('fb-form').style.display='';document.getElementById('fb-ok').style.display='none';document.getElementById('fb-name').value='';document.getElementById('fb-email').value='';document.getElementById('fb-msg').value='';toggleFb()},4000);
+}
+</script>
+
 </body>
 </html>
