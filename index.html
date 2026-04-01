@@ -94,7 +94,7 @@
             <p class="hero-sub">Lineup DJ lets coaches and parents easily create walkout songs and player introductions for Little League, travel ball, and softball teams.</p>
             <div class="hero-rating">
                 <span class="hero-stars">★★★★★</span>
-                <span class="hero-rating-text">5.0 Rating</span>
+                <span class="hero-rating-text">4.9 Rating</span>
                 <span class="hero-rating-sep">·</span>
                 <span class="hero-rating-text">Free Download</span>
             </div>
@@ -247,6 +247,66 @@
             <!-- Announcer selector row -->
             <div class="announcer-selector reveal-up" style="--delay:160ms" id="announcer-selector" role="group" aria-label="Choose announcer">
                 <!-- JS will render selector avatars here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- REVIEWS SECTION -->
+    <section class="reviews-section" id="reviews">
+        <h2 class="reveal-up" style="--delay:0ms">What Parents Are Saying</h2>
+        <p class="reviews-sub reveal-up" style="--delay:40ms">Real reviews from the App Store</p>
+        <div class="reviews-grid">
+            <div class="review-card reveal-up" style="--delay:80ms">
+                <div class="review-header">
+                    <div>
+                        <div class="review-title">So Fun and Special ✨</div>
+                        <div class="review-stars">★★★★★</div>
+                    </div>
+                    <div class="review-meta">
+                        <span class="review-date">Mar 7</span>
+                        <span class="review-author">Team Forest 🌲</span>
+                    </div>
+                </div>
+                <p class="review-body">Lineup DJ has been awesome for our team! It makes it super easy to set up walk-up songs and player introductions, and the kids absolutely love hearing their name and music when they come up to bat!</p>
+            </div>
+            <div class="review-card reveal-up" style="--delay:140ms">
+                <div class="review-header">
+                    <div>
+                        <div class="review-title">Easy to use, simplified, no extra purchases needed!!!</div>
+                        <div class="review-stars">★★★★★</div>
+                    </div>
+                    <div class="review-meta">
+                        <span class="review-date">Mar 17</span>
+                        <span class="review-author">gtegiysy</span>
+                    </div>
+                </div>
+                <p class="review-body">To say I'm impressed is an understatement! The use of this app is way easier than Ballpark DJ! Set your team, create your intro, add song and timeline details, and you're good to go!</p>
+            </div>
+            <div class="review-card reveal-up" style="--delay:200ms">
+                <div class="review-header">
+                    <div>
+                        <div class="review-title">Team Friscone</div>
+                        <div class="review-stars">★★★★★</div>
+                    </div>
+                    <div class="review-meta">
+                        <span class="review-date">Feb 21</span>
+                        <span class="review-author">LFriscone</span>
+                    </div>
+                </div>
+                <p class="review-body">This app was so easy to use and make changes. Like team player name and songs as needed. The kids are going to love this!</p>
+            </div>
+            <div class="review-card reveal-up" style="--delay:260ms">
+                <div class="review-header">
+                    <div>
+                        <div class="review-title">So easy and reasonable pricing</div>
+                        <div class="review-stars">★★★★★</div>
+                    </div>
+                    <div class="review-meta">
+                        <span class="review-date">1d ago</span>
+                        <span class="review-author">Just got my iphone</span>
+                    </div>
+                </div>
+                <p class="review-body">I tried another app first based on all the recommendations I had gotten, but this one is so much easier and more reasonably priced. I am very, very happy with it and how easy it is to use.</p>
             </div>
         </div>
     </section>
@@ -634,8 +694,24 @@
     renderAnnouncerSelector();
     </script>
 
-<!-- ─── ANNOUNCEMENT BANNER + FEEDBACK WIDGET ─── -->
+<!-- ─── REVIEWS, ANNOUNCEMENT BANNER + FEEDBACK WIDGET ─── -->
 <style>
+  /* Reviews Section */
+  .reviews-section{padding:80px 24px;max-width:1200px;margin:0 auto;text-align:center}
+  .reviews-section h2{font-size:2rem;font-weight:700;margin-bottom:8px}
+  .reviews-sub{color:#6b7280;font-size:1rem;margin-bottom:40px}
+  .reviews-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;text-align:left}
+  .review-card{background:#f3f4f6;border-radius:16px;padding:24px 28px;transition:transform .2s ease}
+  .review-card:hover{transform:translateY(-2px)}
+  .review-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+  .review-title{font-weight:600;font-size:15px;line-height:1.3;color:#1f2937}
+  .review-stars{color:#f59e0b;font-size:14px;margin-top:2px;letter-spacing:1px}
+  .review-meta{text-align:right;flex-shrink:0}
+  .review-date{display:block;font-size:12px;color:#9ca3af}
+  .review-author{display:block;font-size:12px;color:#9ca3af;margin-top:1px}
+  .review-body{font-size:14px;line-height:1.6;color:#4b5563}
+  @media(max-width:700px){.reviews-grid{grid-template-columns:1fr}.reviews-section{padding:60px 20px}}
+
   /* Announcement Banner */
   .announce-wrap{display:flex;justify-content:center;padding:100px 24px 0}
   .announce-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:720px;width:100%;background:rgba(0,0,0,.03);border:1px solid rgba(0,0,0,.06);border-radius:12px;padding:12px 16px;font-size:14px;color:#1f2937}
