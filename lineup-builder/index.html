@@ -3370,6 +3370,35 @@ async function fetchSchedule(calendarUrl) {
   return data.ics;
 }
 
+// Save calendar URL to Firestore independently of ALLOW_TEAM_CREATION.
+// This is a web-only field that doesn't affect the iOS app's team data.
+async function saveCalendarUrl() {
+  const fb = initFirebase();
+  if (!fb || !fb.auth.currentUser) return false;
+
+  const teamId = _activeTeamId;
+  if (!teamId) return false;
+
+  const calUrlEl = document.getElementById('team-calendar-url');
+  const calendarUrl = calUrlEl ? calUrlEl.value.trim() : '';
+  if (!calendarUrl) return false;
+
+  try {
+    await fb.db.collection('teams').doc(teamId).set(
+      { gameChangerCalendarUrl: calendarUrl },
+      { merge: true }
+    );
+    // Update local _userTeams so dashboard Schedule button shows immediately
+    const team = _userTeams.find(t => t.id === teamId);
+    if (team) team.gameChangerCalendarUrl = calendarUrl;
+    state.teamCalendarUrl = calendarUrl;
+    return true;
+  } catch (e) {
+    console.error('Failed to save calendar URL:', e);
+    return false;
+  }
+}
+
 // "Test Sync" button in Team Settings
 async function testCalendarSync() {
   const urlEl = document.getElementById('team-calendar-url');
@@ -3393,8 +3422,10 @@ async function testCalendarSync() {
     const games = filterGames(events, calName);
 
     const upcoming = games.filter(g => g.dateObj >= new Date());
+    // Auto-save the URL to Firestore since it's valid
+    await saveCalendarUrl();
     resultEl.innerHTML = `<span style="color:var(--green);">✓ Found ${games.length} game${games.length !== 1 ? 's' : ''} (${upcoming.length} upcoming)` +
-      (calName ? ` from "${calName}"` : '') + `</span>`;
+      (calName ? ` from "${calName}"` : '') + ` — saved!</span>`;
   } catch (e) {
     resultEl.innerHTML = `<span style="color:var(--red);">✕ ${e.message}</span>`;
   } finally {
