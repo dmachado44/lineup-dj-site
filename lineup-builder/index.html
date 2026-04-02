@@ -1140,6 +1140,37 @@
     .schedule-sync-bar .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
     .schedule-empty { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 15px; }
 
+    /* ── STRATEGY SLIDER ── */
+    .strategy-card { padding: 20px 24px; }
+    .strategy-row { display: flex; align-items: center; gap: 14px; }
+    .strategy-icon { font-size: 20px; flex-shrink: 0; color: var(--muted); display: flex; align-items: center; }
+    .strategy-slider-wrap { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .strategy-slider {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; height: 6px; border-radius: 3px;
+      background: var(--border); outline: none;
+      transition: background 0.2s;
+    }
+    .strategy-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--white); border: 2px solid var(--accent);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+      cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .strategy-slider::-webkit-slider-thumb:hover { transform: scale(1.15); box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+    .strategy-slider::-webkit-slider-thumb:active { transform: scale(1.1); }
+    .strategy-slider::-moz-range-thumb {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--white); border: 2px solid var(--accent);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12); cursor: pointer;
+    }
+    .strategy-slider::-moz-range-track { height: 6px; border-radius: 3px; background: var(--border); }
+    .strategy-labels { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+    .strategy-label-left { color: var(--muted); }
+    .strategy-label-right { color: var(--accent); }
+    .strategy-desc { font-size: 13px; color: var(--muted); text-align: center; margin-top: 2px; min-height: 18px; }
+
     /* Calendar URL field in Team Settings */
     .calendar-url-row { display: flex; gap: 10px; align-items: stretch; }
     .calendar-url-row input { flex: 1; }
@@ -2198,6 +2229,26 @@
         <div class="card-title">Attendance</div>
         <div class="att-count" id="att-count">Select players attending today</div>
         <div class="attendance-grid" id="attendance-grid"></div>
+      </div>
+
+      <div class="card strategy-card">
+        <div class="card-title mb-0" style="margin-bottom:4px;">Lineup Strategy</div>
+        <div class="strategy-row">
+          <div class="strategy-icon" title="Balanced">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M2 12h4l2-4 2 4h4l2-4 2 4h4"/><circle cx="12" cy="3" r="1"/></svg>
+          </div>
+          <div class="strategy-slider-wrap">
+            <input type="range" class="strategy-slider" id="strategy-slider" min="0" max="100" value="50" oninput="updateStrategyLabel(this.value)" />
+            <div class="strategy-labels">
+              <span class="strategy-label-left">Balanced</span>
+              <span class="strategy-label-right">Competitive</span>
+            </div>
+          </div>
+          <div class="strategy-icon" title="Competitive" style="color:var(--accent);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+          </div>
+        </div>
+        <div class="strategy-desc" id="strategy-desc">Equal playing time with some preference weighting</div>
       </div>
 
       <div class="card">
@@ -3685,6 +3736,7 @@ const PRESETS = {
 const state = {
   teamName: '', teamSport: 'Baseball', teamLevel: '', teamAgeGroup: '', teamSeason: 'Spring', teamYear: new Date().getFullYear(), teamNotes: '',
   teamCalendarUrl: '',
+  strategyLevel: 50,
   gameName: '', opponent: '', gameDate: '', gameTime: '', gameLocation: '', gameNotes: '',
   innings: 6,
   leagueRules: {
@@ -3739,6 +3791,8 @@ function init() {
       document.getElementById('rule-coed').checked = state.leagueRules.coEd;
       document.getElementById('rule-pitcher-return').checked = state.leagueRules.pitcherCanReturn;
       document.getElementById('rule-max-pitch').value = String(state.leagueRules.maxInningsPitched);
+      var stratSlider = document.getElementById('strategy-slider');
+      if (stratSlider) { stratSlider.value = state.strategyLevel || 50; updateStrategyLabel(stratSlider.value); }
     } catch(e) { /* ignore */ }
   }
 
@@ -4225,12 +4279,51 @@ function shuffleBatting() {
   save();
 }
 
+// ═══════════════════════════════════════════════════
+// LINEUP STRATEGY SLIDER
+// ═══════════════════════════════════════════════════
+function updateStrategyLabel(val) {
+  val = parseInt(val);
+  state.strategyLevel = val;
+  const desc = document.getElementById('strategy-desc');
+  const slider = document.getElementById('strategy-slider');
+  if (!desc) return;
+
+  // Update the slider track fill color
+  const pct = val + '%';
+  slider.style.background = `linear-gradient(to right, var(--border) 0%, var(--border) ${pct}, var(--border) ${pct})`;
+
+  if (val <= 15) {
+    desc.textContent = 'Everyone gets equal time — pure fairness';
+  } else if (val <= 35) {
+    desc.textContent = 'Mostly balanced with slight preference weighting';
+  } else if (val <= 65) {
+    desc.textContent = 'Equal playing time with some preference weighting';
+  } else if (val <= 85) {
+    desc.textContent = 'Stronger fielders get key positions more often';
+  } else {
+    desc.textContent = 'Best fielders locked into their top positions';
+  }
+  save();
+}
+
+// Calculate a "strength score" for a player based on how many preferred
+// positions they have in the infield.  Higher = stronger fielder.
+function playerStrengthScore(player) {
+  const prefs = player.prefPos || [];
+  const infieldPrefs = prefs.filter(p => INFIELD_POSITIONS.includes(p));
+  // More infield prefs → stronger.  Add 1 for having any prefs at all.
+  return infieldPrefs.length + (prefs.length > 0 ? 1 : 0);
+}
+
 function shuffleFielding() {
   const attending = state.players.filter(p => state.attendance[p.id]);
   if (attending.length === 0) return;
 
   const fieldPos = getActiveFieldPositions();
   const numInnings = state.innings;
+  const strategy = state.strategyLevel || 50; // 0 = balanced, 100 = competitive
+  const competitiveBias = strategy / 100; // 0.0 to 1.0
 
   // Clear all positions so we start fresh
   attending.forEach(player => {
@@ -4238,7 +4331,7 @@ function shuffleFielding() {
     if (row) row.positions = Array(numInnings).fill('');
   });
 
-  // Process one inning at a time — this is the key fix
+  // Process one inning at a time
   for (let inning = 0; inning < numInnings; inning++) {
 
     // Count how many field innings each player has been assigned so far
@@ -4250,11 +4343,28 @@ function shuffleFielding() {
         : 0;
     });
 
-    // Shuffle first (to randomize ties), then sort by field count ascending
-    // so players who have played the fewest innings get first pick
+    // Shuffle first (to randomize ties), then sort by priority.
+    // In balanced mode: fairness-first (fewest innings get priority).
+    // In competitive mode: stronger players get priority for field time.
+    const maxField = Math.max(...Object.values(fieldCount), 1);
     const prioritized = [...attending]
       .sort(() => Math.random() - 0.5)
-      .sort((a, b) => fieldCount[a.id] - fieldCount[b.id]);
+      .sort((a, b) => {
+        // Fairness score: lower field count = higher priority (0 to 1, inverted)
+        const fairA = 1 - (fieldCount[a.id] / maxField);
+        const fairB = 1 - (fieldCount[b.id] / maxField);
+
+        // Strength score: more infield prefs = higher priority (normalized)
+        const maxStr = Math.max(...attending.map(p => playerStrengthScore(p)), 1);
+        const strA = playerStrengthScore(a) / maxStr;
+        const strB = playerStrengthScore(b) / maxStr;
+
+        // Blend: at 0% competitive, pure fairness. At 100%, pure strength.
+        const scoreA = (1 - competitiveBias) * fairA + competitiveBias * strA;
+        const scoreB = (1 - competitiveBias) * fairB + competitiveBias * strB;
+
+        return scoreB - scoreA; // Higher score = earlier pick
+      });
 
     const numCanPlay = Math.min(attending.length, fieldPos.length);
     const takenPositions = new Set();
@@ -4277,7 +4387,7 @@ function shuffleFielding() {
           row.positions.slice(0, inning).filter(p => p && p !== 'Bench')
         );
 
-        // Prefer positions not yet played (variety first)
+        // Prefer positions not yet played (variety first — less so in competitive mode)
         const fresh = available.filter(p => !playedSoFar.has(p));
 
         // Apply maxSamePosition hard rule if set
@@ -4290,9 +4400,13 @@ function shuffleFielding() {
             });
 
         // Build pool: fresh positions first → fall back to rule-filtered → last resort any available
-        const basePool = fresh.length > 0 ? fresh : (hardFiltered.length > 0 ? hardFiltered : available);
+        // In competitive mode, prefer sticking to strong positions even if repeated
+        const basePool = (competitiveBias > 0.7)
+          ? (hardFiltered.length > 0 ? hardFiltered : available)
+          : (fresh.length > 0 ? fresh : (hardFiltered.length > 0 ? hardFiltered : available));
 
         // Apply field priority — narrow to infield/outfield zone if set
+        // In competitive mode, zone preference is enforced more strictly
         const prio = player.fieldPriority || 'both';
         let zonePool = basePool;
         if (prio === 'infield') {
@@ -4304,8 +4418,10 @@ function shuffleFielding() {
         }
 
         // Within that zone pool, prefer the player's preferred positions
+        // In competitive mode, preferred positions win almost always
         const preferred = zonePool.filter(p => player.prefPos && player.prefPos.includes(p));
-        const pool = preferred.length > 0 ? preferred : zonePool;
+        const pool = (preferred.length > 0 && (competitiveBias > 0.3 || Math.random() < 0.6))
+          ? preferred : (preferred.length > 0 && Math.random() < 0.3 ? preferred : zonePool);
 
         const chosen = pool[Math.floor(Math.random() * pool.length)];
         row.positions[inning] = chosen;
