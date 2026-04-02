@@ -441,7 +441,7 @@
       letter-spacing: 0.06em;
     }
 
-    input[type=text], input[type=email], input[type=password], input[type=date], input[type=time], input[type=number], select, textarea {
+    input[type=text], input[type=url], input[type=email], input[type=password], input[type=date], input[type=time], input[type=number], select, textarea {
       padding: 14px 16px;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
@@ -461,7 +461,7 @@
       background-position: right 14px center;
       cursor: pointer;
     }
-    input[type=text]::placeholder { color: var(--gray-3); }
+    input[type=text]::placeholder, input[type=url]::placeholder { color: var(--gray-3); }
     input:focus, select:focus, textarea:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-light);
