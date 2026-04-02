@@ -2238,7 +2238,7 @@
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M2 12h4l2-4 2 4h4l2-4 2 4h4"/><circle cx="12" cy="3" r="1"/></svg>
           </div>
           <div class="strategy-slider-wrap">
-            <input type="range" class="strategy-slider" id="strategy-slider" min="0" max="100" value="50" oninput="updateStrategyLabel(this.value)" onchange="updateStrategyLabel(this.value); shuffleFielding();" />
+            <input type="range" class="strategy-slider" id="strategy-slider" min="1" max="5" value="3" step="1" oninput="updateStrategyLabel(this.value)" onchange="updateStrategyLabel(this.value); shuffleFielding();" />
             <div class="strategy-labels">
               <span class="strategy-label-left">Balanced</span>
               <span class="strategy-label-right">Competitive</span>
@@ -3736,7 +3736,7 @@ const PRESETS = {
 const state = {
   teamName: '', teamSport: 'Baseball', teamLevel: '', teamAgeGroup: '', teamSeason: 'Spring', teamYear: new Date().getFullYear(), teamNotes: '',
   teamCalendarUrl: '',
-  strategyLevel: 50,
+  strategyLevel: 3,
   gameName: '', opponent: '', gameDate: '', gameTime: '', gameLocation: '', gameNotes: '',
   innings: 6,
   leagueRules: {
@@ -3792,7 +3792,7 @@ function init() {
       document.getElementById('rule-pitcher-return').checked = state.leagueRules.pitcherCanReturn;
       document.getElementById('rule-max-pitch').value = String(state.leagueRules.maxInningsPitched);
       var stratSlider = document.getElementById('strategy-slider');
-      if (stratSlider) { stratSlider.value = state.strategyLevel || 50; updateStrategyLabel(stratSlider.value); }
+      if (stratSlider) { stratSlider.value = state.strategyLevel || 3; updateStrategyLabel(stratSlider.value); }
     } catch(e) { /* ignore */ }
   }
 
@@ -4286,24 +4286,16 @@ function updateStrategyLabel(val) {
   val = parseInt(val);
   state.strategyLevel = val;
   const desc = document.getElementById('strategy-desc');
-  const slider = document.getElementById('strategy-slider');
   if (!desc) return;
 
-  // Update the slider track fill color
-  const pct = val + '%';
-  slider.style.background = `linear-gradient(to right, var(--border) 0%, var(--border) ${pct}, var(--border) ${pct})`;
-
-  if (val <= 15) {
-    desc.textContent = 'Everyone gets equal time — pure fairness';
-  } else if (val <= 35) {
-    desc.textContent = 'Mostly balanced with slight preference weighting';
-  } else if (val <= 65) {
-    desc.textContent = 'Equal playing time with some preference weighting';
-  } else if (val <= 85) {
-    desc.textContent = 'Stronger fielders get key positions more often';
-  } else {
-    desc.textContent = 'Best fielders locked into their top positions';
-  }
+  const labels = {
+    1: 'Everyone gets equal time — pure fairness',
+    2: 'Mostly balanced with slight preference weighting',
+    3: 'Equal playing time with preference weighting',
+    4: 'Stronger fielders get key positions more often',
+    5: 'Best fielders locked into their top positions'
+  };
+  desc.textContent = labels[val] || labels[3];
   save();
 }
 
@@ -4322,8 +4314,8 @@ function shuffleFielding() {
 
   const fieldPos = getActiveFieldPositions();
   const numInnings = state.innings;
-  const strategy = state.strategyLevel || 50; // 0 = balanced, 100 = competitive
-  const competitiveBias = strategy / 100; // 0.0 to 1.0
+  const strategy = state.strategyLevel || 3; // 1–5 scale
+  const competitiveBias = (strategy - 1) / 4; // 0.0 to 1.0
 
   // Clear all positions so we start fresh
   attending.forEach(player => {
