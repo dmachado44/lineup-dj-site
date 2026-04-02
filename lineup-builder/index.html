@@ -1141,9 +1141,9 @@
     .schedule-empty { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 15px; }
 
     /* Calendar URL field in Team Settings */
-    .calendar-url-row { display: flex; gap: 8px; align-items: flex-start; }
+    .calendar-url-row { display: flex; gap: 10px; align-items: center; }
     .calendar-url-row input { flex: 1; }
-    .calendar-url-row .btn { white-space: nowrap; margin-top: 0; }
+    .calendar-url-row .btn { white-space: nowrap; flex-shrink: 0; }
 
     #view-dashboard {
       display: none;
@@ -1978,11 +1978,12 @@
             <textarea id="team-notes" placeholder="Any other team details..."></textarea>
           </div>
           <div class="field full" id="calendar-url-field">
-            <label>GameChanger Calendar URL <span style="font-weight:400;color:var(--muted);">(optional)</span></label>
-            <div class="card-sub" style="margin-bottom:8px;">Paste your team's GameChanger webcal link to auto-import your game schedule. Find it in GameChanger → Team → Schedule → Share → Copy Link.</div>
+            <label>GameChanger Schedule</label>
+            <div style="font-size:13px;color:var(--muted);margin-bottom:10px;">Paste your webcal link to sync your game schedule. Find it in GameChanger → Team → Schedule → Share → Copy Link.</div>
             <div class="calendar-url-row">
-              <input type="url" id="team-calendar-url" placeholder="webcal://gc.com/teams/…/schedule.ics" />
-              <button class="btn btn-outline btn-sm" onclick="testCalendarSync()" id="btn-test-sync">Test Sync</button>
+              <input type="url" id="team-calendar-url" placeholder="Paste webcal:// link here…" oninput="updateCalendarBtn()" />
+              <button class="btn btn-sm" id="btn-add-calendar" onclick="testCalendarSync()" disabled
+                style="background:var(--accent);color:var(--black);border:none;opacity:0.4;cursor:not-allowed;font-weight:600;padding:10px 18px;border-radius:10px;transition:all 0.2s;">Add Calendar</button>
             </div>
             <div id="calendar-sync-result" style="margin-top:8px;font-size:13px;"></div>
           </div>
@@ -2680,6 +2681,21 @@ async function selectTeam(teamId, closeDropdown = true) {
     setField('team-year',      state.teamYear);
     setField('team-notes',     state.teamNotes);
     setField('team-calendar-url', state.teamCalendarUrl);
+    // Update calendar button state based on whether a URL is already saved
+    var calBtn = document.getElementById('btn-add-calendar');
+    if (calBtn) {
+      if (state.teamCalendarUrl) {
+        calBtn.textContent = 'Update Calendar';
+        calBtn.disabled = false;
+        calBtn.style.opacity = '1';
+        calBtn.style.cursor = 'pointer';
+      } else {
+        calBtn.textContent = 'Add Calendar';
+        calBtn.disabled = true;
+        calBtn.style.opacity = '0.4';
+        calBtn.style.cursor = 'not-allowed';
+      }
+    }
 
     // Apply team theming to the builder
     const currentTeam = _userTeams.find(t => t.id === teamId);
@@ -3399,20 +3415,33 @@ async function saveCalendarUrl() {
   }
 }
 
-// "Test Sync" button in Team Settings
+// Enable/disable the Add Calendar button based on input
+function updateCalendarBtn() {
+  const btn = document.getElementById('btn-add-calendar');
+  const url = document.getElementById('team-calendar-url').value.trim();
+  if (url) {
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.cursor = 'pointer';
+  } else {
+    btn.disabled = true;
+    btn.style.opacity = '0.4';
+    btn.style.cursor = 'not-allowed';
+  }
+}
+
+// "Add Calendar" button in Team Settings
 async function testCalendarSync() {
   const urlEl = document.getElementById('team-calendar-url');
   const resultEl = document.getElementById('calendar-sync-result');
-  const btn = document.getElementById('btn-test-sync');
+  const btn = document.getElementById('btn-add-calendar');
   const url = urlEl.value.trim();
 
-  if (!url) {
-    resultEl.innerHTML = '<span style="color:var(--red);">Please paste a calendar URL first.</span>';
-    return;
-  }
+  if (!url) return;
 
   btn.disabled = true;
   btn.textContent = 'Syncing…';
+  btn.style.opacity = '0.6';
   resultEl.innerHTML = '';
 
   try {
@@ -3424,13 +3453,16 @@ async function testCalendarSync() {
     const upcoming = games.filter(g => g.dateObj >= new Date());
     // Auto-save the URL to Firestore since it's valid
     await saveCalendarUrl();
-    resultEl.innerHTML = `<span style="color:var(--green);">✓ Found ${games.length} game${games.length !== 1 ? 's' : ''} (${upcoming.length} upcoming)` +
-      (calName ? ` from "${calName}"` : '') + ` — saved!</span>`;
+    resultEl.innerHTML = `<span style="color:var(--green);">✓ ${games.length} game${games.length !== 1 ? 's' : ''} synced (${upcoming.length} upcoming)</span>`;
+    btn.textContent = 'Synced ✓';
+    btn.style.opacity = '1';
+    // After a moment, switch to "Update" label for re-syncing
+    setTimeout(() => { btn.textContent = 'Update Calendar'; btn.disabled = false; }, 2000);
   } catch (e) {
     resultEl.innerHTML = `<span style="color:var(--red);">✕ ${e.message}</span>`;
-  } finally {
     btn.disabled = false;
-    btn.textContent = 'Test Sync';
+    btn.textContent = 'Add Calendar';
+    btn.style.opacity = '1';
   }
 }
 
