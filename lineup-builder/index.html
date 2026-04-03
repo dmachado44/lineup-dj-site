@@ -889,18 +889,19 @@
       font-family: inherit;
       border: none;
       border-radius: 6px;
-      background-color: #F5F6F9;
+      background-color: var(--white);
       color: var(--text);
       cursor: pointer;
       appearance: none;
       -webkit-appearance: none;
+      border: 1px solid var(--border);
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238E8E93' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 8px center;
       transition: background 0.1s, border-color 0.1s;
     }
     .pos-select:hover { background-color: var(--gray-5); }
-    .pos-select.filled { background-color: #F5F6F9; font-weight: 500; }
+    .pos-select.filled { background-color: var(--white); font-weight: 500; }
     .pos-select.bench { background-color: var(--bench-bg); }
 
     .att-pill {
