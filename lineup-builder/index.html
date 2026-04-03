@@ -3355,14 +3355,22 @@ function parseICS(icsText) {
     const description = get('DESCRIPTION');
     const uid = get('UID');
 
-    // Parse ICS datetime: 20260322T100000 or with timezone
+    // Parse ICS datetime: 20260322T100000Z (UTC) or 20260322T100000 (local)
     let dateObj = null;
-    const dtMatch = dtRaw.match(/(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})/);
+    const dtMatch = dtRaw.match(/(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z?)/);
     if (dtMatch) {
-      dateObj = new Date(
-        parseInt(dtMatch[1]), parseInt(dtMatch[2]) - 1, parseInt(dtMatch[3]),
-        parseInt(dtMatch[4]), parseInt(dtMatch[5]), parseInt(dtMatch[6])
-      );
+      const isUTC = dtMatch[7] === 'Z';
+      if (isUTC) {
+        dateObj = new Date(Date.UTC(
+          parseInt(dtMatch[1]), parseInt(dtMatch[2]) - 1, parseInt(dtMatch[3]),
+          parseInt(dtMatch[4]), parseInt(dtMatch[5]), parseInt(dtMatch[6])
+        ));
+      } else {
+        dateObj = new Date(
+          parseInt(dtMatch[1]), parseInt(dtMatch[2]) - 1, parseInt(dtMatch[3]),
+          parseInt(dtMatch[4]), parseInt(dtMatch[5]), parseInt(dtMatch[6])
+        );
+      }
     }
 
     if (dateObj && summary) {
