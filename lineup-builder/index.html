@@ -1118,36 +1118,35 @@
     .lineups-empty { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 15px; }
 
     /* ── SCHEDULE VIEW ── */
-    .schedule-list { display: flex; flex-direction: column; gap: 10px; }
-    .schedule-date-group { margin-bottom: 24px; }
+    .schedule-list { display: flex; flex-direction: column; gap: 24px; }
+    .schedule-date-group {}
     .schedule-date-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin-bottom: 12px; padding-left: 2px; }
+    .schedule-table {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      overflow: hidden;
+    }
     .schedule-item {
       display: flex; align-items: center; justify-content: space-between; gap: 20px;
-      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-      padding: 18px 22px; cursor: pointer;
-      transition: background-color 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out;
+      padding: 16px 22px; cursor: pointer;
+      transition: background-color 0.2s ease-out;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none; color: inherit;
     }
-    .schedule-item:hover {
-      background: var(--bg-secondary);
-      border-color: var(--gray-3);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-    }
-    .schedule-item:active { transform: scale(0.995); }
-    .schedule-item-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .schedule-item:last-child { border-bottom: none; }
+    .schedule-item:hover { background: var(--bg-secondary); }
+    .schedule-item:active { background: var(--border); }
+    .schedule-item-info { display: flex; flex-direction: column; gap: 3px; flex: 1; }
     .schedule-item-title { font-size: 15px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 10px; }
     .schedule-item-meta { font-size: 13px; color: var(--muted); }
     .schedule-item-badge { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; white-space: nowrap; letter-spacing: 0.3px; }
     .schedule-item-badge.home { background: var(--teal-light); color: #2d6a12; }
     .schedule-item-badge.away { background: #FFF3E0; color: #B86E00; }
-    .schedule-item-btn {
-      font-size: 13px; font-weight: 600; padding: 9px 16px;
-      border-radius: 999px; border: 1px solid var(--border);
-      background: var(--white); color: var(--text); cursor: pointer;
-      white-space: nowrap; transition: all 0.2s ease-out;
-    }
-    .schedule-item-btn:hover { background: var(--black); color: var(--white); border-color: var(--black); }
-    .schedule-past { opacity: 0.45; }
-    .schedule-past:hover { opacity: 0.65; }
+    .schedule-item-action { font-size: 13px; color: var(--muted); white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+    .schedule-item-action .lineup-linked { color: var(--green); font-weight: 600; }
+    .schedule-chevron { font-size: 16px; color: var(--gray-3); transition: color 0.15s; }
+    .schedule-item:hover .schedule-chevron { color: var(--muted); }
+    .schedule-past .schedule-item-info { opacity: 0.5; }
+    .schedule-past:hover .schedule-item-info { opacity: 0.7; }
     .schedule-sync-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; padding: 10px 14px; background: var(--bg-secondary); border-radius: 8px; font-size: 13px; color: var(--muted); }
     .schedule-sync-bar .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
     .schedule-empty { text-align: center; padding: 48px 24px; color: var(--muted); font-size: 15px; }
@@ -3348,6 +3347,7 @@ function populatePrintSheet(data) {
 let _scheduleTeamId = null;
 let _scheduleTeamName = '';
 let _scheduleGames = [];
+let _scheduleLineups = [];
 
 // Parse ICS text into an array of event objects
 function parseICS(icsText) {
@@ -3562,12 +3562,21 @@ async function openSchedule(teamId) {
   syncBar.innerHTML = '';
 
   try {
-    const icsText = await fetchSchedule(team.gameChangerCalendarUrl);
+    const fb = initFirebase();
+    // Load ICS + saved lineups in parallel
+    const [icsText, lineupSnap] = await Promise.all([
+      fetchSchedule(team.gameChangerCalendarUrl),
+      fb ? fb.db.collection('teams').doc(teamId).collection('lineups').get() : Promise.resolve(null)
+    ]);
     const calName = getCalendarName(icsText);
     const events = parseICS(icsText);
     _scheduleGames = filterGames(events, calName);
 
-    const now = new Date();
+    // Map saved lineups so we can match them to schedule games
+    _scheduleLineups = lineupSnap
+      ? lineupSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+      : [];
+
     syncBar.innerHTML = `
       <div class="schedule-sync-bar">
         <span class="sync-dot"></span>
@@ -3606,15 +3615,35 @@ function renderSchedule() {
   for (const [month, games] of Object.entries(groups)) {
     html += `<div class="schedule-date-group">`;
     html += `<div class="schedule-date-label">${month}</div>`;
+    html += `<div class="schedule-table">`;
     games.forEach(game => {
       const gameDate = new Date(game.date + 'T00:00:00');
       const isPast = gameDate < now;
+      const idx = _scheduleGames.indexOf(game);
       const dayStr = game.dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
       const timeStr = game.time && game.time !== '00:00' ? formatTime(game.time) : '';
       const meta = [dayStr, timeStr, game.location].filter(Boolean).join(' · ');
 
+      // Check if there's a saved lineup matching this game
+      const matchedLineup = _scheduleLineups.find(l =>
+        l.opponent === game.opponent && l.gameDate === game.date
+      );
+
+      let actionHtml;
+      if (matchedLineup) {
+        actionHtml = `<div class="schedule-item-action"><span class="lineup-linked">Lineup saved</span><span class="schedule-chevron">›</span></div>`;
+      } else if (!isPast) {
+        actionHtml = `<div class="schedule-item-action">Create Lineup<span class="schedule-chevron">›</span></div>`;
+      } else {
+        actionHtml = `<div class="schedule-item-action"><span class="schedule-chevron">›</span></div>`;
+      }
+
+      const onclick = matchedLineup
+        ? `viewScheduleLineup('${matchedLineup.id}')`
+        : `createLineupFromSchedule(${idx})`;
+
       html += `
-        <div class="schedule-item ${isPast ? 'schedule-past' : ''}">
+        <div class="schedule-item ${isPast ? 'schedule-past' : ''}" onclick="${onclick}">
           <div class="schedule-item-info">
             <div class="schedule-item-title">
               <span class="schedule-item-badge ${game.isHome ? 'home' : 'away'}">${game.isHome ? 'HOME' : 'AWAY'}</span>
@@ -3622,10 +3651,10 @@ function renderSchedule() {
             </div>
             <div class="schedule-item-meta">${escHtml(meta)}</div>
           </div>
-          ${!isPast ? `<button class="schedule-item-btn" onclick="createLineupFromSchedule(${_scheduleGames.indexOf(game)})">Create Lineup →</button>` : ''}
+          ${actionHtml}
         </div>`;
     });
-    html += `</div>`;
+    html += `</div></div>`;
   }
   html += '</div>';
   container.innerHTML = html;
@@ -3654,6 +3683,24 @@ async function createLineupFromSchedule(gameIndex) {
   state.gameTime = game.time;
   state.gameLocation = game.location || '';
   save();
+}
+
+// View a saved lineup from the schedule (reuses the Past Lineups detail view)
+function viewScheduleLineup(lineupId) {
+  // Switch to the lineups view and show the detail
+  _lineupsTeamId = _scheduleTeamId;
+  _lineupsTeamName = _scheduleTeamName;
+  _pastLineups = _scheduleLineups;
+
+  document.getElementById('lineups-team-name').textContent = _lineupsTeamName + ' — Past Lineups';
+  document.getElementById('lineups-team-sub').textContent = 'View saved game lineups';
+
+  const authEl = document.getElementById('topbar-auth');
+  const lineupsAuthEl = document.getElementById('topbar-auth-lineups');
+  if (authEl && lineupsAuthEl) lineupsAuthEl.innerHTML = authEl.innerHTML;
+
+  showView('lineups');
+  viewLineupDetail(lineupId);
 }
 
 function backToDashboard() {
