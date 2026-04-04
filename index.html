@@ -10,6 +10,7 @@
     <title>Lineup DJ - Walkout Songs for Kids Baseball & Softball</title>
     <meta name="description" content="Lineup DJ helps parents and coaches play walkout songs at youth baseball and softball games. Create walk-up music lineups with AI voice intros. Free app for iPhone.">
     <link rel="canonical" href="https://lineupdj.app/">
+
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://lineupdj.app/">
@@ -17,602 +18,589 @@
     <meta property="og:description" content="Lineup DJ helps parents and coaches play walkout songs at youth baseball and softball games. Create walk-up music lineups with AI voice intros. Free app for iPhone.">
     <meta property="og:image" content="https://lineupdj.app/assets/og-image.png">
     <meta property="og:site_name" content="Lineup DJ">
+
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Lineup DJ - Walkout Songs for Kids Baseball & Softball">
     <meta name="twitter:description" content="Lineup DJ helps parents and coaches play walkout songs at youth baseball and softball games. Create walk-up music lineups with AI voice intros.">
     <meta name="twitter:image" content="https://lineupdj.app/assets/og-image.png">
+
     <link rel="icon" href="/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
     <link rel="apple-touch-icon" href="assets/newblue1024x1024.png">
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-KTQMX1DQ9T"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-KTQMX1DQ9T');
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KTQMX1DQ9T');
     </script>
+
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"WebSite","name":"Lineup DJ","url":"https://lineupdj.app/","description":"Lineup DJ helps parents and coaches play walkout songs at youth baseball and softball games. Create walk-up music lineups with AI voice intros."}
     </script>
     <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Do I need an Apple Music subscription for Lineup DJ to work?","acceptedAnswer":{"@type":"Answer","text":"Yes. Lineup DJ uses Apple Music to search for and play walkout songs. An active Apple Music subscription, including the free trial, is required to add and play songs during games."}},{"@type":"Question","name":"Do all parents need to pay for Lineup DJ?","acceptedAnswer":{"@type":"Answer","text":"No. Only one person on the team needs a paid Lineup DJ subscription to run Gameday mode during games. Parents can join the team and set up their player's walkout song and introduction for free."}},{"@type":"Question","name":"Can parents add their player's walkout song themselves?","acceptedAnswer":{"@type":"Answer","text":"Yes. Coaches can share their team with parents using a simple invite code. Each parent can then add their player's walkout song and introduction so the lineup stays updated automatically."}},{"@type":"Question","name":"What sports is Lineup DJ best for?","acceptedAnswer":{"@type":"Answer","text":"Lineup DJ is designed primarily for youth baseball and softball teams, including Little League, travel ball, coach pitch, and tee-ball. Any sport that uses player introductions or walkout music can also use Lineup DJ."}},{"@type":"Question","name":"How do walkout songs work in youth baseball?","acceptedAnswer":{"@type":"Answer","text":"Walkout songs are short clips of music that play when a player walks up to bat. With Lineup DJ, coaches can assign a walkout song to each player and trigger the music instantly during the game."}},{"@type":"Question","name":"Can I choose the exact part of the walkout song that plays?","acceptedAnswer":{"@type":"Answer","text":"Yes. Lineup DJ lets you trim the exact moment of a song so players hear their favorite part when they walk up to the plate."}},{"@type":"Question","name":"Does Lineup DJ include player introductions?","acceptedAnswer":{"@type":"Answer","text":"Yes. Lineup DJ includes announcer-style player introductions that play before the walkout song, making every at-bat feel like a big-league moment for youth players."}},{"@type":"Question","name":"Can Lineup DJ run the full batting lineup during a game?","acceptedAnswer":{"@type":"Answer","text":"Yes. Coaches can run the entire lineup from the app, trigger player introductions, and play walkout music for each batter throughout the game."}},{"@type":"Question","name":"How do I move a player to the bench?","acceptedAnswer":{"@type":"Answer","text":"Go to your Team. Find the player in your lineup. Swipe left on the player's row. Tap Bench to move them to the bench. To bring them back: Find the player on the bench. Swipe left on their row. Tap Active to move them back into the lineup."}},{"@type":"Question","name":"Why isn't my player's song playing?","acceptedAnswer":{"@type":"Answer","text":"Lineup DJ requires an active Apple Music subscription to play songs. Make sure you're logged into Apple Music on your device. Confirm you have an active subscription or free trial. Try playing the song directly in Apple Music to verify it works. If needed, go to Settings in Lineup DJ and tap Restore Purchases."}}]}
     </script>
+
+    <!-- iOS status banner styles (temporary – remove after fix goes live) -->
+    <style>
+      .ios-status-banner {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 14px 20px;
+        background: #FFF8E1;
+        border: 1px solid #FFE082;
+        border-radius: 12px;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        text-align: left;
+        font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+        font-size: 14px;
+        color: #5D4037;
+        line-height: 1.5;
+      }
+      .ios-status-banner strong {
+        color: #3E2723;
+      }
+      .ios-status-icon {
+        font-size: 18px;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+      @media (max-width: 480px) {
+        .ios-status-banner {
+          margin: 0 16px;
+          font-size: 13px;
+          padding: 12px 16px;
+        }
+      }
+    </style>
 </head>
 <body>
 
-    <!-- NAVIGATION -->
-    <header class="site-header" id="site-header">
-        <nav class="site-nav" id="site-nav">
-            <a class="nav-logo" href="index.html">
-                <img src="assets/newblue1024x1024.png" alt="Lineup DJ" class="nav-app-icon">
-                <span>Lineup DJ</span>
-            </a>
-            <div class="nav-links">
-                <a href="blog/index.html" class="nav-link">Blog</a>
-                <a href="about.html" class="nav-link">About</a>
-                <a href="#faq" class="nav-link">FAQs</a>
-                <a href="contact.html" class="nav-link">Contact</a>
-                <a href="https://apps.apple.com/us/app/lineup-dj/id6743953226" class="nav-download-btn" target="_blank" rel="noopener noreferrer">
-                    <img src="assets/apple icon.svg" alt="" aria-hidden="true" width="14" height="17">
-                    Download
-                </a>
-            </div>
-        </nav>
-    </header>
+<!-- NAVIGATION -->
+<header class="site-header" id="site-header">
+  <nav class="site-nav" id="site-nav">
+    <a class="nav-logo" href="index.html">
+      <img src="assets/newblue1024x1024.png" alt="Lineup DJ" class="nav-app-icon">
+      <span>Lineup DJ</span>
+    </a>
+    <div class="nav-links">
+      <a href="blog/index.html" class="nav-link">Blog</a>
+      <a href="about.html" class="nav-link">About</a>
+      <a href="#faq" class="nav-link">FAQs</a>
+      <a href="contact.html" class="nav-link">Contact</a>
+      <a href="https://apps.apple.com/us/app/lineup-dj/id6743953226" class="nav-download-btn" target="_blank" rel="noopener noreferrer">
+        <img src="assets/apple icon.svg" alt="" aria-hidden="true" width="14" height="17">
+        Download
+      </a>
+    </div>
+  </nav>
+</header>
 
-    <!-- HERO SECTION -->
-    <section class="hero-section" id="hero">
-        <div class="hero-inner">
-            <img src="assets/newblue1024x1024.png" alt="Lineup DJ App Icon" class="hero-icon">
-            <h1>Walkout Songs for Youth<br>Baseball &amp; Softball</h1>
-            <p class="hero-sub">Lineup DJ lets coaches and parents easily create walkout songs and player introductions for Little League, travel ball, and softball teams.</p>
-            <div class="hero-rating">
-                <span class="hero-stars">★★★★★</span>
-                <span class="hero-rating-text">5.0 Rating</span>
-                <span class="hero-rating-sep">·</span>
-                <span class="hero-rating-text">Free Download</span>
-            </div>
-            <a href="https://apps.apple.com/us/app/lineup-dj/id6743953226" class="app-store-button" target="_blank" rel="noopener noreferrer">
-                <img src="assets/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store">
-            </a>
+<!-- iOS STATUS BANNER (temporary – remove after fix goes live) -->
+<div style="padding: 20px 24px 0;">
+  <div class="ios-status-banner">
+    <span class="ios-status-icon">&#x1F527;</span>
+    <span><strong>iOS Update In Progress</strong> &mdash; Some new users may experience a loading issue. A fix has been submitted to Apple and should be available soon.</span>
+  </div>
+</div>
+
+<!-- HERO SECTION -->
+<section class="hero-section" id="hero">
+  <div class="hero-inner">
+    <img src="assets/newblue1024x1024.png" alt="Lineup DJ App Icon" class="hero-icon">
+    <h1>Walkout Songs for Youth<br>Baseball &amp; Softball</h1>
+    <p class="hero-sub">Lineup DJ lets coaches and parents easily create walkout songs and player introductions for Little League, travel ball, and softball teams.</p>
+    <div class="hero-rating">
+      <span class="hero-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+      <span class="hero-rating-text">5.0 Rating</span>
+      <span class="hero-rating-sep">&middot;</span>
+      <span class="hero-rating-text">Free Download</span>
+    </div>
+    <a href="https://apps.apple.com/us/app/lineup-dj/id6743953226" class="app-store-button" target="_blank" rel="noopener noreferrer">
+      <img src="assets/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store">
+    </a>
+  </div>
+</section>
+
+<!-- SCREENSHOTS SECTION -->
+<section class="screenshots-section" id="screenshots" aria-label="App screenshots">
+  <div class="screenshots-track" id="screenshots-track">
+    <img src="assets/screenshot-1.png" alt="Give every player a walkout song" class="screenshot-img reveal-right" style="--delay:0ms">
+    <img src="assets/screenshot-2.png" alt="Pick the exact moment they love" class="screenshot-img reveal-right" style="--delay:120ms">
+    <img src="assets/screenshot-3.png" alt="Share the team with parents" class="screenshot-img reveal-right" style="--delay:240ms">
+    <img src="assets/screenshot-4.png" alt="Run your walkout song lineup" class="screenshot-img reveal-right" style="--delay:360ms">
+    <img src="assets/screenshot-5.png" alt="No more scrambling" class="screenshot-img reveal-right" style="--delay:480ms">
+  </div>
+</section>
+
+<!-- SHARED LINEUP SECTION -->
+<section class="shared-section" id="shared">
+  <div class="shared-inner">
+    <div class="shared-text reveal-up" style="--delay:0ms">
+      <h2>A Shared Lineup for<br>the Whole Team</h2>
+      <p>Parents can add their player's walkout music while coaches stay in control of the lineup.</p>
+    </div>
+    <div class="shared-visual reveal-up" style="--delay:120ms">
+      <!-- Floating avatar bubbles -->
+      <div class="avatar-bubble ab-1"><div class="default-avatar-svg"></div></div>
+      <div class="avatar-bubble ab-2"><div class="default-avatar-svg"></div></div>
+      <div class="avatar-bubble ab-3"><div class="default-avatar-svg"></div></div>
+      <div class="avatar-bubble ab-4"><div class="default-avatar-svg"></div></div>
+      <div class="avatar-bubble ab-5"><div class="default-avatar-svg"></div></div>
+      <div class="avatar-bubble ab-6"><div class="default-avatar-svg"></div></div>
+      <div class="avatar-bubble ab-7"><div class="default-avatar-svg"></div></div>
+      <div class="avatar-bubble ab-8"><div class="default-avatar-svg"></div></div>
+      <div class="avatar-bubble ab-9"><div class="default-avatar-svg"></div></div>
+      <div class="avatar-bubble ab-10"><div class="default-avatar-svg"></div></div>
+
+      <!-- Lineup card -->
+      <div class="lineup-card">
+        <div class="lineup-player-row">
+          <span class="lp-num">1</span>
+          <div class="lp-info">
+            <span class="lp-name">Jake Thompson</span>
+            <span class="lp-song">Thunderstruck</span>
+          </div>
+          <span class="lp-jersey" style="color:#FF9500">3</span>
+          <svg class="lp-arrow" width="8" height="13" viewBox="0 0 8 13" fill="none"><path d="M1 1l6 5.5L1 12" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-    </section>
-
-    <!-- SCREENSHOTS SECTION -->
-    <section class="screenshots-section" id="screenshots" aria-label="App screenshots">
-        <div class="screenshots-track" id="screenshots-track">
-            <img src="assets/screenshot-1.png" alt="Give every player a walkout song" class="screenshot-img reveal-right" style="--delay:0ms">
-            <img src="assets/screenshot-2.png" alt="Pick the exact moment they love" class="screenshot-img reveal-right" style="--delay:120ms">
-            <img src="assets/screenshot-3.png" alt="Share the team with parents" class="screenshot-img reveal-right" style="--delay:240ms">
-            <img src="assets/screenshot-4.png" alt="Run your walkout song lineup" class="screenshot-img reveal-right" style="--delay:360ms">
-            <img src="assets/screenshot-5.png" alt="No more scrambling" class="screenshot-img reveal-right" style="--delay:480ms">
+        <div class="lineup-divider"></div>
+        <div class="lineup-player-row">
+          <span class="lp-num">2</span>
+          <div class="lp-info">
+            <span class="lp-name">Ethan Ramirez</span>
+            <span class="lp-song">Eye of the Tiger</span>
+          </div>
+          <span class="lp-jersey" style="color:#FF9500">99</span>
+          <svg class="lp-arrow" width="8" height="13" viewBox="0 0 8 13" fill="none"><path d="M1 1l6 5.5L1 12" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-    </section>
-
-    <!-- SHARED LINEUP SECTION -->
-    <section class="shared-section" id="shared">
-        <div class="shared-inner">
-            <div class="shared-text reveal-up" style="--delay:0ms">
-                <h2>A Shared Lineup for<br>the Whole Team</h2>
-                <p>Parents can add their player's walkout music while coaches stay in control of the lineup.</p>
-            </div>
-            <div class="shared-visual reveal-up" style="--delay:120ms">
-                <!-- Floating avatar bubbles - positioned around the lineup card -->
-                <div class="avatar-bubble ab-1"><div class="default-avatar-svg"></div></div>
-                <div class="avatar-bubble ab-2"><div class="default-avatar-svg"></div></div>
-                <div class="avatar-bubble ab-3"><div class="default-avatar-svg"></div></div>
-                <div class="avatar-bubble ab-4"><div class="default-avatar-svg"></div></div>
-                <div class="avatar-bubble ab-5"><div class="default-avatar-svg"></div></div>
-                <div class="avatar-bubble ab-6"><div class="default-avatar-svg"></div></div>
-                <div class="avatar-bubble ab-7"><div class="default-avatar-svg"></div></div>
-                <div class="avatar-bubble ab-8"><div class="default-avatar-svg"></div></div>
-                <div class="avatar-bubble ab-9"><div class="default-avatar-svg"></div></div>
-                <div class="avatar-bubble ab-10"><div class="default-avatar-svg"></div></div>
-
-                <!-- Lineup card -->
-                <div class="lineup-card">
-                    <div class="lineup-player-row">
-                        <span class="lp-num">1</span>
-                        <div class="lp-info">
-                            <span class="lp-name">Jake Thompson</span>
-                            <span class="lp-song">Thunderstruck</span>
-                        </div>
-                        <span class="lp-jersey" style="color:#FF9500">3</span>
-                        <svg class="lp-arrow" width="8" height="13" viewBox="0 0 8 13" fill="none"><path d="M1 1l6 5.5L1 12" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </div>
-                    <div class="lineup-divider"></div>
-                    <div class="lineup-player-row">
-                        <span class="lp-num">2</span>
-                        <div class="lp-info">
-                            <span class="lp-name">Ethan Ramirez</span>
-                            <span class="lp-song">Eye of the Tiger</span>
-                        </div>
-                        <span class="lp-jersey" style="color:#FF9500">99</span>
-                        <svg class="lp-arrow" width="8" height="13" viewBox="0 0 8 13" fill="none"><path d="M1 1l6 5.5L1 12" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </div>
-                    <div class="lineup-divider"></div>
-                    <div class="lineup-player-row">
-                        <span class="lp-num">3</span>
-                        <div class="lp-info">
-                            <span class="lp-name">Lucas Parker</span>
-                            <span class="lp-song">Seven Nation Army</span>
-                        </div>
-                        <span class="lp-jersey" style="color:#FF9500">1</span>
-                        <svg class="lp-arrow" width="8" height="13" viewBox="0 0 8 13" fill="none"><path d="M1 1l6 5.5L1 12" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </div>
-                    <div class="lineup-divider"></div>
-                    <div class="lineup-player-row">
-                        <span class="lp-num">4</span>
-                        <div class="lp-info">
-                            <span class="lp-name">Mason Lee</span>
-                            <span class="lp-song">Can't Stop the Feeling</span>
-                        </div>
-                        <span class="lp-jersey" style="color:#FF9500">10</span>
-                        <svg class="lp-arrow" width="8" height="13" viewBox="0 0 8 13" fill="none"><path d="M1 1l6 5.5L1 12" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </div>
-                    <div class="lineup-divider"></div>
-                    <div class="lineup-player-row">
-                        <span class="lp-num">5</span>
-                        <div class="lp-info">
-                            <span class="lp-name">Noah Martinez</span>
-                            <span class="lp-song">We Will Rock You</span>
-                        </div>
-                        <span class="lp-jersey" style="color:#FF9500">7</span>
-                        <svg class="lp-arrow" width="8" height="13" viewBox="0 0 8 13" fill="none"><path d="M1 1l6 5.5L1 12" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </div>
-                </div>
-            </div>
+        <div class="lineup-divider"></div>
+        <div class="lineup-player-row">
+          <span class="lp-num">3</span>
+          <div class="lp-info">
+            <span class="lp-name">Lucas Parker</span>
+            <span class="lp-song">Seven Nation Army</span>
+          </div>
+          <span class="lp-jersey" style="color:#FF9500">1</span>
+          <svg class="lp-arrow" width="8" height="13" viewBox="0 0 8 13" fill="none"><path d="M1 1l6 5.5L1 12" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-    </section>
-
-    <!-- GAMEDAY SECTION -->
-    <section class="gameday-section" id="gameday">
-        <div class="gameday-inner">
-            <div class="gameday-text reveal-up" style="--delay:0ms">
-                <h2>Run Your Entire Walkout Song Lineup From One App</h2>
-                <p>Tap through players, trigger their intro, and play walkout music instantly during the game.</p>
-            </div>
-            <div class="phone-mock-wrapper reveal-up" style="--delay:100ms">
-                <div class="gameday-scene">
-                    <img src="assets/phone ui.png" alt="Lineup DJ app interface" class="gameday-phone-img">
-                    <img src="assets/player card 1.png" alt="Jake Thompson" class="gameday-card gameday-card-1 reveal-right" style="--delay:100ms">
-                    <img src="assets/player card 2.png" alt="Ethan Ramirez" class="gameday-card gameday-card-2 reveal-right" style="--delay:240ms">
-                    <img src="assets/player card 3.png" alt="Lucas Parker" class="gameday-card gameday-card-3 reveal-right" style="--delay:380ms">
-                </div>
-            </div>
+        <div class="lineup-divider"></div>
+        <div class="lineup-player-row">
+          <span class="lp-num">4</span>
+          <div class="lp-info">
+            <span class="lp-name">Mason Lee</span>
+            <span class="lp-song">Can't Stop the Feeling</span>
+          </div>
+          <span class="lp-jersey" style="color:#FF9500">10</span>
+          <svg class="lp-arrow" width="8" height="13" viewBox="0 0 8 13" fill="none"><path d="M1 1l6 5.5L1 12" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-    </section>
-
-    <!-- ANNOUNCER SECTION -->
-    <section class="announcer-section" id="announcer">
-        <div class="announcer-inner">
-            <div class="announcer-heading reveal-up" style="--delay:0ms">
-                <h2>Professional Announcer-Style Player Introductions</h2>
-                <p>Make every player feel like a big leaguer with custom announcer intros before their walkout song.</p>
-            </div>
-            <div class="announcer-card reveal-up" style="--delay:80ms" id="announcer-card">
-                <div class="announcer-avatar-wrap" id="announcer-avatar-wrap">
-                    <!-- JS will render the active announcer avatar here -->
-                </div>
-                <div class="announcer-info" id="announcer-info">
-                    <h3 class="announcer-name" id="announcer-name">Marcus</h3>
-                    <p class="announcer-desc" id="announcer-desc">kinetic, loud, always mid-sentence</p>
-                </div>
-                <div class="announcer-preview-wrap">
-                    <button class="announcer-preview-btn" id="announcer-preview-btn" type="button" aria-label="Preview announcer voice">
-                        <span class="apb-play-icon">
-                            <svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M2 1.5l10 6.5-10 6.5V1.5z" fill="#1C1C1E"/></svg>
-                        </span>
-                        <span class="apb-label">Preview</span>
-                        <span class="apb-wave" id="apb-wave" aria-hidden="true">
-                            <svg width="30" height="16" viewBox="0 0 30 16" fill="none">
-                                <rect x="0" y="5" width="3" height="6" rx="1.5" fill="#C7C7CC" class="wave-bar"/>
-                                <rect x="5" y="2" width="3" height="12" rx="1.5" fill="#C7C7CC" class="wave-bar"/>
-                                <rect x="10" y="4" width="3" height="8" rx="1.5" fill="#C7C7CC" class="wave-bar"/>
-                                <rect x="15" y="1" width="3" height="14" rx="1.5" fill="#C7C7CC" class="wave-bar"/>
-                                <rect x="20" y="3" width="3" height="10" rx="1.5" fill="#C7C7CC" class="wave-bar"/>
-                                <rect x="25" y="6" width="3" height="4" rx="1.5" fill="#C7C7CC" class="wave-bar"/>
-                            </svg>
-                        </span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Announcer selector row -->
-            <div class="announcer-selector reveal-up" style="--delay:160ms" id="announcer-selector" role="group" aria-label="Choose announcer">
-                <!-- JS will render selector avatars here -->
-            </div>
+        <div class="lineup-divider"></div>
+        <div class="lineup-player-row">
+          <span class="lp-num">5</span>
+          <div class="lp-info">
+            <span class="lp-name">Noah Martinez</span>
+            <span class="lp-song">We Will Rock You</span>
+          </div>
+          <span class="lp-jersey" style="color:#FF9500">7</span>
+          <svg class="lp-arrow" width="8" height="13" viewBox="0 0 8 13" fill="none"><path d="M1 1l6 5.5L1 12" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- CTA SECTION -->
-    <section class="cta-section" id="cta">
-        <div class="cta-inner reveal-up" style="--delay:0ms">
-            <h2>Create Walkout Songs for<br>Your Team Today</h2>
-            <a href="https://apps.apple.com/us/app/lineup-dj/id6743953226" class="app-store-button" target="_blank" rel="noopener noreferrer">
-                <img src="assets/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store">
-            </a>
-            <p class="cta-sub">Try FREE for 7 days &middot; Cancel anytime</p>
-        </div>
-    </section>
+<!-- GAMEDAY SECTION -->
+<section class="gameday-section" id="gameday">
+  <div class="gameday-inner">
+    <div class="gameday-text reveal-up" style="--delay:0ms">
+      <h2>Run Your Entire Walkout Song Lineup From One App</h2>
+      <p>Tap through players, trigger their intro, and play walkout music instantly during the game.</p>
+    </div>
+    <div class="phone-mock-wrapper reveal-up" style="--delay:100ms">
+      <div class="gameday-scene">
+        <img src="assets/phone ui.png" alt="Lineup DJ app interface" class="gameday-phone-img">
+        <img src="assets/player card 1.png" alt="Jake Thompson" class="gameday-card gameday-card-1 reveal-right" style="--delay:100ms">
+        <img src="assets/player card 2.png" alt="Ethan Ramirez" class="gameday-card gameday-card-2 reveal-right" style="--delay:240ms">
+        <img src="assets/player card 3.png" alt="Lucas Parker" class="gameday-card gameday-card-3 reveal-right" style="--delay:380ms">
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- BLOG SECTION -->
-    <section class="blog-section">
-        <h2 class="reveal-up" style="--delay:0ms">Latest from Our Blog</h2>
-        <div class="blog-carousel">
-            <button class="carousel-btn carousel-prev" type="button" aria-label="Previous post">←</button>
-            <div class="carousel-viewport">
-                <div class="blog-carousel-track">
-                    <a href="blog/top-25-walkout-songs-kids-2026.html" class="blog-card reveal-up" style="--delay:60ms">
-                        <div class="blog-card-meta">
-                            <time datetime="2026-02-11">February 11, 2026</time>
-                            <span>·</span>
-                            <span>8 min read</span>
-                        </div>
-                        <h3>Top 25 Walkout Songs for Kids (2026)</h3>
-                        <p>Movie hits, game anthems, and 15-second crowd winners—the ultimate guide for youth baseball and softball.</p>
-                        <span class="read-more">Read More →</span>
-                    </a>
-                    <a href="blog/family-friendly-walkout-songs.html" class="blog-card reveal-up" style="--delay:140ms">
-                        <div class="blog-card-meta">
-                            <time datetime="2025-04-24">April 24, 2025</time>
-                            <span>·</span>
-                            <span>5 min read</span>
-                        </div>
-                        <h3>Family-Friendly Baseball Walkout Songs: Best Choices for Youth Players</h3>
-                        <p>Discover the best age-appropriate walkout songs that keep the energy high and the content clean.</p>
-                        <span class="read-more">Read More →</span>
-                    </a>
-                </div>
-            </div>
-            <button class="carousel-btn carousel-next" type="button" aria-label="Next post">→</button>
-        </div>
-        <div class="carousel-dots" role="tablist" aria-label="Blog post navigation"></div>
-    </section>
+<!-- ANNOUNCER SECTION -->
+<section class="announcer-section" id="announcer">
+  <div class="announcer-inner">
+    <div class="announcer-heading reveal-up" style="--delay:0ms">
+      <h2>Professional Announcer-Style Player Introductions</h2>
+      <p>Make every player feel like a big leaguer with custom announcer intros before their walkout song.</p>
+    </div>
+    <div class="announcer-card reveal-up" style="--delay:80ms" id="announcer-card">
+      <div class="announcer-avatar-wrap" id="announcer-avatar-wrap">
+        <!-- JS will render the active announcer avatar here -->
+      </div>
+      <div class="announcer-info" id="announcer-info">
+        <h3 class="announcer-name" id="announcer-name">Marcus</h3>
+        <p class="announcer-desc" id="announcer-desc">kinetic, loud, always mid-sentence</p>
+      </div>
+      <div class="announcer-preview-wrap">
+        <button class="announcer-preview-btn" id="announcer-preview-btn" type="button" aria-label="Preview announcer voice">
+          <span class="apb-play-icon">
+            <svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M2 1.5l10 6.5-10 6.5V1.5z" fill="#1C1C1E"/></svg>
+          </span>
+          <span class="apb-label">Preview</span>
+          <span class="apb-wave" id="apb-wave" aria-hidden="true">
+            <svg width="30" height="16" viewBox="0 0 30 16" fill="none">
+              <rect x="0" y="5" width="3" height="6" rx="1.5" fill="#C7C7CC" class="wave-bar"/>
+              <rect x="5" y="2" width="3" height="12" rx="1.5" fill="#C7C7CC" class="wave-bar"/>
+              <rect x="10" y="4" width="3" height="8" rx="1.5" fill="#C7C7CC" class="wave-bar"/>
+              <rect x="15" y="1" width="3" height="14" rx="1.5" fill="#C7C7CC" class="wave-bar"/>
+              <rect x="20" y="3" width="3" height="10" rx="1.5" fill="#C7C7CC" class="wave-bar"/>
+              <rect x="25" y="6" width="3" height="4" rx="1.5" fill="#C7C7CC" class="wave-bar"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+    <!-- Announcer selector row -->
+    <div class="announcer-selector reveal-up" style="--delay:160ms" id="announcer-selector" role="group" aria-label="Choose announcer">
+      <!-- JS will render selector avatars here -->
+    </div>
+  </div>
+</section>
 
-    <!-- FAQ SECTION -->
-    <section class="faq-section" id="faq">
-        <h2 class="reveal-up" style="--delay:0ms">Frequently Asked Questions</h2>
-        <div class="faq-container">
-            <details class="faq-item reveal-up" style="--delay:60ms">
-                <summary class="faq-question">Do I need an Apple Music subscription for Lineup DJ to work?</summary>
-                <p class="faq-answer">Yes. Lineup DJ uses Apple Music to search for and play walkout songs. An active Apple Music subscription, including the free trial, is required to add and play songs during games.</p>
-            </details>
-            <details class="faq-item reveal-up" style="--delay:80ms">
-                <summary class="faq-question">Do all parents need to pay for Lineup DJ?</summary>
-                <p class="faq-answer">No. Only one person on the team needs a paid Lineup DJ subscription to run Gameday mode during games. Parents can join the team and set up their player's walkout song and introduction for free.</p>
-            </details>
-            <details class="faq-item reveal-up" style="--delay:100ms">
-                <summary class="faq-question">Can parents add their player's walkout song themselves?</summary>
-                <p class="faq-answer">Yes. Coaches can share their team with parents using a simple invite code. Each parent can then add their player's walkout song and introduction so the lineup stays updated automatically.</p>
-            </details>
-            <details class="faq-item reveal-up" style="--delay:120ms">
-                <summary class="faq-question">What sports is Lineup DJ best for?</summary>
-                <p class="faq-answer">Lineup DJ is designed primarily for youth baseball and softball teams, including Little League, travel ball, coach pitch, and tee-ball. Any sport that uses player introductions or walkout music can also use Lineup DJ.</p>
-            </details>
-            <details class="faq-item reveal-up" style="--delay:140ms">
-                <summary class="faq-question">How do walkout songs work in youth baseball?</summary>
-                <p class="faq-answer">Walkout songs are short clips of music that play when a player walks up to bat. With Lineup DJ, coaches can assign a walkout song to each player and trigger the music instantly during the game.</p>
-            </details>
-            <details class="faq-item reveal-up" style="--delay:160ms">
-                <summary class="faq-question">Can I choose the exact part of the walkout song that plays?</summary>
-                <p class="faq-answer">Yes. Lineup DJ lets you trim the exact moment of a song so players hear their favorite part when they walk up to the plate.</p>
-            </details>
-            <details class="faq-item reveal-up" style="--delay:180ms">
-                <summary class="faq-question">Does Lineup DJ include player introductions?</summary>
-                <p class="faq-answer">Yes. Lineup DJ includes announcer-style player introductions that play before the walkout song, making every at-bat feel like a big-league moment for youth players.</p>
-            </details>
-            <details class="faq-item reveal-up" style="--delay:200ms">
-                <summary class="faq-question">Can Lineup DJ run the full batting lineup during a game?</summary>
-                <p class="faq-answer">Yes. Coaches can run the entire lineup from the app, trigger player introductions, and play walkout music for each batter throughout the game.</p>
-            </details>
-            <details class="faq-item reveal-up" style="--delay:220ms">
-                <summary class="faq-question">How do I move a player to the bench?</summary>
-                <div class="faq-answer">
-                    <ul>
-                        <li>Go to your Team</li>
-                        <li>Find the player in your lineup</li>
-                        <li>Swipe left on the player&rsquo;s row</li>
-                        <li>Tap &ldquo;Bench&rdquo; to move them to the bench</li>
-                    </ul>
-                    <hr class="faq-answer-rule" aria-hidden="true">
-                    <p class="faq-answer-sub">To bring them back:</p>
-                    <ul>
-                        <li>Find the player on the bench</li>
-                        <li>Swipe left on their row</li>
-                        <li>Tap &ldquo;Active&rdquo; to move them back into the lineup</li>
-                    </ul>
-                </div>
-            </details>
-            <details class="faq-item reveal-up" style="--delay:240ms">
-                <summary class="faq-question">Why isn&rsquo;t my player&rsquo;s song playing?</summary>
-                <div class="faq-answer">
-                    <p>Lineup DJ requires an active Apple Music subscription to play songs.</p>
-                    <ul>
-                        <li>Make sure you&rsquo;re logged into Apple Music on your device</li>
-                        <li>Confirm you have an active subscription or free trial</li>
-                        <li>Try playing the song directly in Apple Music to verify it works</li>
-                        <li>If needed, go to Settings in Lineup DJ and tap &ldquo;Restore Purchases&rdquo;</li>
-                    </ul>
-                </div>
-            </details>
-        </div>
-    </section>
+<!-- CTA SECTION -->
+<section class="cta-section" id="cta">
+  <div class="cta-inner reveal-up" style="--delay:0ms">
+    <h2>Create Walkout Songs for<br>Your Team Today</h2>
+    <a href="https://apps.apple.com/us/app/lineup-dj/id6743953226" class="app-store-button" target="_blank" rel="noopener noreferrer">
+      <img src="assets/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store">
+    </a>
+    <p class="cta-sub">Try FREE for 7 days &middot; Cancel anytime</p>
+  </div>
+</section>
 
-    <!-- FOOTER -->
-    <footer class="site-footer">
-        <div class="footer-inner">
-            <div class="footer-left">
-                <div class="footer-logo">
-                    <img src="assets/newblue1024x1024.png" alt="Lineup DJ" class="footer-icon">
-                    <span>Lineup DJ</span>
-                </div>
-                <p class="footer-desc">Lineup DJ makes it easy to add walkout songs and player introductions to youth baseball and softball games. Coaches and parents can quickly set up walkup music for every player and run their lineup effortlessly on game day.</p>
-                <div class="footer-legal">
-                    <a href="privacy.html">Privacy Policy</a>
-                    <span class="footer-sep">·</span>
-                    <a href="terms.html">Terms of Service</a>
-                </div>
-            </div>
-            <nav class="footer-right" aria-label="Footer navigation">
-                <a href="blog/index.html" class="footer-nav-link">Blog</a>
-                <a href="about.html" class="footer-nav-link">About</a>
-                <a href="#faq" class="footer-nav-link">FAQs</a>
-                <a href="contact.html" class="footer-nav-link">Contact</a>
-                <a href="https://www.tiktok.com/@lineupdj" class="footer-tiktok" target="_blank" rel="noopener noreferrer" aria-label="Lineup DJ on TikTok">
-                    <img src="assets/tiktok-icon.svg" alt="" aria-hidden="true" width="20" height="20">
-                </a>
-                <a href="https://www.instagram.com/lineupdj_app" class="footer-instagram" target="_blank" rel="noopener noreferrer" aria-label="Lineup DJ on Instagram">
-                    <img src="assets/Instagram_Glyph_Black.svg" alt="" aria-hidden="true" width="20" height="20">
-                </a>
-                <a href="https://apps.apple.com/us/app/lineup-dj/id6743953226" class="footer-download-btn" target="_blank" rel="noopener noreferrer">
-                    <img src="assets/apple icon.svg" alt="" aria-hidden="true" width="14" height="17">
-                    Download
-                </a>
-            </nav>
-        </div>
-    </footer>
+<!-- BLOG SECTION -->
+<section class="blog-section">
+  <h2 class="reveal-up" style="--delay:0ms">Latest from Our Blog</h2>
+  <div class="blog-carousel">
+    <button class="carousel-btn carousel-prev" type="button" aria-label="Previous post">&larr;</button>
+    <div class="carousel-viewport">
+      <div class="blog-carousel-track">
+        <a href="blog/top-25-walkout-songs-kids-2026.html" class="blog-card reveal-up" style="--delay:60ms">
+          <div class="blog-card-meta">
+            <time datetime="2026-02-11">February 11, 2026</time>
+            <span>&middot;</span>
+            <span>8 min read</span>
+          </div>
+          <h3>Top 25 Walkout Songs for Kids (2026)</h3>
+          <p>Movie hits, game anthems, and 15-second crowd winners&mdash;the ultimate guide for youth baseball and softball.</p>
+          <span class="read-more">Read More &rarr;</span>
+        </a>
+        <a href="blog/family-friendly-walkout-songs.html" class="blog-card reveal-up" style="--delay:140ms">
+          <div class="blog-card-meta">
+            <time datetime="2025-04-24">April 24, 2025</time>
+            <span>&middot;</span>
+            <span>5 min read</span>
+          </div>
+          <h3>Family-Friendly Baseball Walkout Songs: Best Choices for Youth Players</h3>
+          <p>Discover the best age-appropriate walkout songs that keep the energy high and the content clean.</p>
+          <span class="read-more">Read More &rarr;</span>
+        </a>
+      </div>
+    </div>
+    <button class="carousel-btn carousel-next" type="button" aria-label="Next post">&rarr;</button>
+  </div>
+  <div class="carousel-dots" role="tablist" aria-label="Blog post navigation"></div>
+</section>
 
-    <div id="toast" class="toast" aria-live="polite" hidden></div>
+<!-- FAQ SECTION -->
+<section class="faq-section" id="faq">
+  <h2 class="reveal-up" style="--delay:0ms">Frequently Asked Questions</h2>
+  <div class="faq-container">
+    <details class="faq-item reveal-up" style="--delay:60ms">
+      <summary class="faq-question">Do I need an Apple Music subscription for Lineup DJ to work?</summary>
+      <p class="faq-answer">Yes. Lineup DJ uses Apple Music to search for and play walkout songs. An active Apple Music subscription, including the free trial, is required to add and play songs during games.</p>
+    </details>
+    <details class="faq-item reveal-up" style="--delay:80ms">
+      <summary class="faq-question">Do all parents need to pay for Lineup DJ?</summary>
+      <p class="faq-answer">No. Only one person on the team needs a paid Lineup DJ subscription to run Gameday mode during games. Parents can join the team and set up their player's walkout song and introduction for free.</p>
+    </details>
+    <details class="faq-item reveal-up" style="--delay:100ms">
+      <summary class="faq-question">Can parents add their player's walkout song themselves?</summary>
+      <p class="faq-answer">Yes. Coaches can share their team with parents using a simple invite code. Each parent can then add their player's walkout song and introduction so the lineup stays updated automatically.</p>
+    </details>
+    <details class="faq-item reveal-up" style="--delay:120ms">
+      <summary class="faq-question">What sports is Lineup DJ best for?</summary>
+      <p class="faq-answer">Lineup DJ is designed primarily for youth baseball and softball teams, including Little League, travel ball, coach pitch, and tee-ball. Any sport that uses player introductions or walkout music can also use Lineup DJ.</p>
+    </details>
+    <details class="faq-item reveal-up" style="--delay:140ms">
+      <summary class="faq-question">How do walkout songs work in youth baseball?</summary>
+      <p class="faq-answer">Walkout songs are short clips of music that play when a player walks up to bat. With Lineup DJ, coaches can assign a walkout song to each player and trigger the music instantly during the game.</p>
+    </details>
+    <details class="faq-item reveal-up" style="--delay:160ms">
+      <summary class="faq-question">Can I choose the exact part of the walkout song that plays?</summary>
+      <p class="faq-answer">Yes. Lineup DJ lets you trim the exact moment of a song so players hear their favorite part when they walk up to the plate.</p>
+    </details>
+    <details class="faq-item reveal-up" style="--delay:180ms">
+      <summary class="faq-question">Does Lineup DJ include player introductions?</summary>
+      <p class="faq-answer">Yes. Lineup DJ includes announcer-style player introductions that play before the walkout song, making every at-bat feel like a big-league moment for youth players.</p>
+    </details>
+    <details class="faq-item reveal-up" style="--delay:200ms">
+      <summary class="faq-question">Can Lineup DJ run the full batting lineup during a game?</summary>
+      <p class="faq-answer">Yes. Coaches can run the entire lineup from the app, trigger player introductions, and play walkout music for each batter throughout the game.</p>
+    </details>
+    <details class="faq-item reveal-up" style="--delay:220ms">
+      <summary class="faq-question">How do I move a player to the bench?</summary>
+      <div class="faq-answer">
+        <ul>
+          <li>Go to your Team</li>
+          <li>Find the player in your lineup</li>
+          <li>Swipe left on the player&rsquo;s row</li>
+          <li>Tap &ldquo;Bench&rdquo; to move them to the bench</li>
+        </ul>
+        <hr class="faq-answer-rule" aria-hidden="true">
+        <p class="faq-answer-sub">To bring them back:</p>
+        <ul>
+          <li>Find the player on the bench</li>
+          <li>Swipe left on their row</li>
+          <li>Tap &ldquo;Active&rdquo; to move them back into the lineup</li>
+        </ul>
+      </div>
+    </details>
+    <details class="faq-item reveal-up" style="--delay:240ms">
+      <summary class="faq-question">Why isn&rsquo;t my player&rsquo;s song playing?</summary>
+      <div class="faq-answer">
+        <p>Lineup DJ requires an active Apple Music subscription to play songs.</p>
+        <ul>
+          <li>Make sure you&rsquo;re logged into Apple Music on your device</li>
+          <li>Confirm you have an active subscription or free trial</li>
+          <li>Try playing the song directly in Apple Music to verify it works</li>
+          <li>If needed, go to Settings in Lineup DJ and tap &ldquo;Restore Purchases&rdquo;</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+</section>
 
-    <script>
-    // ─── Announcer data ───────────────────────────────────────────────────────
-    const ANNOUNCERS = [
-        {
-            id: 'adam',
-            name: 'Adam',
-            desc: 'classic, smooth, been doing this since 1987',
-            audio: 'assets/audio/preview-adam.mp3'
-        },
-        {
-            id: 'tyler',
-            name: 'Tyler',
-            desc: 'warm, real, sounds like he genuinely cares',
-            audio: 'assets/audio/preview-tyler.mp3'
-        },
-        {
-            id: 'michael',
-            name: 'Michael',
-            desc: 'kinetic, loud, always mid-sentence',
-            audio: 'assets/audio/preview-michael.mp3'
-        },
-        {
-            id: 'stephanie',
-            name: 'Stephanie',
-            desc: 'laid back but never misses a beat',
-            audio: 'assets/audio/preview-stephanie.mp3'
-        },
-        {
-            id: 'jada',
-            name: 'Jada',
-            desc: 'bright, energetic, gets the crowd going',
-            audio: 'assets/audio/preview-jada.mp3'
-        },
-        {
-            id: 'frank',
-            name: 'Frank',
-            desc: 'Thick, gravelly tone',
-            audio: 'assets/audio/preview-frank.mp3'
-        }
-    ];
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="footer-logo">
+        <img src="assets/newblue1024x1024.png" alt="Lineup DJ" class="footer-icon">
+        <span>Lineup DJ</span>
+      </div>
+      <p class="footer-desc">Lineup DJ makes it easy to add walkout songs and player introductions to youth baseball and softball games. Coaches and parents can quickly set up walkup music for every player and run their lineup effortlessly on game day.</p>
+      <div class="footer-legal">
+        <a href="privacy.html">Privacy Policy</a>
+        <span class="footer-sep">&middot;</span>
+        <a href="terms.html">Terms of Service</a>
+      </div>
+    </div>
+    <nav class="footer-right" aria-label="Footer navigation">
+      <a href="blog/index.html" class="footer-nav-link">Blog</a>
+      <a href="about.html" class="footer-nav-link">About</a>
+      <a href="#faq" class="footer-nav-link">FAQs</a>
+      <a href="contact.html" class="footer-nav-link">Contact</a>
+      <a href="https://www.tiktok.com/@lineupdj" class="footer-tiktok" target="_blank" rel="noopener noreferrer" aria-label="Lineup DJ on TikTok">
+        <img src="assets/tiktok-icon.svg" alt="" aria-hidden="true" width="20" height="20">
+      </a>
+      <a href="https://www.instagram.com/lineupdj_app" class="footer-instagram" target="_blank" rel="noopener noreferrer" aria-label="Lineup DJ on Instagram">
+        <img src="assets/Instagram_Glyph_Black.svg" alt="" aria-hidden="true" width="20" height="20">
+      </a>
+      <a href="https://apps.apple.com/us/app/lineup-dj/id6743953226" class="footer-download-btn" target="_blank" rel="noopener noreferrer">
+        <img src="assets/apple icon.svg" alt="" aria-hidden="true" width="14" height="17">
+        Download
+      </a>
+    </nav>
+  </div>
+</footer>
 
-    let activeAnnouncerIndex = 2; // Michael is active by default
-    let announcerAudio = null;
-    let isPlayingPreview = false;
+<div id="toast" class="toast" aria-live="polite" hidden></div>
 
-    function buildAnnouncerSVG(a, size) {
-        return `<img src="assets/announcer-${a.id}-face.svg" width="${size}" height="${size}" alt="${a.name}" style="border-radius:50%;display:block;">`;
-    }
+<script>
+// ─── Announcer data ───────────────────────────────────────────────────────
+const ANNOUNCERS = [
+  { id: 'adam',      name: 'Adam',      desc: 'classic, smooth, been doing this since 1987',      audio: 'assets/audio/preview-adam.mp3' },
+  { id: 'tyler',     name: 'Tyler',     desc: 'warm, real, sounds like he genuinely cares',       audio: 'assets/audio/preview-tyler.mp3' },
+  { id: 'michael',   name: 'Michael',   desc: 'kinetic, loud, always mid-sentence',               audio: 'assets/audio/preview-michael.mp3' },
+  { id: 'stephanie', name: 'Stephanie', desc: 'laid back but never misses a beat',                audio: 'assets/audio/preview-stephanie.mp3' },
+  { id: 'jada',      name: 'Jada',      desc: 'bright, energetic, gets the crowd going',          audio: 'assets/audio/preview-jada.mp3' },
+  { id: 'frank',     name: 'Frank',     desc: 'Thick, gravelly tone',                             audio: 'assets/audio/preview-frank.mp3' }
+];
 
-    function renderAnnouncerCard(index) {
-        const a = ANNOUNCERS[index];
-        document.getElementById('announcer-avatar-wrap').innerHTML = buildAnnouncerSVG(a, 160);
-        document.getElementById('announcer-name').textContent = a.name;
-        document.getElementById('announcer-desc').textContent = a.desc;
-        stopPreview();
-    }
+let activeAnnouncerIndex = 2; // Michael is active by default
+let announcerAudio = null;
+let isPlayingPreview = false;
 
-    function renderAnnouncerSelector() {
-        const selector = document.getElementById('announcer-selector');
-        selector.innerHTML = '';
-        ANNOUNCERS.forEach((a, i) => {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'announcer-sel-btn' + (i === activeAnnouncerIndex ? ' active' : '');
-            btn.setAttribute('aria-label', 'Select ' + a.name);
-            btn.innerHTML = buildAnnouncerSVG(a, 72);
-            btn.addEventListener('click', () => {
-                activeAnnouncerIndex = i;
-                renderAnnouncerCard(i);
-                document.querySelectorAll('.announcer-sel-btn').forEach((b, j) => {
-                    b.classList.toggle('active', j === i);
-                });
-            });
-            selector.appendChild(btn);
-        });
-    }
+function buildAnnouncerSVG(a, size) {
+  return `<img src="assets/announcer-${a.id}-face.svg" width="${size}" height="${size}" alt="${a.name}" style="border-radius:50%;display:block;">`;
+}
 
-    function stopPreview() {
-        if (announcerAudio) {
-            announcerAudio.pause();
-            announcerAudio.currentTime = 0;
-        }
-        isPlayingPreview = false;
-        const btn = document.getElementById('announcer-preview-btn');
-        if (btn) {
-            btn.classList.remove('playing');
-            btn.querySelector('.apb-label').textContent = 'Preview';
-        }
-        document.querySelectorAll('.wave-bar').forEach(b => b.classList.remove('wave-animate'));
-    }
+function renderAnnouncerCard(index) {
+  const a = ANNOUNCERS[index];
+  document.getElementById('announcer-avatar-wrap').innerHTML = buildAnnouncerSVG(a, 160);
+  document.getElementById('announcer-name').textContent = a.name;
+  document.getElementById('announcer-desc').textContent = a.desc;
+  stopPreview();
+}
 
-    document.getElementById('announcer-preview-btn').addEventListener('click', function() {
-        if (isPlayingPreview) {
-            stopPreview();
-            return;
-        }
-        const a = ANNOUNCERS[activeAnnouncerIndex];
-        announcerAudio = new Audio(a.audio);
-        announcerAudio.addEventListener('ended', stopPreview);
-        announcerAudio.addEventListener('error', stopPreview);
-        announcerAudio.play().catch(stopPreview);
-        isPlayingPreview = true;
-        this.classList.add('playing');
-        this.querySelector('.apb-label').textContent = 'Playing...';
-        document.querySelectorAll('.wave-bar').forEach(b => b.classList.add('wave-animate'));
+function renderAnnouncerSelector() {
+  const selector = document.getElementById('announcer-selector');
+  selector.innerHTML = '';
+  ANNOUNCERS.forEach((a, i) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'announcer-sel-btn' + (i === activeAnnouncerIndex ? ' active' : '');
+    btn.setAttribute('aria-label', 'Select ' + a.name);
+    btn.innerHTML = buildAnnouncerSVG(a, 72);
+    btn.addEventListener('click', () => {
+      activeAnnouncerIndex = i;
+      renderAnnouncerCard(i);
+      document.querySelectorAll('.announcer-sel-btn').forEach((b, j) => {
+        b.classList.toggle('active', j === i);
+      });
     });
+    selector.appendChild(btn);
+  });
+}
 
-    // ─── Navigation scroll behaviour ─────────────────────────────────────────
-    (function() {
-        var header = document.getElementById('site-header');
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 20) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        }, { passive: true });
-    })();
+function stopPreview() {
+  if (announcerAudio) { announcerAudio.pause(); announcerAudio.currentTime = 0; }
+  isPlayingPreview = false;
+  const btn = document.getElementById('announcer-preview-btn');
+  if (btn) { btn.classList.remove('playing'); btn.querySelector('.apb-label').textContent = 'Preview'; }
+  document.querySelectorAll('.wave-bar').forEach(b => b.classList.remove('wave-animate'));
+}
 
-    // ─── IntersectionObserver for scroll-in animations ────────────────────────
-    (function() {
-        var observer = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-                if (entry.isIntersecting) {
-                    var el = entry.target;
-                    var delay = el.style.getPropertyValue('--delay') || '0ms';
-                    setTimeout(function() {
-                        el.classList.add('revealed');
-                    }, parseInt(delay) || 0);
-                    observer.unobserve(el);
-                }
-            });
-        }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+document.getElementById('announcer-preview-btn').addEventListener('click', function() {
+  if (isPlayingPreview) { stopPreview(); return; }
+  const a = ANNOUNCERS[activeAnnouncerIndex];
+  announcerAudio = new Audio(a.audio);
+  announcerAudio.addEventListener('ended', stopPreview);
+  announcerAudio.addEventListener('error', stopPreview);
+  announcerAudio.play().catch(stopPreview);
+  isPlayingPreview = true;
+  this.classList.add('playing');
+  this.querySelector('.apb-label').textContent = 'Playing...';
+  document.querySelectorAll('.wave-bar').forEach(b => b.classList.add('wave-animate'));
+});
 
-        document.querySelectorAll('.reveal-right, .reveal-up').forEach(function(el) {
-            observer.observe(el);
-        });
-    })();
+// ─── Navigation scroll behaviour ─────────────────────────────────────────
+(function() {
+  var header = document.getElementById('site-header');
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 20) { header.classList.add('scrolled'); }
+    else { header.classList.remove('scrolled'); }
+  }, { passive: true });
+})();
 
-    // ─── FAQ animated accordion ───────────────────────────────────────────────
-    (function() {
-        document.querySelectorAll('.faq-item').forEach(function(details) {
-            var summary = details.querySelector('summary');
-            summary.addEventListener('click', function(e) {
-                e.preventDefault();
-                details.style.overflow = 'hidden';
-                if (details.open) {
-                    var closing = details.animate(
-                        [{ height: details.scrollHeight + 'px' }, { height: summary.scrollHeight + 'px' }],
-                        { duration: 280, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
-                    );
-                    closing.onfinish = function() {
-                        details.open = false;
-                        details.style.overflow = '';
-                    };
-                } else {
-                    details.open = true;
-                    details.animate(
-                        [{ height: summary.scrollHeight + 'px' }, { height: details.scrollHeight + 'px' }],
-                        { duration: 320, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
-                    ).onfinish = function() {
-                        details.style.overflow = '';
-                    };
-                }
-            });
-        });
-    })();
-
-    // ─── Handle shared lineup deep links ─────────────────────────────────────
-    (function handleSharedLineup() {
-        var pathParts = window.location.pathname.split('/');
-        if (pathParts.length >= 3 && pathParts[1] === 'l') {
-            var lineupId = pathParts[2];
-            window.location.href = 'lineupdj://l/' + lineupId;
-            setTimeout(function() {
-                window.location.href = 'https://apps.apple.com/us/app/lineup-dj/id6743953226';
-            }, 1000);
-        }
-    })();
-
-    // ─── Blog carousel ────────────────────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', function() {
-        var carousel = document.querySelector('.blog-carousel');
-        var track = document.querySelector('.blog-carousel-track');
-        var cards = document.querySelectorAll('.blog-carousel-track .blog-card');
-        var prevBtn = document.querySelector('.carousel-prev');
-        var nextBtn = document.querySelector('.carousel-next');
-        var dotsContainer = document.querySelector('.carousel-dots');
-        var cardCount = cards.length;
-
-        if (!track || cardCount === 0) return;
-
-        if (cardCount <= 2) {
-            carousel.classList.add('blog-carousel--static');
-            return;
-        }
-
-        carousel.classList.add('blog-carousel--carousel');
-        var currentIndex = 0;
-
-        for (var i = 0; i < cardCount; i++) {
-            var dot = document.createElement('button');
-            dot.type = 'button';
-            dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-            dot.dataset.index = i;
-            dot.setAttribute('aria-label', 'Go to post ' + (i + 1));
-            dot.setAttribute('aria-selected', i === 0);
-            dotsContainer.appendChild(dot);
-        }
-        var dots = dotsContainer.querySelectorAll('.carousel-dot');
-
-        function getSlideOffset() { return cards[0] ? cards[0].offsetWidth + 24 : 0; }
-        function updateCarousel() {
-            track.style.transform = 'translateX(-' + (currentIndex * getSlideOffset()) + 'px)';
-            dots.forEach(function(dot, i) {
-                dot.classList.toggle('active', i === currentIndex);
-                dot.setAttribute('aria-selected', i === currentIndex);
-            });
-            prevBtn.disabled = currentIndex === 0;
-            nextBtn.disabled = currentIndex >= cardCount - 1;
-        }
-        prevBtn.addEventListener('click', function() { if (currentIndex > 0) { currentIndex--; updateCarousel(); } });
-        nextBtn.addEventListener('click', function() { if (currentIndex < cardCount - 1) { currentIndex++; updateCarousel(); } });
-        dots.forEach(function(dot, i) { dot.addEventListener('click', function() { currentIndex = i; updateCarousel(); }); });
-        window.addEventListener('resize', updateCarousel);
-        updateCarousel();
+// ─── IntersectionObserver for scroll-in animations ────────────────────────
+(function() {
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var el = entry.target;
+        var delay = el.style.getPropertyValue('--delay') || '0ms';
+        setTimeout(function() { el.classList.add('revealed'); }, parseInt(delay) || 0);
+        observer.unobserve(el);
+      }
     });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.reveal-right, .reveal-up').forEach(function(el) { observer.observe(el); });
+})();
 
-    // ─── Init announcers ──────────────────────────────────────────────────────
-    renderAnnouncerCard(activeAnnouncerIndex);
-    renderAnnouncerSelector();
-    </script>
+// ─── FAQ animated accordion ──────────────────────────────────────────────
+(function() {
+  document.querySelectorAll('.faq-item').forEach(function(details) {
+    var summary = details.querySelector('summary');
+    summary.addEventListener('click', function(e) {
+      e.preventDefault();
+      details.style.overflow = 'hidden';
+      if (details.open) {
+        var closing = details.animate(
+          [{ height: details.scrollHeight + 'px' }, { height: summary.scrollHeight + 'px' }],
+          { duration: 280, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+        );
+        closing.onfinish = function() { details.open = false; details.style.overflow = ''; };
+      } else {
+        details.open = true;
+        details.animate(
+          [{ height: summary.scrollHeight + 'px' }, { height: details.scrollHeight + 'px' }],
+          { duration: 320, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+        ).onfinish = function() { details.style.overflow = ''; };
+      }
+    });
+  });
+})();
+
+// ─── Handle shared lineup deep links ─────────────────────────────────────
+(function handleSharedLineup() {
+  var pathParts = window.location.pathname.split('/');
+  if (pathParts.length >= 3 && pathParts[1] === 'l') {
+    var lineupId = pathParts[2];
+    window.location.href = 'lineupdj://l/' + lineupId;
+    setTimeout(function() {
+      window.location.href = 'https://apps.apple.com/us/app/lineup-dj/id6743953226';
+    }, 1000);
+  }
+})();
+
+// ─── Blog carousel ───────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  var carousel = document.querySelector('.blog-carousel');
+  var track = document.querySelector('.blog-carousel-track');
+  var cards = document.querySelectorAll('.blog-carousel-track .blog-card');
+  var prevBtn = document.querySelector('.carousel-prev');
+  var nextBtn = document.querySelector('.carousel-next');
+  var dotsContainer = document.querySelector('.carousel-dots');
+  var cardCount = cards.length;
+  if (!track || cardCount === 0) return;
+  if (cardCount <= 2) { carousel.classList.add('blog-carousel--static'); return; }
+  carousel.classList.add('blog-carousel--carousel');
+  var currentIndex = 0;
+  for (var i = 0; i < cardCount; i++) {
+    var dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+    dot.dataset.index = i;
+    dot.setAttribute('aria-label', 'Go to post ' + (i + 1));
+    dot.setAttribute('aria-selected', i === 0);
+    dotsContainer.appendChild(dot);
+  }
+  var dots = dotsContainer.querySelectorAll('.carousel-dot');
+  function getSlideOffset() { return cards[0] ? cards[0].offsetWidth + 24 : 0; }
+  function updateCarousel() {
+    track.style.transform = 'translateX(-' + (currentIndex * getSlideOffset()) + 'px)';
+    dots.forEach(function(dot, i) {
+      dot.classList.toggle('active', i === currentIndex);
+      dot.setAttribute('aria-selected', i === currentIndex);
+    });
+    prevBtn.disabled = currentIndex === 0;
+    nextBtn.disabled = currentIndex >= cardCount - 1;
+  }
+  prevBtn.addEventListener('click', function() { if (currentIndex > 0) { currentIndex--; updateCarousel(); } });
+  nextBtn.addEventListener('click', function() { if (currentIndex < cardCount - 1) { currentIndex++; updateCarousel(); } });
+  dots.forEach(function(dot, i) { dot.addEventListener('click', function() { currentIndex = i; updateCarousel(); }); });
+  window.addEventListener('resize', updateCarousel);
+  updateCarousel();
+});
+
+// ─── Init announcers ─────────────────────────────────────────────────────
+renderAnnouncerCard(activeAnnouncerIndex);
+renderAnnouncerSelector();
+</script>
 </body>
 </html>
